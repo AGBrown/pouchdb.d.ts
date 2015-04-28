@@ -59,14 +59,14 @@ Any changes to the definitions must therefore:
 |--tests 						replica test files of pouchdb/tests
 |  \--integration 				  (example) 
 |     |--test.basics.extra.ts 	  (example) extra stuff required to make the test file build
-|     \--test.basics.ts 		  (example) a replica test file of pouchdb/tests/integration/test.basics.js
+|     |--test.basics.ts 		  (example) a replica test file of pouchdb/tests/integration/test.basics.js
 |     \--utils.d.ts 		  	  (example) a replica definition file for pouchdb/tests/integration/utils.js
 |--typings 						typings files to support tests, builds etc.
 |--.travis.yml 					the travis CI settings file
 |--license
 |--package.json 				the npm package.json file
 |--pouchdb-tests.ts 			The "correctness" tests for pouchdb.d.ts
-|--pouchdb.d.ts 				The actual pouchdb definitions file
+\--pouchdb.d.ts 				The actual pouchdb definitions file
 ```
 
 The [readme-dt.md](README-dt.md) contains the final readme for the DefinitelyTyped repository
