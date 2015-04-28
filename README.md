@@ -82,7 +82,7 @@ The [readme-dt.md](README-dt.md) contains the final readme for the DefinitelyTyp
 [pouchdb-tests]: 	https://github.com/pouchdb/pouchdb/tree/3.4.0/tests
 [this-issues]: 		https://github.com/AGBrown/pouchdb.d.ts/issues
 [this-prs]: 		https://github.com/AGBrown/pouchdb.d.ts/pulls?q=is%3Aopen+is%3Apr
-[this-img-d001]: 	https://github.com/AGBrown/pouchdb.d.ts/blob/feat/docs/d001-intellisense.png
+[this-img-d001]: 	https://github.com/AGBrown/pouchdb.d.ts/blob/master/docs/d001-intellisense.png
 
 [travis-img-master]:https://travis-ci.org/AGBrown/pouchdb.d.ts.svg?branch=master
 [travis-img-dev]: 	https://travis-ci.org/AGBrown/pouchdb.d.ts.svg?branch=dev
