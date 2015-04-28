@@ -7,5 +7,11 @@
   "license": "MIT",
   "devDependencies": {
     "typescript": "1.4.1"
+  },
+  "scripts": {
+    "pretest": "npm run list-main; npm run list-subs; cat ts-files.txt;",
+    "list-main":  "find . -maxdepth 1 -type f -name '*.ts' > ts-files.txt",
+    "list-subs":  "find tests typings -type f -name '*.ts' >> ts-files.txt",
+    "test": "tsc @ts-files.txt"
   }
 }
