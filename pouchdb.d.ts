@@ -296,7 +296,7 @@ declare module pouchdb {
                       * @param docId the doc id
                       * @param options
                       */
-                    get<R>(docId: string, options?: Options, callback?: async.Callback<R>): void;
+                    get<R extends ExistingDoc>(docId: string, options?: Options, callback?: async.Callback<R>): void;
                 }
                 /** Promise pattern for remove */
                 interface Promise {
@@ -305,7 +305,7 @@ declare module pouchdb {
                       * @param docId the doc id
                       * @param options
                       */
-                    get<R>(docId: string, options?: Options): async.Thenable<R>;
+                    get<R extends ExistingDoc>(docId: string, options?: Options): async.Thenable<R>;
                 }
             }
 
