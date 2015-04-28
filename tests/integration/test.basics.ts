@@ -291,5 +291,23 @@ adapters.forEach((adapter: string) => {
                 });
             });
         });
+
+        it('Remove doc twice with specified id', () => {
+            var db = new PouchDB(dbs.name);
+            return db.put({ _id: 'specifiedId', test: 'somestuff' }).then(() => {
+                return db.get<pouchdb.test.integration.TestDoc>('specifiedId');
+            }).then((doc) => {
+                return db.remove(doc);
+            }).then(() => {
+                return db.put({
+                    _id: 'specifiedId',
+                    test: 'somestuff2'
+                });
+            }).then(() => {
+                return db.get<pouchdb.test.integration.TestDoc>('specifiedId');
+            }).then((doc) => {
+                return db.remove(doc);
+            });
+        });
     });
 });
