@@ -1,0 +1,11 @@
+{
+  "version": "0.0.0",
+  "private": true,
+  "name": "pouchdb-typescript",
+  "description": "Dev repo for pouchdb typescript definitions",
+  "repository": "https://github.com/AGBrown/pouchdb-typescript",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "1.4.1"
+  }
+}
