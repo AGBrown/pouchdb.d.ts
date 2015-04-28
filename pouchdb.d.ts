@@ -160,7 +160,7 @@ declare module pouchdb {
                 ok: boolean;
             }
 
-            /** Promise/callback result for `put()`, `post()` */
+            /** Promise/callback result for various methods */
             interface OperationResponse extends BaseResponse {
                 /** The id of the doc operated on */
                 id: string;
@@ -332,7 +332,8 @@ declare module pouchdb {
                  */
                 interface Callback {
                     /**
-                     * Create a new document and let PouchDB auto-generate an _id for it.
+                     * Create a new document and let PouchDB auto-generate an _id for it 
+                     * (tip: use `put()` instead for better indexing)
                      * @param doc the doc (with no id)
                      * @param options ajax options
                      * @todo define options shape - docs don't make it clear what this is
@@ -343,6 +344,7 @@ declare module pouchdb {
                 interface Promise {
                     /**
                      * Create a new document and let PouchDB auto-generate an _id for it.
+                     * (tip: use `put()` instead for better indexing)
                      * @param doc the doc (with no id)
                      * @param options ajax options
                      * @todo define options shape - docs don't make it clear what this is
