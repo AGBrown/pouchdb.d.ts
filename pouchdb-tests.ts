@@ -240,5 +240,85 @@ module PouchDBTest {
                 db2.destroy().then(myThen, myErr);
             }
         }
+        module put {
+            var oe = { };
+            var of = { foo: "test" };
+            var eDoc: pouchdb.api.methods.ExistingDoc = { foo: "test", _id: "1", _rev: "1" };
+            var nDoc: pouchdb.api.methods.NewDoc = { foo: "test", _id: "1" };
+            var bDoc: pouchdb.api.methods.BaseDoc = { foo: "test" };
+            var id = "1";
+            var rv = "1";
+
+            function callback() {
+                var db: pouchdb.callback.PouchDB = new PouchDB("dbname",(e, v) => { });
+                //  Overload tests for the callback versions of put
+                db.put(eDoc);
+                db.put(eDoc, (err, val) => { });
+                db.put(eDoc, (err) => { });
+
+                db.put(eDoc, oe);
+                db.put(eDoc, of);
+                db.put(eDoc, oe, (err, val) => { val.ok === true; });
+                db.put(eDoc, of, (err, val) => { val.ok === true; });
+                db.put(eDoc, of, (err) => { err.error; });
+
+                db.put(nDoc);
+                db.put(nDoc, (err, val) => { });
+
+                db.put(nDoc, oe);
+                db.put(nDoc, of);
+                db.put(nDoc, oe, (err, val) => { val.ok === true; });
+                db.put(nDoc, of, (err, val) => { val.ok === true; });
+                db.put(nDoc, of, (err) => { err.error; });
+
+                db.put(bDoc, id, rv);
+                db.put(bDoc, id, rv, (err, val) => { val.ok === true; });
+
+                db.put(bDoc, id, rv, oe);
+                db.put(bDoc, id, rv, of);
+                db.put(bDoc, id, rv, oe, (err, val) => { val.ok === true; });
+                db.put(bDoc, id, rv, of, (err, val) => { val.ok === true; });
+                db.put(bDoc, id, rv, of, (err) => { err.error; });
+
+                db.put(bDoc, id);
+                db.put(bDoc, id, (err, val) => { val.ok === true; });
+
+                db.put(bDoc, id, oe);
+                db.put(bDoc, id, of);
+                db.put(bDoc, id, oe, (err, val) => { val.ok === true; });
+                db.put(bDoc, id, of, (err, val) => { val.ok === true; });
+                db.put(bDoc, id, of, (err) => { err.error; });
+            }
+            function promise() {
+                var db1: pouchdb.thenable.PouchDB = new PouchDB("dbname");
+                var db2: pouchdb.promise.PouchDB = new PouchDB("dbname");
+
+                db1.put(eDoc).then(resp => { }, err => { }).catch(err => { });
+                db2.put(eDoc).then(resp => { }, err => { }).catch(err => { });
+                db2.put(eDoc).then(resp => { }).catch(err => { });
+                db2.put(eDoc).catch(err => { });
+
+                db1.put(eDoc, {}).then(resp => { }, err => { }).catch(err => { });
+                db2.put(eDoc, {}).then(resp => { }, err => { }).catch(err => { });
+
+                db1.put(nDoc).then(resp => { }, err => { }).catch(err => { });
+                db2.put(nDoc).then(resp => { }, err => { }).catch(err => { });
+
+                db1.put(nDoc, {}).then(resp => { }, err => { }).catch(err => { });
+                db2.put(nDoc, {}).then(resp => { }, err => { }).catch(err => { });
+
+                db1.put(bDoc, id, rv).then(resp => { }, err => { }).catch(err => { });
+                db2.put(bDoc, id, rv).then(resp => { }, err => { }).catch(err => { });
+
+                db1.put(bDoc, id, rv, {}).then(resp => { }, err => { }).catch(err => { });
+                db2.put(bDoc, id, rv, {}).then(resp => { }, err => { }).catch(err => { });
+
+                db1.put(bDoc, id).then(resp => { }, err => { }).catch(err => { });
+                db2.put(bDoc, id).then(resp => { }, err => { }).catch(err => { });
+
+                db1.put(bDoc, id, {}).then(resp => { }, err => { }).catch(err => { });
+                db2.put(bDoc, id, {}).then(resp => { }, err => { }).catch(err => { });
+            }
+        }
     }
 }

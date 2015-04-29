@@ -576,10 +576,22 @@ declare module pouchdb {
                     /**
                      * Update an existing document.
                      * @param doc the doc
+                     * @todo define options shape - docs don't make it clear what this is
+                     */
+                    put(doc: ExistingDoc, callback?: async.Callback<OperationResponse>): void;
+                    /**
+                     * Update an existing document.
+                     * @param doc the doc
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    put(doc: ExistingDoc, options?: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
+                    put(doc: ExistingDoc, options: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
+                    /**
+                     * Create a new document.
+                     * @param doc the doc
+                     * @todo define options shape - docs don't make it clear what this is
+                     */
+                    put(doc: NewDoc, callback?: async.Callback<OperationResponse>): void;
                     /**
                      * Create a new document.
                      * @param doc the doc
@@ -587,6 +599,14 @@ declare module pouchdb {
                      * @todo define options shape - docs don't make it clear what this is
                      */
                     put(doc: NewDoc, options?: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
+                    /**
+                     * Update an existing document. 
+                     * @param doc the doc
+                     * @param docId the doc id
+                     * @param docRev the doc rev
+                     * @todo define options shape - docs don't make it clear what this is
+                     */
+                    put(doc: BaseDoc, docId: string, docRev: string, callback?: async.Callback<OperationResponse>): void;
                     /**
                      * Update an existing document. 
                      * @param doc the doc
@@ -601,10 +621,18 @@ declare module pouchdb {
                      * you must use the update overload otherwise a conflict will occur.
                      * @param doc the doc
                      * @param docId the doc id
+                     * @todo define options shape - docs don't make it clear what this is
+                     */
+                    put(doc: BaseDoc, docId: string, callback?: async.Callback<OperationResponse>): void;
+                    /**
+                     * Create a new document. If the document already exists, 
+                     * you must use the update overload otherwise a conflict will occur.
+                     * @param doc the doc
+                     * @param docId the doc id
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    put(doc: BaseDoc, docId: string, options?: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
+                    put(doc: BaseDoc, docId: string, options: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
                 }
                 /** Promise pattern for put */
                 interface Promise {
