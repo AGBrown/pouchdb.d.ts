@@ -309,5 +309,28 @@ adapters.forEach((adapter: string) => {
                 return db.remove(doc);
             });
         });
+
+        it('Remove doc, no callback', function (done) {
+            var db = new PouchDB(dbs.name);
+            var changes = db.changes({
+                live: true,
+                include_docs: true,
+                onChange: function (change) {
+                    if (change.doc._deleted) {
+                        changes.cancel();
+                    }
+                },
+                complete: function (err, result) {
+                    result.status.should.equal('cancelled');
+                    done();
+                }
+            });
+            db.post({ _id: 'somestuff' }, function (err, res) {
+                db.remove({
+                    _id: res.id,
+                    _rev: res.rev
+                });
+            });
+        });
     });
 });

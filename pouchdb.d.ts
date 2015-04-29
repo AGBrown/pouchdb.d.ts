@@ -191,6 +191,141 @@ declare module pouchdb {
             //////////////////////////// Methods //////////////////////////////
             // Please keep these modules in alphabetical order
 
+            /** Contains the method and call/return types for changes() */
+            module changes {
+                /** Options for `changes()` output */
+                interface BaseOptions {
+                    /**
+                     * Does "live" changes, using CouchDB’s `_longpoll_` feed if remote.
+                     * @default `false`
+                     */
+                    live: boolean;
+                    /**
+                     * Include the associated document with each change
+                     * @see conflicts
+                     * @see attachments
+                     * @default `false`
+                     */
+                    include_docs: boolean;
+                    /**
+                     * Include conflicts (see {@linkcode #include_docs})
+                     * @see include_docs
+                     * @see attachments
+                     * @default `false`
+                     */
+                    conflicts: boolean;
+                    /**
+                     * Include attachments (see {@linkcode #include_docs})
+                     * @see include_docs
+                     * @see conflicts
+                     * @default `false`
+                     */
+                    attachments: boolean;
+                    /**
+                     * Reverse the order of output documents
+                     * @default `false`
+                     */
+                    descending: boolean;
+                    /**
+                     * Start the results from the change immediately after the given sequence number. 
+                     * You can also pass `'now'` if you want only new changes (when `live` is `true`).
+                     * @default undefined
+                     */
+                    since: any; // string | number
+                    /**
+                     * Limit the number of results to this number.
+                     * @default undefined
+                     */
+                    limit: number;
+                    /**
+                     * Request timeout (in milliseconds).
+                     * @default undefined
+                     */
+                    timeout: number;
+                }
+                /** Options for filtering `changes()` output */
+                interface FilterOptions {
+                    ////////////////////// FILTER FUNCTIONS ////////////////////
+                    /**
+                     * Reference a filter function from a design document to selectively get updates. 
+                     * To use a view function, pass `'_view'` here and provide a reference to the view 
+                     * function in {@link #view}
+                     * @see params
+                     * @see view
+                     */
+                    filter: any; // string | function(doc, params)
+                    /** Only show changes for docs with these ids. */
+                    doc_ids: string[];
+                    /**
+                     *  Object containing properties that are passed to the filter function, 
+                     * e.g. `{"foo:"bar"}`, where `"bar"` will be available in the filter function 
+                     * as `params.query.foo`. To access the `params`, define your filter function like 
+                     * `function (doc, params) { ... }`.
+                     * @see filter
+                     */
+                    query_params: {};
+                    /**
+                     * Specify a view function (e.g. `'design_doc_name/view_name'`) to act as a filter. 
+                     * Documents counted as “passed” for a view filter if a map function emits at least 
+                     * one record for them (set {@linkcode #filter} to `'view'` to use this).
+                     */
+                    view: string;
+                }
+                /** Advanced options for `changes()` */
+                interface AdvancedOptions {
+                    /**
+                     * Available for non-http databases. Passing `false` prevents the changes feed 
+                     * from keeping all the documents in memory – in other words `complete` always has 
+                     * an empty results array, and the `change` event is the only way to get the event.
+                     * @default true
+                     */
+                    returnDocs: boolean;
+                    /**
+                     * Available for http databases. This configures how many changes to fetch at a 
+                     * time. Increasing this can reduce the number of requests made. 
+                     * @default 25
+                     */
+                    batch_size: number;
+                    /**
+                     * Specifies how many revisions are returned in the changes array: 
+                     * `'main_only'`, will only return the current “winning” revision; 
+                     * `'all_docs'` will return all leaf revisions
+                     * (including conflicts and deleted former conflicts).
+                     * @default 'main_only'
+                     */
+                    style: string;
+                }
+                /** The event listeners for `changes()` */
+                interface EventsOptions {
+
+                }
+
+                interface ChangesOptions    extends EventsOptions, BaseOptions, FilterOptions { }
+                interface ChangesOptionsAdv extends EventsOptions, ChangesOptions, AdvancedOptions { }
+                /** Result object for changes() */
+                interface ChangesResult {
+                    /**
+                     * Cancels all further event emissions for the call to 
+                     * `changes()` that returned this object
+                     */
+                    cancel(): void;
+                }
+                /** The overloads for changes() */
+                interface Overloads {
+                    /**
+                     * A list of changes made to documents in the database, in the order they were made. 
+                     * @returns an object with the method `cancel()` to stop listening for new changes
+                     */
+                    changes(options: methods.changes.ChangesOptions): methods.changes.ChangesResult;
+                    /**
+                     * A list of changes made to documents in the database, in the order they were made
+                     * (using advanced options). 
+                     * @returns an object with the method `cancel()` to stop listening for new changes
+                     */
+                    changes(options: methods.changes.ChangesOptionsAdv): methods.changes.ChangesResult;
+                }
+            }
+
             /** Contains the method and call/return types for close() */
             module close {
                 /** Callback pattern for close() */
@@ -496,6 +631,7 @@ declare module pouchdb {
                 , methods.post.Callback
                 , methods.put.Callback
                 , methods.remove.Callback
+                , methods.changes.Overloads
             {}
             /** pouchDB api: promise based */
             interface Promise extends
@@ -507,6 +643,7 @@ declare module pouchdb {
                 , methods.post.Promise
                 , methods.put.Promise
                 , methods.remove.Promise
+                , methods.changes.Overloads
             {}
         }
         /** The main pouchDB interface properties */
