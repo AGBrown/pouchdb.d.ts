@@ -155,6 +155,7 @@ declare module pouchdb {
     module api {
         /** Contains methods and their call/return types */
         module methods {
+            //////////////////////////// Responses /////////////////////////////
             /** Promise/callback result for various methods */
             interface BaseResponse {
                 /** `true` if the operation was successful; `false` otherwise */
@@ -168,17 +169,18 @@ declare module pouchdb {
                 /** The revision of the doc after the operation */
                 rev: string;
             }
-
+            
+            //////////////////////////// Doc Shapes ////////////////////////////
             /** Interface for an empty doc */
             interface BaseDoc { }
 
-            /** Interface for a doc passed to the put() method */
+            /** Interface for a doc (with `_id`) passed to the put() method */
             interface NewDoc extends BaseDoc {
                 /** The id of the doc to be operated on */
                 _id: string;
             }
 
-            /** Interface for a doc passed to the put() method */
+            /** Interface for a doc (with `_id`, `_rev`, `_deleted`) passed to the put() method */
             interface ExistingDoc extends NewDoc {
                 /** The revision of the doc to be operated on */
                 _rev: string;
@@ -190,7 +192,7 @@ declare module pouchdb {
                 _deleted?: boolean;
             }
 
-            //////////////////////////// Methods //////////////////////////////
+            //////////////////////////// Methods ///////////////////////////////
             // Please keep these modules in alphabetical order
 
             /** Contains the method and call/return types for changes() */
