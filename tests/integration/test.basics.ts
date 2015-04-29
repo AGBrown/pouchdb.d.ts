@@ -34,7 +34,7 @@ adapters.forEach((adapter: string) => {
         });
 
         it("create a pouch",(done) => {
-            new PouchDB(dbs.name,(err: any, db: pouchdb.callback.PouchDB) => {
+            new PouchDB(dbs.name, (err, db) => {
                 //  typescript: can't really handle should, so need to use expect instead
                 expect(err).not.to.exist;
                 expect(db).to.be.an.instanceOf(PouchDB);
