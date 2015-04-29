@@ -217,7 +217,7 @@ adapters.forEach((adapter: string) => {
                     _id: info.id,
                     _rev: info.rev
                 }, (doc) => {
-                        db.get(info.id, (err: pouchdb.async.Error) => {
+                        db.get(info.id, (err) => {
                             expect(err.error).to.exist;
                             done();
                         });
