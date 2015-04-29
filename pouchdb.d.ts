@@ -148,7 +148,6 @@ declare module pouchdb {
              */
             (error: Error, value: T): void;
         }
-        interface StandardCallback extends Callback<api.methods.OperationResponse> { }
     }
 
     /** Contains the main pouchDB api */
