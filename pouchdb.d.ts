@@ -148,6 +148,7 @@ declare module pouchdb {
              */
             (error: Error, value: T): void;
         }
+        interface StandardCallback extends Callback<api.methods.OperationResponse> { }
     }
 
     /** Contains the main pouchDB api */
@@ -184,6 +185,7 @@ declare module pouchdb {
                 /**
                  * indicates the deleted status of a doc
                  * @todo is this always present, or optional?
+                 * @default: false
                  */
                 _deleted?: boolean;
             }
@@ -199,53 +201,52 @@ declare module pouchdb {
                      * Does "live" changes, using CouchDB’s `_longpoll_` feed if remote.
                      * @default `false`
                      */
-                    live: boolean;
+                    live?: boolean;
                     /**
                      * Include the associated document with each change
                      * @see conflicts
                      * @see attachments
                      * @default `false`
                      */
-                    include_docs: boolean;
+                    include_docs?: boolean;
                     /**
                      * Include conflicts (see {@linkcode #include_docs})
                      * @see include_docs
                      * @see attachments
                      * @default `false`
                      */
-                    conflicts: boolean;
+                    conflicts?: boolean;
                     /**
                      * Include attachments (see {@linkcode #include_docs})
                      * @see include_docs
                      * @see conflicts
                      * @default `false`
                      */
-                    attachments: boolean;
+                    attachments?: boolean;
                     /**
                      * Reverse the order of output documents
                      * @default `false`
                      */
-                    descending: boolean;
+                    descending?: boolean;
                     /**
                      * Start the results from the change immediately after the given sequence number. 
                      * You can also pass `'now'` if you want only new changes (when `live` is `true`).
                      * @default undefined
                      */
-                    since: any; // string | number
+                    since?: any; // string | number
                     /**
                      * Limit the number of results to this number.
                      * @default undefined
                      */
-                    limit: number;
+                    limit?: number;
                     /**
                      * Request timeout (in milliseconds).
                      * @default undefined
                      */
-                    timeout: number;
+                    timeout?: number;
                 }
                 /** Options for filtering `changes()` output */
                 interface FilterOptions {
-                    ////////////////////// FILTER FUNCTIONS ////////////////////
                     /**
                      * Reference a filter function from a design document to selectively get updates. 
                      * To use a view function, pass `'_view'` here and provide a reference to the view 
@@ -253,9 +254,9 @@ declare module pouchdb {
                      * @see params
                      * @see view
                      */
-                    filter: any; // string | function(doc, params)
+                    filter?: any; // string | function(doc, params)
                     /** Only show changes for docs with these ids. */
-                    doc_ids: string[];
+                    doc_ids?: string[];
                     /**
                      *  Object containing properties that are passed to the filter function, 
                      * e.g. `{"foo:"bar"}`, where `"bar"` will be available in the filter function 
@@ -263,13 +264,13 @@ declare module pouchdb {
                      * `function (doc, params) { ... }`.
                      * @see filter
                      */
-                    query_params: {};
+                    query_params?: {};
                     /**
                      * Specify a view function (e.g. `'design_doc_name/view_name'`) to act as a filter. 
                      * Documents counted as “passed” for a view filter if a map function emits at least 
                      * one record for them (set {@linkcode #filter} to `'view'` to use this).
                      */
-                    view: string;
+                    view?: string;
                 }
                 /** Advanced options for `changes()` */
                 interface AdvancedOptions {
@@ -279,13 +280,13 @@ declare module pouchdb {
                      * an empty results array, and the `change` event is the only way to get the event.
                      * @default true
                      */
-                    returnDocs: boolean;
+                    returnDocs?: boolean;
                     /**
                      * Available for http databases. This configures how many changes to fetch at a 
                      * time. Increasing this can reduce the number of requests made. 
                      * @default 25
                      */
-                    batch_size: number;
+                    batch_size?: number;
                     /**
                      * Specifies how many revisions are returned in the changes array: 
                      * `'main_only'`, will only return the current “winning” revision; 
@@ -293,15 +294,70 @@ declare module pouchdb {
                      * (including conflicts and deleted former conflicts).
                      * @default 'main_only'
                      */
-                    style: string;
+                    style?: string;
                 }
+
+                /**
+                 * Change event object
+                 * @todo confirm shape
+                 */
+                interface ChangeInfo {
+                    id: string;
+                    seq: number;
+                    changes: { rev: string }[];
+                    deleted?: boolean;
+                    /**
+                     * The doc in the change
+                     * @see ChangesOptions#include_docs
+                     * @see ChangesOptionsAdv#include_docs
+                     * @todo confirm the doc type
+                     */
+                    doc?: ExistingDoc;
+                }
+                /** 
+                 * Complete event object
+                 * @todo confirm shape
+                 */
+                interface CompleteInfo {
+                    status: string;
+                    last_seq: number;
+                    results: ChangeInfo[];
+                }
+
                 /** The event listeners for `changes()` */
                 interface EventsOptions {
+                    /** 
+                     * The `change` event listener. This event fires when a change has been found.
+                     */
+                    onChange: (change: ChangeInfo) => void;
 
+                    ///** The `create` event listener */
+                    //create?: (???) => void;
+                    ///** The `update` event listener */
+                    //update?: (???) => void;
+                    ///** The `delete` event listener */
+                    //delete?: (???) => void;
+                    ///** The `paused` event listener */
+                    //paused?: (???) => void;
+                    
+                    /** 
+                     * The `complete` event listener.  This event fires when all changes have been 
+                     * read. In live changes, only cancelling the changes should trigger this event.
+                     */
+                    complete?: (err: async.Error, info: CompleteInfo) => void;
+                    /** 
+                     * The `error` event listener. This event is fired when the replication is stopped 
+                     * due to an unrecoverable failure.
+                     * @todo: confirm error shape
+                     */
+                    error?: (err: any) => void;
                 }
 
+                /** Options for the `changes()` method */
                 interface ChangesOptions    extends EventsOptions, BaseOptions, FilterOptions { }
+                /** Advanced options for the `changes()` method */
                 interface ChangesOptionsAdv extends EventsOptions, ChangesOptions, AdvancedOptions { }
+
                 /** Result object for changes() */
                 interface ChangesResult {
                     /**
@@ -323,6 +379,13 @@ declare module pouchdb {
                      * @returns an object with the method `cancel()` to stop listening for new changes
                      */
                     changes(options: methods.changes.ChangesOptionsAdv): methods.changes.ChangesResult;
+                }
+                /** Callback pattern for changes() */
+                interface Callback {
+
+                }
+                /** Promise pattern for changes() */
+                interface Promise {
                 }
             }
 

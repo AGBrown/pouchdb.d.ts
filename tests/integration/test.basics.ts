@@ -321,11 +321,11 @@ adapters.forEach((adapter: string) => {
                     }
                 },
                 complete: function (err, result) {
-                    result.status.should.equal('cancelled');
+                    expect(result.status).to.equal('cancelled');
                     done();
                 }
             });
-            db.post({ _id: 'somestuff' }, function (err, res) {
+            db.post({ _id: 'somestuff' }, (err, res: pouchdb.api.methods.OperationResponse) => {
                 db.remove({
                     _id: res.id,
                     _rev: res.rev
