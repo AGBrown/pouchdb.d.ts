@@ -81,7 +81,7 @@ adapters.forEach((adapter: string) => {
         });
 
         it('Add a doc', (done) => {
-            var db = new PouchDB(dbs.name, (err, val) => { });
+            var db = new PouchDB(dbs.name,(err, val) => { });
             db.post({ test: 'somestuff' }, (err, info) => {
                 expect(err).not.to.exist;
                 done();
@@ -96,8 +96,8 @@ adapters.forEach((adapter: string) => {
         });
 
         it('Modify a doc', (done) => {
-            var db = new PouchDB(dbs.name,(err, val) => { });
-            db.post({ test: 'somestuff' }, (err, info: pouchdb.api.methods.OperationResponse) => {
+            var db = new PouchDB(dbs.name, (err, val) => { });
+            db.post({ test: 'somestuff' }, (err, info) => {
                 db.put({
                     _id: info.id,
                     _rev: info.rev,

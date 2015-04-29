@@ -535,6 +535,14 @@ declare module pouchdb {
                  *          (see test.basics.ts "modify a doc" - requires `info: OperationResponse`
                  */
                 interface Callback {
+                    // overload order is important
+                    /**
+                     * Create a new document and let PouchDB auto-generate an _id for it 
+                     * (tip: use `put()` instead for better indexing)
+                     * @param doc the doc (with no id)
+                     * @todo define options shape - docs don't make it clear what this is
+                     */
+                    post(doc: BaseDoc, callback: async.Callback<OperationResponse>): void;
                     /**
                      * Create a new document and let PouchDB auto-generate an _id for it 
                      * (tip: use `put()` instead for better indexing)
@@ -542,7 +550,7 @@ declare module pouchdb {
                      * @param options ajax options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    post(doc: BaseDoc, options?: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
+                    post(doc: BaseDoc, options: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
                 }
                 /** Promise pattern for post */
                 interface Promise {
