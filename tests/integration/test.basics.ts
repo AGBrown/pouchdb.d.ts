@@ -291,5 +291,133 @@ adapters.forEach((adapter: string) => {
                 });
             });
         });
+
+        it('Remove doc twice with specified id', () => {
+            var db = new PouchDB(dbs.name);
+            return db.put({ _id: 'specifiedId', test: 'somestuff' }).then(() => {
+                return db.get<pouchdb.test.integration.TestDoc>('specifiedId');
+            }).then((doc) => {
+                return db.remove(doc);
+            }).then(() => {
+                return db.put({
+                    _id: 'specifiedId',
+                    test: 'somestuff2'
+                });
+            }).then(() => {
+                return db.get<pouchdb.test.integration.TestDoc>('specifiedId');
+            }).then((doc) => {
+                return db.remove(doc);
+            });
+        });
+
+        it('Remove doc, no callback', (done) => {
+            var db = new PouchDB(dbs.name,(e, v) => { });
+            var changes = db.changes({
+                live: true,
+                include_docs: true,
+                onChange: (change) => {
+                    if (change.doc._deleted) {
+                        changes.cancel();
+                    }
+                },
+                complete: (err, result) => {
+                    expect(result.status).to.equal('cancelled');
+                    done();
+                }
+            });
+            db.post({ _id: 'somestuff' }, (err, res: pouchdb.api.methods.OperationResponse) => {
+                db.remove({
+                    _id: res.id,
+                    _rev: res.rev
+                });
+            });
+        });
+
+        it('Delete document without id', (done) => {
+            var db = new PouchDB(dbs.name, (e, v) => { });
+            //  typescript won't let this test compile unless we specify _id and _rev to be undefined
+            db.remove({
+                test: 'ing',
+                _id: undefined,
+                _rev: undefined
+            },(err) => {
+                expect(err).to.exist;
+                done();
+            });
+        });
+
+        it('Delete document with many args', () => {
+            var db = new PouchDB(dbs.name);
+            var doc: pouchdb.api.methods.NewDoc = { _id: 'foo' };
+            return db.put(doc).then((info) => {
+                return db.remove(doc._id, info.rev, {});
+            });
+        });
+
+        it('Delete document with many args, callback style', (done) => {
+            var db = new PouchDB(dbs.name, (e, v) => { });
+            var doc: pouchdb.api.methods.NewDoc = { _id: 'foo' };
+            db.put(doc, (err, info: pouchdb.api.methods.OperationResponse) => {
+                expect(err).not.to.exist;
+                db.remove(doc._id, info.rev, {}, (err) => {
+                    expect(err).not.to.exist;
+                    done();
+                });
+            });
+        });
+
+        it('Delete doc with id + rev + no opts', () => {
+            var db = new PouchDB(dbs.name);
+            var doc: pouchdb.api.methods.NewDoc = { _id: 'foo' };
+            return db.put(doc).then((info) => {
+                return db.remove(doc._id, info.rev);
+            });
+        });
+
+        it('Delete doc with id + rev + no opts, callback style', (done) => {
+            var db = new PouchDB(dbs.name, (e, v) => { });
+            var doc: pouchdb.api.methods.NewDoc = { _id: 'foo' };
+            db.put(doc,(err, info: pouchdb.api.methods.OperationResponse) => {
+                expect(err).not.to.exist;
+                db.remove(doc._id, info.rev, (err) => {
+                    expect(err).not.to.exist;
+                    done();
+                });
+            });
+        });
+
+        it('Delete doc with doc + opts', () => {
+            var db = new PouchDB(dbs.name);
+            var doc: pouchdb.api.methods.NewDoc = { _id: 'foo' };
+            return db.put(doc).then((info) => {
+                //  typescript: downcast twice, or once and store in var, so do latter
+                var doc2 = (<pouchdb.api.methods.ExistingDoc>doc);
+                doc2._rev = info.rev;
+                return db.remove(doc2, {});
+            });
+        });
+
+        it('Delete doc with doc + opts, callback style', (done) => {
+            var db = new PouchDB(dbs.name, (e, v) => { });
+            var doc: pouchdb.api.methods.NewDoc = { _id: 'foo' };
+            db.put(doc, (err, info) => {
+                expect(err).not.to.exist;
+                //  typescript: downcast twice, or once and store in var, so do latter
+                var doc2 = (<pouchdb.api.methods.ExistingDoc>doc);
+                doc2._rev = info.rev;
+                db.remove(doc2, {}, (err) => {
+                    expect(err).not.to.exist;
+                    done();
+                });
+            });
+        });
+
+        //it('Delete doc with rev in opts', () => {
+        //    var db = new PouchDB(dbs.name);
+        //    var doc: pouchdb.api.methods.NewDoc = { _id: 'foo' };
+        //    return db.put(doc).then((info) => {
+        //        return db.remove(doc, { rev: info.rev });
+        //    });
+        //});
     });
 });
