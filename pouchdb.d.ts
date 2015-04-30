@@ -493,14 +493,14 @@ declare module pouchdb {
                     /**
                       * Retrieves a document, specified by `docId`.
                       * @param docId the doc id
-                      * @param options
                       */
-                    get<R extends ExistingDoc>(docId: string, options: Options, callback?: async.Callback<R>): void;
+                    get<R extends ExistingDoc>(docId: string, callback?: async.Callback<R>): void;
                     /**
                       * Retrieves a document, specified by `docId`.
                       * @param docId the doc id
+                      * @param options
                       */
-                    get<R extends ExistingDoc>(docId: string, callback?: async.Callback<R>): void;
+                    get<R extends ExistingDoc>(docId: string, options: Options, callback?: async.Callback<R>): void;
                 }
                 /** Promise pattern for remove */
                 interface Promise {

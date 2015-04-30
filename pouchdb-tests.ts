@@ -229,7 +229,7 @@ module PouchDBTest {
             var destroyOpts = { ajax: "full" };
 
             function callback() {
-                var db: pouchdb.callback.PouchDB = new PouchDB("dbname", (e, v) => { }));
+                var db: pouchdb.callback.PouchDB = new PouchDB("dbname", (e, v) => { });
                 var myCb1 = (err: any, info: pouchdb.api.methods.destroy.Info) => { };
                 var myCb2 = () => { };
                 //  As per the 3.4.0 http://pouchdb.com/api.html#delete_database
@@ -251,6 +251,28 @@ module PouchDBTest {
 
                 db2.destroy(destroyOpts).then(myThen, myErr);
                 db2.destroy().then(myThen, myErr);
+            }
+        }
+        module get {
+            interface TestDoc extends pouchdb.api.methods.ExistingDoc { test: string; }
+            var id = "1";
+            var test: string;
+            function callback() {
+                var db: pouchdb.callback.PouchDB = new PouchDB("dbname",(e, v) => { });
+                db.get<TestDoc>(id);
+                db.get<TestDoc>(id, (err, doc) => { test = doc.test; });
+
+                db.get<TestDoc>(id, {});
+                db.get<TestDoc>(id, {}, (err, doc) => { test = doc.test; });
+            }
+            function promise() {
+                var db1: pouchdb.thenable.PouchDB = new PouchDB("dbname");
+                var db2: pouchdb.promise.PouchDB = new PouchDB("dbname");
+                db1.get<TestDoc>(id);
+                db1.get<TestDoc>(id).then(doc => { test = doc.test; }, err => { });
+
+                db2.get<TestDoc>(id);
+                db2.get<TestDoc>(id).then(doc => { test = doc.test; }, err => { });
             }
         }
         module put {
