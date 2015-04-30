@@ -212,11 +212,24 @@ module PouchDBTest {
     }
 
     module methods {
+        module close {
+            function callback() {
+                var db: pouchdb.callback.PouchDB = new PouchDB("dbname", (e, v) => { });
+                db.close();
+                db.close((err, msg) => { });
+            }
+            function promise() {
+                var db1: pouchdb.thenable.PouchDB = new PouchDB("dbname");
+                var db2: pouchdb.promise.PouchDB = new PouchDB("dbname");
+                db1.close();
+                db1.close().then(msg => { }, err => { });
+            }
+        }
         module destroy {
             var destroyOpts = { ajax: "full" };
 
             function callback() {
-                var db: pouchdb.callback.PouchDB = new PouchDB("dbname", undefined);
+                var db: pouchdb.callback.PouchDB = new PouchDB("dbname", (e, v) => { }));
                 var myCb1 = (err: any, info: pouchdb.api.methods.destroy.Info) => { };
                 var myCb2 = () => { };
                 //  As per the 3.4.0 http://pouchdb.com/api.html#delete_database
@@ -230,12 +243,12 @@ module PouchDBTest {
             function promise() {
                 var myThen = (db: pouchdb.api.methods.destroy.Info) => { };
                 var myErr = (err: any) => { };
-
                 var db1: pouchdb.thenable.PouchDB = new PouchDB("dbname");
+                var db2: pouchdb.promise.PouchDB = new PouchDB("dbname");
+
                 db1.destroy(destroyOpts).then(myThen, myErr);
                 db1.destroy().then(myThen, myErr);
 
-                var db2: pouchdb.promise.PouchDB = new PouchDB("dbname");
                 db2.destroy(destroyOpts).then(myThen, myErr);
                 db2.destroy().then(myThen, myErr);
             }

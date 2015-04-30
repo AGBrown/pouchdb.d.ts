@@ -400,7 +400,7 @@ declare module pouchdb {
                 /** Promise pattern for close() */
                 interface Promise {
                     /** Closes the pouchdb */
-                    close(): async.Thenable<void>;
+                    close(): async.Thenable<string>;
                 }
             }
 
