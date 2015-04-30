@@ -542,7 +542,7 @@ declare module pouchdb {
                      * @param doc the doc (with no id)
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    post(doc: BaseDoc, callback: async.Callback<OperationResponse>): void;
+                    post(doc: BaseDoc, callback?: async.Callback<OperationResponse>): void;
                     /**
                      * Create a new document and let PouchDB auto-generate an _id for it 
                      * (tip: use `put()` instead for better indexing)
@@ -598,7 +598,7 @@ declare module pouchdb {
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    put(doc: NewDoc, options?: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
+                    put(doc: NewDoc, options: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
                     /**
                      * Update an existing document. 
                      * @param doc the doc
@@ -615,7 +615,7 @@ declare module pouchdb {
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    put(doc: BaseDoc, docId: string, docRev: string, options?: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
+                    put(doc: BaseDoc, docId: string, docRev: string, options: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
                     /**
                      * Create a new document. If the document already exists, 
                      * you must use the update overload otherwise a conflict will occur.
@@ -680,16 +680,25 @@ declare module pouchdb {
                  * @todo: do the callbacks return the doc, or just the OperationResponse?
                  */
                 interface Callback {
-                   /**
-                     * Deletes the document. 
-                     * `doc` is required to be a document with at least an `_id` and a `_rev` property. 
-                     * Sending the full document will work as well.
-                     * @param docId the doc id
-                     * @param docRev the doc revision
-                     * @param options
-                     * @todo define options shape - docs don't make it clear what this is
-                     */
-                    remove(docId: string, docRev: string, options?: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
+                    /**
+                      * Deletes the document. 
+                      * `doc` is required to be a document with at least an `_id` and a `_rev` property. 
+                      * Sending the full document will work as well.
+                      * @param docId the doc id
+                      * @param docRev the doc revision
+                      * @todo define options shape - docs don't make it clear what this is
+                      */
+                    remove(docId: string, docRev: string, callback?: async.Callback<OperationResponse>): void;
+                    /**
+                      * Deletes the document. 
+                      * `doc` is required to be a document with at least an `_id` and a `_rev` property. 
+                      * Sending the full document will work as well.
+                      * @param docId the doc id
+                      * @param docRev the doc revision
+                      * @param options
+                      * @todo define options shape - docs don't make it clear what this is
+                      */
+                    remove(docId: string, docRev: string, options: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
                     /**
                      * Deletes the document. 
                      * `doc` is required to be a document with at least an `_id` and a `_rev` property. 
@@ -698,7 +707,16 @@ declare module pouchdb {
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    remove(doc: ExistingDoc, options?: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
+                    remove(doc: ExistingDoc, callback?: async.Callback<OperationResponse>): void;
+                    /**
+                     * Deletes the document. 
+                     * `doc` is required to be a document with at least an `_id` and a `_rev` property. 
+                     * Sending the full document will work as well.
+                     * @param doc the doc
+                     * @param options
+                     * @todo define options shape - docs don't make it clear what this is
+                     */
+                    remove(doc: ExistingDoc, options: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
                  }
                 /** Promise pattern for remove */
                 interface Promise {

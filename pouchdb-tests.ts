@@ -320,5 +320,33 @@ module PouchDBTest {
                 db2.put(bDoc, id, {}).then(resp => { }, err => { }).catch(err => { });
             }
         }
+        module remove {
+            var oe = {};
+            var of = { foo: "test" };
+            var eDoc: pouchdb.api.methods.ExistingDoc = { foo: "test", _id: "1", _rev: "1" };
+            var nDoc: pouchdb.api.methods.NewDoc = { foo: "test", _id: "1" };
+            var bDoc: pouchdb.api.methods.BaseDoc = { foo: "test" };
+            var id = "1";
+            var rv = "1";
+            function callback() {
+                var db: pouchdb.callback.PouchDB = new PouchDB("dbname", (e, v) => { });
+                db.remove(id, rv);
+                db.remove(id, rv, (err, val) => { });
+                
+                db.remove(id, rv, {});
+                db.remove(id, rv, {}, (err, val) => { });
+                
+                db.remove(eDoc);
+                db.remove(eDoc, (err, val) => { });
+                
+                db.remove(eDoc, {});
+                db.remove(eDoc, {}, (err, val) => { });
+            }
+            function promise() {
+                var db1: pouchdb.thenable.PouchDB = new PouchDB("dbname");
+                var db2: pouchdb.promise.PouchDB = new PouchDB("dbname");
+
+            }
+        }
     }
 }
