@@ -211,12 +211,22 @@ declare module pouchdb {
 
             /** Contains the method and call/return types for bulkDocs() */
             module bulkDocs {
+                /** Options for bulk docs */
+                interface Options<D> extends options.EmptyOptions {
+                    docs: D[]
+                }
                 /** 
                  * Callback pattern for bulkDocs() 
                  * @todo a mixed doc array for mixed CUD updates
                  * @todo new_edits
                  */
-                interface Callback {                    
+                interface Callback {
+                    /**
+                     * Update/Delete each doc in an array of documents.
+                     * @param doc the doc
+                     * @todo define options shape - docs don't make it clear what this is
+                     */
+                    bulkDocs(options: Options<ExistingDoc>, callback?: async.Callback<OperationResponse[]>): void;
                     /**
                      * Update/Delete each doc in an array of documents.
                      * @param doc the doc
@@ -236,6 +246,12 @@ declare module pouchdb {
                      * @param doc the doc
                      * @todo define options shape - docs don't make it clear what this is
                      */
+                    bulkDocs(doc: Options<NewDoc>, callback?: async.Callback<OperationResponse[]>): void;
+                    /**
+                     * Create multiple documents.
+                     * @param doc the doc
+                     * @todo define options shape - docs don't make it clear what this is
+                     */
                     bulkDocs(doc: NewDoc[], callback?: async.Callback<OperationResponse[]>): void;
                     /**
                      * Create multiple documents.
@@ -245,33 +261,25 @@ declare module pouchdb {
                      */
                     bulkDocs(doc: NewDoc[], options: options.EmptyOptions, callback?: async.Callback<OperationResponse[]>): void;                    
                     
-                    ///**
-                    // * Mixed operations on an array of documents
-                    // * @param doc the doc
-                    // * @todo define options shape - docs don't make it clear what this is
-                    // */
-                    //bulkDocs(doc: MixedDoc[], callback?: async.Callback<OperationResponse[]>): void;
-                    ///**
-                    // * Mixed operations on an array of documents
-                    // * @param doc the doc
-                    // * @param options
-                    // * @todo define options shape - docs don't make it clear what this is
-                    // */
-                    //bulkDocs(doc: MixedDoc[], options: options.EmptyOptions, callback?: async.Callback<OperationResponse[]>): void;
-                    
                     /**
-                     * Create multiple documents.
+                     * Perform mixed Create/Update/Delete operations on multiple documents.
+                     * @param options the doc
+                     * @todo define options shape - docs don't make it clear what this is
+                     */
+                    bulkDocs(options: Options<MixedDoc>, callback?: async.Callback<OperationResponse[]>): void;
+                    /**
+                     * Perform mixed Create/Update/Delete operations on multiple documents.
                      * @param doc the doc
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    bulkDocs(doc: BaseDoc[], callback?: async.Callback<OperationResponse[]>): void;
+                    bulkDocs(doc: MixedDoc[], callback?: async.Callback<OperationResponse[]>): void;
                     /**
-                     * Create multiple documents.
+                     * Perform mixed Create/Update/Delete operations on multiple documents.
                      * @param doc the doc
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    bulkDocs(doc: BaseDoc[], options: options.EmptyOptions, callback?: async.Callback<OperationResponse[]>): void;                    
+                    bulkDocs(doc: MixedDoc[], options: options.EmptyOptions, callback?: async.Callback<OperationResponse[]>): void;                    
                 }
                 /** Promise pattern for bulkDocs() */
                 interface Promise {

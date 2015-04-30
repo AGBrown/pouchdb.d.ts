@@ -422,20 +422,20 @@ adapters.forEach((adapter: string) => {
         //    });
         //});
 
-        //it('Bulk docs', function (done) {
-        //    var db = new PouchDB(dbs.name);
-        //    db.bulkDocs({
-        //        docs: [
-        //            { test: 'somestuff' },
-        //            { test: 'another' }
-        //        ]
-        //    }, function (err, infos) {
-        //            infos.length.should.equal(2);
-        //            infos[0].ok.should.equal(true);
-        //            infos[1].ok.should.equal(true);
-        //            done();
-        //        });
-        //});
+        it('Bulk docs', function (done) {
+            var db = new PouchDB(dbs.name, (e, v) => { });
+            db.bulkDocs({
+                docs: [
+                    { test: 'somestuff' },
+                    { test: 'another' }
+                ]
+            }, function (err, infos) {
+                    expect(infos.length).to.equal(2);
+                    expect(infos[0].ok).to.equal(true);
+                    expect(infos[1].ok).to.equal(true);
+                    done();
+                });
+        });
 
         //  See: https://github.com/AGBrown/pouchdb.d.ts/issues/4
         it('Bulk docs - api version', function (done) {
