@@ -179,7 +179,8 @@ declare module pouchdb {
                 _id: string;
             }
 
-            /** Interface for a doc (with `_id`, `_rev`, `_deleted`) passed to the put() method */
+            /** Interface for a doc (with `_id`, `_rev`, `_deleted`) passed to 
+             *    the `put()` and `bulkDocs()` method */
             interface ExistingDoc extends NewDoc {
                 /** The revision of the doc to be operated on */
                 _rev: string;
@@ -191,8 +192,105 @@ declare module pouchdb {
                 _deleted?: boolean;
             }
 
+            /** Interface for a bulk update array member (with `_id?`, `_rev?`, `_deleted?`) 
+             *    passed to the bulkDocs() method */
+            interface MixedDoc {
+                /** The id of the doc to be operated on */
+                _id?: string;
+                /** The revision of the doc to be operated on */
+                _rev?: string;
+                /**
+                 * indicates the deleted status of a doc
+                 * @default: false
+                 */
+                _deleted?: boolean;
+            }
+
             //////////////////////////// Methods ///////////////////////////////
             // Please keep these modules in alphabetical order
+
+            /** Contains the method and call/return types for bulkDocs() */
+            module bulkDocs {
+                /** 
+                 * Callback pattern for bulkDocs() 
+                 * @todo a mixed doc array for mixed CUD updates
+                 * @todo new_edits
+                 */
+                interface Callback {                    
+                    /**
+                     * Update/Delete each doc in an array of documents.
+                     * @param doc the doc
+                     * @todo define options shape - docs don't make it clear what this is
+                     */
+                    bulkDocs(doc: ExistingDoc[], callback?: async.Callback<OperationResponse[]>): void;
+                    /**
+                     * Update/Delete each doc in an array of documents.
+                     * @param doc the doc
+                     * @param options
+                     * @todo define options shape - docs don't make it clear what this is
+                     */
+                    bulkDocs(doc: ExistingDoc[], options: options.EmptyOptions, callback?: async.Callback<OperationResponse[]>): void;                    
+                    
+                    /**
+                     * Create multiple documents.
+                     * @param doc the doc
+                     * @todo define options shape - docs don't make it clear what this is
+                     */
+                    bulkDocs(doc: NewDoc[], callback?: async.Callback<OperationResponse[]>): void;
+                    /**
+                     * Create multiple documents.
+                     * @param doc the doc
+                     * @param options
+                     * @todo define options shape - docs don't make it clear what this is
+                     */
+                    bulkDocs(doc: NewDoc[], options: options.EmptyOptions, callback?: async.Callback<OperationResponse[]>): void;                    
+                    
+                    ///**
+                    // * Mixed operations on an array of documents
+                    // * @param doc the doc
+                    // * @todo define options shape - docs don't make it clear what this is
+                    // */
+                    //bulkDocs(doc: MixedDoc[], callback?: async.Callback<OperationResponse[]>): void;
+                    ///**
+                    // * Mixed operations on an array of documents
+                    // * @param doc the doc
+                    // * @param options
+                    // * @todo define options shape - docs don't make it clear what this is
+                    // */
+                    //bulkDocs(doc: MixedDoc[], options: options.EmptyOptions, callback?: async.Callback<OperationResponse[]>): void;
+                    
+                    /**
+                     * Create multiple documents.
+                     * @param doc the doc
+                     * @todo define options shape - docs don't make it clear what this is
+                     */
+                    bulkDocs(doc: BaseDoc[], callback?: async.Callback<OperationResponse[]>): void;
+                    /**
+                     * Create multiple documents.
+                     * @param doc the doc
+                     * @param options
+                     * @todo define options shape - docs don't make it clear what this is
+                     */
+                    bulkDocs(doc: BaseDoc[], options: options.EmptyOptions, callback?: async.Callback<OperationResponse[]>): void;                    
+                }
+                /** Promise pattern for bulkDocs() */
+                interface Promise {
+                    /**
+                     * Update/Delete each doc in an array of documents.
+                     * @param doc the doc
+                     * @param options
+                     * @todo define options shape - docs don't make it clear what this is
+                     */
+                    bulkDocs(doc: ExistingDoc[], options?: options.EmptyOptions): async.Thenable<OperationResponse[]>;
+                    /**
+                     * Create multiple documents.
+                     * @param doc the doc
+                     * @param options
+                     * @todo define options shape - docs don't make it clear what this is
+                     */
+                    bulkDocs(doc: NewDoc[], options?: options.EmptyOptions): async.Thenable<OperationResponse[]>;
+                }
+            }
 
             /** Contains the method and call/return types for changes() */
             module changes {
@@ -747,26 +845,28 @@ declare module pouchdb {
             /** pouchDB api: callback based */
             interface Callback extends
                 Properties
-                , methods.destroy.Callback
+                , methods.bulkDocs.Callback
+                , methods.changes.Overloads
                 , methods.close.Callback
+                , methods.destroy.Callback
                 , methods.get.Callback
                 , methods.id.Callback
                 , methods.post.Callback
                 , methods.put.Callback
                 , methods.remove.Callback
-                , methods.changes.Overloads
             {}
             /** pouchDB api: promise based */
             interface Promise extends
                 Properties
-                , methods.destroy.Promise
+                , methods.bulkDocs.Promise
+                , methods.changes.Overloads
                 , methods.close.Promise
+                , methods.destroy.Promise
                 , methods.get.Promise
                 , methods.id.Promise
                 , methods.post.Promise
                 , methods.put.Promise
                 , methods.remove.Promise
-                , methods.changes.Overloads
             {}
         }
         /** The main pouchDB interface properties */
