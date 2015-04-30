@@ -212,11 +212,24 @@ module PouchDBTest {
     }
 
     module methods {
+        module close {
+            function callback() {
+                var db: pouchdb.callback.PouchDB = new PouchDB("dbname", (e, v) => { });
+                db.close();
+                db.close((err, msg) => { });
+            }
+            function promise() {
+                var db1: pouchdb.thenable.PouchDB = new PouchDB("dbname");
+                var db2: pouchdb.promise.PouchDB = new PouchDB("dbname");
+                db1.close();
+                db1.close().then(msg => { }, err => { });
+            }
+        }
         module destroy {
             var destroyOpts = { ajax: "full" };
 
             function callback() {
-                var db: pouchdb.callback.PouchDB = new PouchDB("dbname", undefined);
+                var db: pouchdb.callback.PouchDB = new PouchDB("dbname", (e, v) => { });
                 var myCb1 = (err: any, info: pouchdb.api.methods.destroy.Info) => { };
                 var myCb2 = () => { };
                 //  As per the 3.4.0 http://pouchdb.com/api.html#delete_database
@@ -230,14 +243,144 @@ module PouchDBTest {
             function promise() {
                 var myThen = (db: pouchdb.api.methods.destroy.Info) => { };
                 var myErr = (err: any) => { };
-
                 var db1: pouchdb.thenable.PouchDB = new PouchDB("dbname");
+                var db2: pouchdb.promise.PouchDB = new PouchDB("dbname");
+
                 db1.destroy(destroyOpts).then(myThen, myErr);
                 db1.destroy().then(myThen, myErr);
 
-                var db2: pouchdb.promise.PouchDB = new PouchDB("dbname");
                 db2.destroy(destroyOpts).then(myThen, myErr);
                 db2.destroy().then(myThen, myErr);
+            }
+        }
+        module get {
+            interface TestDoc extends pouchdb.api.methods.ExistingDoc { test: string; }
+            var id = "1";
+            var test: string;
+            function callback() {
+                var db: pouchdb.callback.PouchDB = new PouchDB("dbname",(e, v) => { });
+                db.get<TestDoc>(id);
+                db.get<TestDoc>(id, (err, doc) => { test = doc.test; });
+
+                db.get<TestDoc>(id, {});
+                db.get<TestDoc>(id, {}, (err, doc) => { test = doc.test; });
+            }
+            function promise() {
+                var db1: pouchdb.thenable.PouchDB = new PouchDB("dbname");
+                var db2: pouchdb.promise.PouchDB = new PouchDB("dbname");
+                db1.get<TestDoc>(id);
+                db1.get<TestDoc>(id).then(doc => { test = doc.test; }, err => { });
+
+                db2.get<TestDoc>(id);
+                db2.get<TestDoc>(id).then(doc => { test = doc.test; }, err => { });
+            }
+        }
+        module put {
+            var oe = { };
+            var of = { foo: "test" };
+            var eDoc: pouchdb.api.methods.ExistingDoc = { foo: "test", _id: "1", _rev: "1" };
+            var nDoc: pouchdb.api.methods.NewDoc = { foo: "test", _id: "1" };
+            var bDoc: pouchdb.api.methods.BaseDoc = { foo: "test" };
+            var id = "1";
+            var rv = "1";
+
+            function callback() {
+                var db: pouchdb.callback.PouchDB = new PouchDB("dbname",(e, v) => { });
+                //  Overload tests for the callback versions of put
+                db.put(eDoc);
+                db.put(eDoc, (err, val) => { });
+                db.put(eDoc, (err) => { });
+
+                db.put(eDoc, oe);
+                db.put(eDoc, of);
+                db.put(eDoc, oe, (err, val) => { val.ok === true; });
+                db.put(eDoc, of, (err, val) => { val.ok === true; });
+                db.put(eDoc, of, (err) => { err.error; });
+
+                db.put(nDoc);
+                db.put(nDoc, (err, val) => { });
+
+                db.put(nDoc, oe);
+                db.put(nDoc, of);
+                db.put(nDoc, oe, (err, val) => { val.ok === true; });
+                db.put(nDoc, of, (err, val) => { val.ok === true; });
+                db.put(nDoc, of, (err) => { err.error; });
+
+                db.put(bDoc, id, rv);
+                db.put(bDoc, id, rv, (err, val) => { val.ok === true; });
+
+                db.put(bDoc, id, rv, oe);
+                db.put(bDoc, id, rv, of);
+                db.put(bDoc, id, rv, oe, (err, val) => { val.ok === true; });
+                db.put(bDoc, id, rv, of, (err, val) => { val.ok === true; });
+                db.put(bDoc, id, rv, of, (err) => { err.error; });
+
+                db.put(bDoc, id);
+                db.put(bDoc, id, (err, val) => { val.ok === true; });
+
+                db.put(bDoc, id, oe);
+                db.put(bDoc, id, of);
+                db.put(bDoc, id, oe, (err, val) => { val.ok === true; });
+                db.put(bDoc, id, of, (err, val) => { val.ok === true; });
+                db.put(bDoc, id, of, (err) => { err.error; });
+            }
+            function promise() {
+                var db1: pouchdb.thenable.PouchDB = new PouchDB("dbname");
+                var db2: pouchdb.promise.PouchDB = new PouchDB("dbname");
+
+                db1.put(eDoc).then(resp => { }, err => { }).catch(err => { });
+                db2.put(eDoc).then(resp => { }, err => { }).catch(err => { });
+                db2.put(eDoc).then(resp => { }).catch(err => { });
+                db2.put(eDoc).catch(err => { });
+
+                db1.put(eDoc, {}).then(resp => { }, err => { }).catch(err => { });
+                db2.put(eDoc, {}).then(resp => { }, err => { }).catch(err => { });
+
+                db1.put(nDoc).then(resp => { }, err => { }).catch(err => { });
+                db2.put(nDoc).then(resp => { }, err => { }).catch(err => { });
+
+                db1.put(nDoc, {}).then(resp => { }, err => { }).catch(err => { });
+                db2.put(nDoc, {}).then(resp => { }, err => { }).catch(err => { });
+
+                db1.put(bDoc, id, rv).then(resp => { }, err => { }).catch(err => { });
+                db2.put(bDoc, id, rv).then(resp => { }, err => { }).catch(err => { });
+
+                db1.put(bDoc, id, rv, {}).then(resp => { }, err => { }).catch(err => { });
+                db2.put(bDoc, id, rv, {}).then(resp => { }, err => { }).catch(err => { });
+
+                db1.put(bDoc, id).then(resp => { }, err => { }).catch(err => { });
+                db2.put(bDoc, id).then(resp => { }, err => { }).catch(err => { });
+
+                db1.put(bDoc, id, {}).then(resp => { }, err => { }).catch(err => { });
+                db2.put(bDoc, id, {}).then(resp => { }, err => { }).catch(err => { });
+            }
+        }
+        module remove {
+            var oe = {};
+            var of = { foo: "test" };
+            var eDoc: pouchdb.api.methods.ExistingDoc = { foo: "test", _id: "1", _rev: "1" };
+            var nDoc: pouchdb.api.methods.NewDoc = { foo: "test", _id: "1" };
+            var bDoc: pouchdb.api.methods.BaseDoc = { foo: "test" };
+            var id = "1";
+            var rv = "1";
+            function callback() {
+                var db: pouchdb.callback.PouchDB = new PouchDB("dbname", (e, v) => { });
+                db.remove(id, rv);
+                db.remove(id, rv, (err, val) => { });
+                
+                db.remove(id, rv, {});
+                db.remove(id, rv, {}, (err, val) => { });
+                
+                db.remove(eDoc);
+                db.remove(eDoc, (err, val) => { });
+                
+                db.remove(eDoc, {});
+                db.remove(eDoc, {}, (err, val) => { });
+            }
+            function promise() {
+                var db1: pouchdb.thenable.PouchDB = new PouchDB("dbname");
+                var db2: pouchdb.promise.PouchDB = new PouchDB("dbname");
+
             }
         }
     }

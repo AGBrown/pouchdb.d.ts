@@ -400,7 +400,7 @@ declare module pouchdb {
                 /** Promise pattern for close() */
                 interface Promise {
                     /** Closes the pouchdb */
-                    close(): async.Thenable<void>;
+                    close(): async.Thenable<string>;
                 }
             }
 
@@ -493,9 +493,14 @@ declare module pouchdb {
                     /**
                       * Retrieves a document, specified by `docId`.
                       * @param docId the doc id
+                      */
+                    get<R extends ExistingDoc>(docId: string, callback?: async.Callback<R>): void;
+                    /**
+                      * Retrieves a document, specified by `docId`.
+                      * @param docId the doc id
                       * @param options
                       */
-                    get<R extends ExistingDoc>(docId: string, options?: Options, callback?: async.Callback<R>): void;
+                    get<R extends ExistingDoc>(docId: string, options: Options, callback?: async.Callback<R>): void;
                 }
                 /** Promise pattern for remove */
                 interface Promise {
@@ -530,6 +535,14 @@ declare module pouchdb {
                  *          (see test.basics.ts "modify a doc" - requires `info: OperationResponse`
                  */
                 interface Callback {
+                    // overload order is important
+                    /**
+                     * Create a new document and let PouchDB auto-generate an _id for it 
+                     * (tip: use `put()` instead for better indexing)
+                     * @param doc the doc (with no id)
+                     * @todo define options shape - docs don't make it clear what this is
+                     */
+                    post(doc: BaseDoc, callback?: async.Callback<OperationResponse>): void;
                     /**
                      * Create a new document and let PouchDB auto-generate an _id for it 
                      * (tip: use `put()` instead for better indexing)
@@ -537,7 +550,7 @@ declare module pouchdb {
                      * @param options ajax options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    post(doc: BaseDoc, options?: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
+                    post(doc: BaseDoc, options: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
                 }
                 /** Promise pattern for post */
                 interface Promise {
@@ -563,17 +576,37 @@ declare module pouchdb {
                     /**
                      * Update an existing document.
                      * @param doc the doc
+                     * @todo define options shape - docs don't make it clear what this is
+                     */
+                    put(doc: ExistingDoc, callback?: async.Callback<OperationResponse>): void;
+                    /**
+                     * Update an existing document.
+                     * @param doc the doc
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    put(doc: ExistingDoc, options?: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
+                    put(doc: ExistingDoc, options: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
+                    /**
+                     * Create a new document.
+                     * @param doc the doc
+                     * @todo define options shape - docs don't make it clear what this is
+                     */
+                    put(doc: NewDoc, callback?: async.Callback<OperationResponse>): void;
                     /**
                      * Create a new document.
                      * @param doc the doc
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    put(doc: NewDoc, options?: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
+                    put(doc: NewDoc, options: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
+                    /**
+                     * Update an existing document. 
+                     * @param doc the doc
+                     * @param docId the doc id
+                     * @param docRev the doc rev
+                     * @todo define options shape - docs don't make it clear what this is
+                     */
+                    put(doc: BaseDoc, docId: string, docRev: string, callback?: async.Callback<OperationResponse>): void;
                     /**
                      * Update an existing document. 
                      * @param doc the doc
@@ -582,7 +615,15 @@ declare module pouchdb {
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    put(doc: BaseDoc, docId: string, docRev: string, options?: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
+                    put(doc: BaseDoc, docId: string, docRev: string, options: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
+                    /**
+                     * Create a new document. If the document already exists, 
+                     * you must use the update overload otherwise a conflict will occur.
+                     * @param doc the doc
+                     * @param docId the doc id
+                     * @todo define options shape - docs don't make it clear what this is
+                     */
+                    put(doc: BaseDoc, docId: string, callback?: async.Callback<OperationResponse>): void;
                     /**
                      * Create a new document. If the document already exists, 
                      * you must use the update overload otherwise a conflict will occur.
@@ -591,7 +632,7 @@ declare module pouchdb {
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    put(doc: BaseDoc, docId: string, options?: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
+                    put(doc: BaseDoc, docId: string, options: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
                 }
                 /** Promise pattern for put */
                 interface Promise {
@@ -639,16 +680,25 @@ declare module pouchdb {
                  * @todo: do the callbacks return the doc, or just the OperationResponse?
                  */
                 interface Callback {
-                   /**
-                     * Deletes the document. 
-                     * `doc` is required to be a document with at least an `_id` and a `_rev` property. 
-                     * Sending the full document will work as well.
-                     * @param docId the doc id
-                     * @param docRev the doc revision
-                     * @param options
-                     * @todo define options shape - docs don't make it clear what this is
-                     */
-                    remove(docId: string, docRev: string, options?: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
+                    /**
+                      * Deletes the document. 
+                      * `doc` is required to be a document with at least an `_id` and a `_rev` property. 
+                      * Sending the full document will work as well.
+                      * @param docId the doc id
+                      * @param docRev the doc revision
+                      * @todo define options shape - docs don't make it clear what this is
+                      */
+                    remove(docId: string, docRev: string, callback?: async.Callback<OperationResponse>): void;
+                    /**
+                      * Deletes the document. 
+                      * `doc` is required to be a document with at least an `_id` and a `_rev` property. 
+                      * Sending the full document will work as well.
+                      * @param docId the doc id
+                      * @param docRev the doc revision
+                      * @param options
+                      * @todo define options shape - docs don't make it clear what this is
+                      */
+                    remove(docId: string, docRev: string, options: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
                     /**
                      * Deletes the document. 
                      * `doc` is required to be a document with at least an `_id` and a `_rev` property. 
@@ -657,7 +707,16 @@ declare module pouchdb {
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    remove(doc: ExistingDoc, options?: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
+                    remove(doc: ExistingDoc, callback?: async.Callback<OperationResponse>): void;
+                    /**
+                     * Deletes the document. 
+                     * `doc` is required to be a document with at least an `_id` and a `_rev` property. 
+                     * Sending the full document will work as well.
+                     * @param doc the doc
+                     * @param options
+                     * @todo define options shape - docs don't make it clear what this is
+                     */
+                    remove(doc: ExistingDoc, options: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
                  }
                 /** Promise pattern for remove */
                 interface Promise {
