@@ -138,12 +138,12 @@ adapters.forEach(function (adapter) {
             });
         });
 
-        it('Test empty bulkDocs', function () {
+        it('Test empty bulkDocs', () => {
             var db = new PouchDB(dbs.name);
             return db.bulkDocs([]);
         });
 
-        it('Test many bulkDocs', function () {
+        it('Test many bulkDocs',() => {
             var db = new PouchDB(dbs.name);
             var docs: pouchdb.api.methods.NewDoc[] = [];
             for (var i = 0; i < 201; i++) {
@@ -152,49 +152,58 @@ adapters.forEach(function (adapter) {
             return db.bulkDocs(docs);
         });
 
-        //it('Test errors on invalid doc id', function (done) {
-        //    var db = new PouchDB(dbs.name);
-        //    var docs = [{
-        //        '_id': '_invalid',
-        //        foo: 'bar'
-        //    }];
-        //    db.bulkDocs({ docs: docs }, function (err, info) {
-        //        err.status.should.equal(PouchDB.Errors.RESERVED_ID.status,
-        //            'correct error status returned');
-        //        err.message.should.equal(PouchDB.Errors.RESERVED_ID.message,
-        //            'correct error message returned');
-        //        should.not.exist(info, 'info is empty');
-        //        done();
-        //    });
-        //});
+        it('Test errors on invalid doc id', (done) => {
+            var db = new PouchDB(dbs.name, (e, v) => { });
+            var docs = [{
+                '_id': '_invalid',
+                foo: 'bar'
+            }];
+            db.bulkDocs({ docs: docs },(err, info) => {
+                expect((<BulkDocsError>err).status).to.equal(
+                    PouchDB.Errors.RESERVED_ID.status,
+                    'correct error status returned');
+                expect((<BulkDocsError>err).status).to.equal(
+                    PouchDB.Errors.RESERVED_ID.message,
+                    'correct error message returned');
+                expect(info).not.to.exist('info is empty');
+                done();
+            });
+        });
 
-        //it('Test two errors on invalid doc id', function (done) {
-        //    var docs = [
-        //        { '_id': '_invalid', foo: 'bar' },
-        //        { '_id': 123, foo: 'bar' }
-        //    ];
+        it('Test two errors on invalid doc id', (done) => {
+            var docs: pouchdb.api.methods.BaseDoc[] = [
+                { '_id': '_invalid', foo: 'bar' },
+                { '_id': 123, foo: 'bar' }
+            ];
 
-        //    var db = new PouchDB(dbs.name);
-        //    db.bulkDocs({ docs: docs }, function (err, info) {
-        //        err.status.should.equal(PouchDB.Errors.RESERVED_ID.status,
-        //            'correct error returned');
-        //        err.message.should.equal(PouchDB.Errors.RESERVED_ID.message,
-        //            'correct error message returned');
-        //        should.not.exist(info, 'info is empty');
-        //        done();
-        //    });
-        //});
+            var db = new PouchDB(dbs.name, (e, v) => { });
+            db.bulkDocs({ docs: docs }, (err, info) => {
+                expect((<BulkDocsError>err).status).to.equal(
+                    PouchDB.Errors.RESERVED_ID.status,
+                    'correct error status returned');
+                expect((<BulkDocsError>err).status).to.equal(
+                    PouchDB.Errors.RESERVED_ID.message,
+                    'correct error message returned');
+                expect(info).not.to.exist('info is empty');
+                done();
+            });
+        });
 
-        //it('No docs', function (done) {
-        //    var db = new PouchDB(dbs.name);
-        //    db.bulkDocs({ 'doc': [{ 'foo': 'bar' }] }, function (err, result) {
-        //        err.status.should.equal(PouchDB.Errors.MISSING_BULK_DOCS.status,
-        //            'correct error returned');
-        //        err.message.should.equal(PouchDB.Errors.MISSING_BULK_DOCS.message,
-        //            'correct error message returned');
-        //        done();
-        //    });
-        //});
+        it('No docs', function (done) {
+            var db = new PouchDB(dbs.name,(e, v) => { });
+            var docs: pouchdb.api.methods.bulkDocs.MixedDoc[] = [{ 'foo': 'bar' }];
+            //  typescript: have to set docs to undefined to make this test possible
+            //      as ts overloads that are defined try and prevent us omitting the docs property
+            db.bulkDocs({ docs: undefined, 'doc': docs }, (err, result) => {
+                expect((<BulkDocsError>err).status).to.equal(
+                    PouchDB.Errors.MISSING_BULK_DOCS.status,
+                    'correct error returned');
+                expect((<BulkDocsError>err).status).to.equal(
+                    PouchDB.Errors.MISSING_BULK_DOCS.message,
+                    'correct error message returned');
+                done();
+            });
+        });
 
         //it('Jira 911', function (done) {
         //    var db = new PouchDB(dbs.name);
