@@ -27,7 +27,7 @@ adapters.forEach((adapter: string) => {
     describe("test.basics.js-" + adapter,() => {
         var dbs: dbsShape = {};
         beforeEach((done) => {
-            dbs.name = "foo";
+            dbs.name = testUtils.adapterUrl(adapter, 'testdb');
             testUtils.cleanup([dbs.name], done);
         });
 
