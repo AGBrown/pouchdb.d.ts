@@ -1,3 +1,10 @@
+// Type definitions for pouchdb v3.4.0
+// Project: http://pouchdb.com/, https://github.com/pouchdb/pouchdb
+// Definitions by: Andy Brown <https://github.com/AGBrown> (https://github.com/AGBrown/pouchdb.d.ts)
+// Definitions: https://github.com/borisyankov/DefinitelyTyped
+// THIS FILE:
+//  This file provides "compilation" tests for pouchdb.d.ts as per the DefinitelyTyped best practices
+
 /// <reference path="pouchdb.d.ts" />
 
 module promise {
