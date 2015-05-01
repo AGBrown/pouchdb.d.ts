@@ -98,13 +98,13 @@ adapters.forEach(function (adapter) {
             });
         });
 
-        it('No id in bulk docs', function (done) {
+        it('No id in bulk docs', (done) => {
             var db = new PouchDB(dbs.name, (e, v) => {});
             var newdoc: pouchdb.api.methods.NewDoc = {
                 '_id': 'foobar',
                 'body': 'baz'
             };
-            db.put(newdoc, function (err, doc) {
+            db.put(newdoc, (err, doc) => {
                 expect(doc.ok).to.exist;
                 var docs = [
                     {
@@ -118,7 +118,7 @@ adapters.forEach(function (adapter) {
                         '_deleted': true
                     }
                 ];
-                db.bulkDocs({ docs: docs }, function (err, results) {
+                db.bulkDocs({ docs: docs }, (err, results) => {
                     expect(results[0]).to.have.property('name', 'conflict');
                     expect(results[1]).to.have.property('name', 'conflict');
                     done();
@@ -126,17 +126,17 @@ adapters.forEach(function (adapter) {
             });
         });
 
-        //it('No _rev and new_edits=false', function (done) {
-        //    var db = new PouchDB(dbs.name);
-        //    var docs = [{
-        //        _id: 'foo',
-        //        integer: 1
-        //    }];
-        //    db.bulkDocs({ docs: docs }, { new_edits: false }, function (err, res) {
-        //        should.exist(err, 'error reported');
-        //        done();
-        //    });
-        //});
+        it('No _rev and new_edits=false', (done) => {
+            var db = new PouchDB(dbs.name, (e, v) => {});
+            var docs: pouchdb.api.methods.NewDoc[] = [{
+                _id: 'foo',
+                integer: 1
+            }];
+            db.bulkDocs({ docs: docs }, { new_edits: false }, (err, res) => {
+                expect(err).to.exist('error reported');
+                done();
+            });
+        });
 
         //it('Test empty bulkDocs', function () {
         //    var db = new PouchDB(dbs.name);

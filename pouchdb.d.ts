@@ -211,9 +211,14 @@ declare module pouchdb {
                     _deleted?: boolean;
                 }
                 /** Options for `bulkDocs()` */
-                interface Options<D extends NewDoc | MixedDoc> extends options.EmptyOptions {
+                interface DocumentPouch<D extends NewDoc | MixedDoc> extends options.EmptyOptions {
                     /** The array of documents to update */
                     docs: D[]
+                }
+                /** The options type for `bulkDocs()` */
+                interface BulkDocsOptions extends options.EmptyOptions {
+                    /** Advanced option: when set to `false` allows you to post and overwrite existing documents. */
+                    new_edits?: boolean;
                 }
                 /** Error details for a document in a `bulkDocs()` operation */
                 interface BulkDocsError {
@@ -238,7 +243,12 @@ declare module pouchdb {
                      * Update/Delete each doc in an array of documents.
                      * @param options an options object with the documents to update/delete
                      */
-                    bulkDocs(options: Options<ExistingDoc>, callback?: async.Callback<BulkDocsResponse[]>): void;
+                    bulkDocs(docs: DocumentPouch<ExistingDoc>, callback?: async.Callback<BulkDocsResponse[]>): void;
+                    /**
+                     * Update/Delete each doc in an array of documents.
+                     * @param options an options object with the documents to update/delete
+                     */
+                    bulkDocs(docs: DocumentPouch<ExistingDoc>, options: BulkDocsOptions, callback?: async.Callback<BulkDocsResponse[]>): void;
                     /**
                      * Update/Delete each doc in an array of documents.
                      * @param doc the doc
@@ -251,13 +261,18 @@ declare module pouchdb {
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    bulkDocs(docs: ExistingDoc[], options: options.EmptyOptions, callback?: async.Callback<BulkDocsResponse[]>): void;                    
+                    bulkDocs(docs: ExistingDoc[], options: BulkDocsOptions, callback?: async.Callback<BulkDocsResponse[]>): void;                    
                     
                     /**
                      * Create multiple documents.
                      * @param doc the doc
                      */
-                    bulkDocs(docs: Options<NewDoc>, callback?: async.Callback<BulkDocsResponse[]>): void;
+                    bulkDocs(docs: DocumentPouch<NewDoc>, callback?: async.Callback<BulkDocsResponse[]>): void;
+                    /**
+                     * Create multiple documents.
+                     * @param doc the doc
+                     */
+                    bulkDocs(docs: DocumentPouch<NewDoc>, options: BulkDocsOptions, callback?: async.Callback<BulkDocsResponse[]>): void;
                     /**
                      * Create multiple documents.
                      * @param doc the doc
@@ -270,13 +285,18 @@ declare module pouchdb {
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    bulkDocs(docs: NewDoc[], options: options.EmptyOptions, callback?: async.Callback<BulkDocsResponse[]>): void;                    
+                    bulkDocs(docs: NewDoc[], options: BulkDocsOptions, callback?: async.Callback<BulkDocsResponse[]>): void;                    
                     
                     /**
                      * Perform mixed Create/Update/Delete operations on multiple documents.
                      * @param options the doc
                      */
-                    bulkDocs(options: Options<MixedDoc>, callback?: async.Callback<BulkDocsResponse[]>): void;
+                    bulkDocs(docs: DocumentPouch<MixedDoc>, callback?: async.Callback<BulkDocsResponse[]>): void;
+                    /**
+                     * Perform mixed Create/Update/Delete operations on multiple documents.
+                     * @param options the doc
+                     */
+                    bulkDocs(docs: DocumentPouch<MixedDoc>, options: BulkDocsOptions, callback?: async.Callback<BulkDocsResponse[]>): void;
                     /**
                      * Perform mixed Create/Update/Delete operations on multiple documents.
                      * @param doc the doc
@@ -289,7 +309,7 @@ declare module pouchdb {
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    bulkDocs(docs: MixedDoc[], options: options.EmptyOptions, callback?: async.Callback<BulkDocsResponse[]>): void;                    
+                    bulkDocs(docs: MixedDoc[], options: BulkDocsOptions, callback?: async.Callback<BulkDocsResponse[]>): void;                    
                 }
                 /** Promise pattern for bulkDocs() */
                 interface Promise {
@@ -299,33 +319,33 @@ declare module pouchdb {
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    bulkDocs(docs: ExistingDoc[], options?: options.EmptyOptions): async.Thenable<BulkDocsResponse[]>;
+                    bulkDocs(docs: ExistingDoc[], options?: BulkDocsOptions): async.Thenable<BulkDocsResponse[]>;
                     /**
                      * Create multiple documents.
                      * @param doc the doc
                      * @param options
                      */
-                    bulkDocs(docs: Options<NewDoc>): async.Thenable<BulkDocsResponse[]>;
+                    bulkDocs(docs: DocumentPouch<NewDoc>): async.Thenable<BulkDocsResponse[]>;
                     /**
                      * Create multiple documents.
                      * @param doc the doc
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    bulkDocs(docs: NewDoc[], options?: options.EmptyOptions): async.Thenable<BulkDocsResponse[]>;
+                    bulkDocs(docs: NewDoc[], options?: BulkDocsOptions): async.Thenable<BulkDocsResponse[]>;
                     /**
                      * Perform mixed Create/Update/Delete operations on multiple documents.
                      * @param docs the documents to act on
                      * @param options
                      */
-                    bulkDocs(docs: Options<MixedDoc>): async.Thenable<BulkDocsResponse[]>;
+                    bulkDocs(docs: DocumentPouch<MixedDoc>): async.Thenable<BulkDocsResponse[]>;
                     /**
                      * Perform mixed Create/Update/Delete operations on multiple documents.
                      * @param docs the documents to act on
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    bulkDocs(docs: MixedDoc[], options?: options.EmptyOptions): async.Thenable<BulkDocsResponse[]>;
+                    bulkDocs(docs: MixedDoc[], options?: BulkDocsOptions): async.Thenable<BulkDocsResponse[]>;
                 }
             }
 
