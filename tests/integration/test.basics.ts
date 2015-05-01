@@ -448,20 +448,20 @@ adapters.forEach((adapter: string) => {
                 });
         });
 
-        //it('Bulk docs with a promise', function (done) {
-        //    var db = new PouchDB(dbs.name);
-        //    db.bulkDocs({
-        //        docs: [
-        //            { test: 'somestuff' },
-        //            { test: 'another' }
-        //        ]
-        //    }).then(function (infos) {
-        //        infos.length.should.equal(2);
-        //        infos[0].ok.should.equal(true);
-        //        infos[1].ok.should.equal(true);
-        //        done();
-        //    }).catch(done);
-        //});
+        it('Bulk docs with a promise', function (done) {
+            var db = new PouchDB(dbs.name);
+            db.bulkDocs({
+                docs: [
+                    { test: 'somestuff' },
+                    { test: 'another' }
+                ]
+            }).then(function (infos) {
+                expect(infos.length).to.equal(2);
+                expect((<BulkDocsInfo>infos[0]).ok).to.equal(true);
+                expect((<BulkDocsInfo>infos[1]).ok).to.equal(true);
+                done();
+            }).catch(done);
+        });
 
         //it('Basic checks', function (done) {
         //    var db = new PouchDB(dbs.name);

@@ -237,7 +237,6 @@ declare module pouchdb {
                     /**
                      * Update/Delete each doc in an array of documents.
                      * @param options an options object with the documents to update/delete
-                     * @todo define options shape - docs don't make it clear what this is
                      */
                     bulkDocs(options: Options<ExistingDoc>, callback?: async.Callback<BulkDocsResponse[]>): void;
                     /**
@@ -257,7 +256,6 @@ declare module pouchdb {
                     /**
                      * Create multiple documents.
                      * @param doc the doc
-                     * @todo define options shape - docs don't make it clear what this is
                      */
                     bulkDocs(docs: Options<NewDoc>, callback?: async.Callback<BulkDocsResponse[]>): void;
                     /**
@@ -277,7 +275,6 @@ declare module pouchdb {
                     /**
                      * Perform mixed Create/Update/Delete operations on multiple documents.
                      * @param options the doc
-                     * @todo define options shape - docs don't make it clear what this is
                      */
                     bulkDocs(options: Options<MixedDoc>, callback?: async.Callback<BulkDocsResponse[]>): void;
                     /**
@@ -307,9 +304,28 @@ declare module pouchdb {
                      * Create multiple documents.
                      * @param doc the doc
                      * @param options
+                     */
+                    bulkDocs(docs: Options<NewDoc>): async.Thenable<BulkDocsResponse[]>;
+                    /**
+                     * Create multiple documents.
+                     * @param doc the doc
+                     * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
                     bulkDocs(docs: NewDoc[], options?: options.EmptyOptions): async.Thenable<BulkDocsResponse[]>;
+                    /**
+                     * Perform mixed Create/Update/Delete operations on multiple documents.
+                     * @param docs the documents to act on
+                     * @param options
+                     */
+                    bulkDocs(docs: Options<MixedDoc>): async.Thenable<BulkDocsResponse[]>;
+                    /**
+                     * Perform mixed Create/Update/Delete operations on multiple documents.
+                     * @param docs the documents to act on
+                     * @param options
+                     * @todo define options shape - docs don't make it clear what this is
+                     */
+                    bulkDocs(docs: MixedDoc[], options?: options.EmptyOptions): async.Thenable<BulkDocsResponse[]>;
                 }
             }
 
