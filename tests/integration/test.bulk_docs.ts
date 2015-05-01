@@ -98,33 +98,33 @@ adapters.forEach(function (adapter) {
             });
         });
 
-        //it('No id in bulk docs', function (done) {
-        //    var db = new PouchDB(dbs.name);
-        //    var newdoc = {
-        //        '_id': 'foobar',
-        //        'body': 'baz'
-        //    };
-        //    db.put(newdoc, function (err, doc) {
-        //        should.exist(doc.ok);
-        //        var docs = [
-        //            {
-        //                '_id': newdoc._id,
-        //                '_rev': newdoc._rev,
-        //                'body': 'blam'
-        //            },
-        //            {
-        //                '_id': newdoc._id,
-        //                '_rev': newdoc._rev,
-        //                '_deleted': true
-        //            }
-        //        ];
-        //        db.bulkDocs({ docs: docs }, function (err, results) {
-        //            results[0].should.have.property('name', 'conflict');
-        //            results[1].should.have.property('name', 'conflict');
-        //            done();
-        //        });
-        //    });
-        //});
+        it('No id in bulk docs', function (done) {
+            var db = new PouchDB(dbs.name, (e, v) => {});
+            var newdoc: pouchdb.api.methods.NewDoc = {
+                '_id': 'foobar',
+                'body': 'baz'
+            };
+            db.put(newdoc, function (err, doc) {
+                expect(doc.ok).to.exist;
+                var docs = [
+                    {
+                        '_id': newdoc._id,
+                        '_rev': (<pouchdb.api.methods.ExistingDoc>newdoc)._rev,
+                        'body': 'blam'
+                    },
+                    {
+                        '_id': newdoc._id,
+                        '_rev': (<pouchdb.api.methods.ExistingDoc>newdoc)._rev,
+                        '_deleted': true
+                    }
+                ];
+                db.bulkDocs({ docs: docs }, function (err, results) {
+                    expect(results[0]).to.have.property('name', 'conflict');
+                    expect(results[1]).to.have.property('name', 'conflict');
+                    done();
+                });
+            });
+        });
 
         //it('No _rev and new_edits=false', function (done) {
         //    var db = new PouchDB(dbs.name);
