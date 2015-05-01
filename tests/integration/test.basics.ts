@@ -450,5 +450,20 @@ adapters.forEach((adapter: string) => {
                     done();
                 });
         });
+
+        //it('Bulk docs with a promise', function (done) {
+        //    var db = new PouchDB(dbs.name);
+        //    db.bulkDocs({
+        //        docs: [
+        //            { test: 'somestuff' },
+        //            { test: 'another' }
+        //        ]
+        //    }).then(function (infos) {
+        //        infos.length.should.equal(2);
+        //        infos[0].ok.should.equal(true);
+        //        infos[1].ok.should.equal(true);
+        //        done();
+        //    }).catch(done);
+        //});
     });
 });
