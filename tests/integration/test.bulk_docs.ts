@@ -9,13 +9,21 @@
 /// <reference path="../../typings/chai/chai.d.ts" />
 /// <reference path="../../typings/mocha/mocha.d.ts" />
 /// <reference path="../../pouchdb.d.ts" />
+/// <reference path="common.ts" />
 /// <reference path="utils.d.ts" />
 /// <reference path="test.basics.extra.ts" />
 'use strict';
 
-var adapters = ['local', 'http'];
+interface NewTestDoc extends pouchdb.api.methods.NewDoc {
+    integer: number;
+    string: string;
+}
 
-function makeDocs(start: number, end?: number, templateDoc?: string) {
+interface ExistingTestDoc extends pouchdb.api.methods.ExistingDoc, NewTestDoc { }
+
+var adapters: string[] = ['http', 'local'];
+
+function makeDocs<R extends NewTestDoc>(start: number, end?: number, templateDoc?: string): R[] {
     var templateDocSrc = templateDoc ? JSON.stringify(templateDoc) : '{}';
     if (end === undefined) {
         end = start;
@@ -54,40 +62,40 @@ adapters.forEach(function (adapter) {
             { name: 'Randall Leeds', commits: 9 }
         ];
 
-        it('Testing bulk docs', function (done) {
-            var db = new PouchDB(dbs.name);
+        it('Testing bulk docs', (done) => {
+            var db = new PouchDB(dbs.name, (e, v) => { });
             var docs = makeDocs(5);
-            //db.bulkDocs({ docs: docs }, function (err, results) {
-            //    results.should.have.length(5, 'results length matches');
-            //    for (var i = 0; i < 5; i++) {
-            //        results[i].id.should.equal(docs[i]._id, 'id matches');
-            //        should.exist(results[i].rev, 'rev is set');
-            //        // Update the doc
-            //        docs[i]._rev = results[i].rev;
-            //        docs[i].string = docs[i].string + '.00';
-            //    }
-            //    db.bulkDocs({ docs: docs }, function (err, results) {
-            //        results.should.have.length(5, 'results length matches');
-            //        for (i = 0; i < 5; i++) {
-            //            results[i].id.should.equal(i.toString(), 'id matches again');
-            //            // set the delete flag to delete the docs in the next step
-            //            docs[i]._rev = results[i].rev;
-            //            docs[i]._deleted = true;
-            //        }
-            //        db.put(docs[0], function (err, doc) {
-            //            db.bulkDocs({ docs: docs }, function (err, results) {
-            //                results[0].name.should.equal(
-            //                    'conflict', 'First doc should be in conflict');
-            //                should.not.exist(results[0].rev, 'no rev in conflict');
-            //                for (i = 1; i < 5; i++) {
-            //                    results[i].id.should.equal(i.toString());
-            //                    should.exist(results[i].rev);
-            //                }
-            //                done();
-            //            });
-            //        });
-            //    });
-            //});
+            db.bulkDocs({ docs: docs }, (err, results) => {
+                expect(results).to.have.length(5, 'results length matches');
+                for (var i = 0; i < 5; i++) {
+                    expect((<BulkDocsInfo>results[i]).id).to.equal(docs[i]._id, 'id matches');
+                    expect((<BulkDocsInfo>results[i]).rev).to.exist('rev is set');
+                    // Update the doc
+                    (<ExistingTestDoc>docs[i])._rev = (<BulkDocsInfo>results[i]).rev;
+                    (<ExistingTestDoc>docs[i]).string = docs[i].string + '.00';
+                }
+                db.bulkDocs({ docs: <ExistingTestDoc[]>docs }, (err, results) => {
+                    expect(results).to.have.length(5, 'results length matches');
+                    for (i = 0; i < 5; i++) {
+                        expect((<BulkDocsInfo>results[i]).id).to.equal(i.toString(), 'id matches again');
+                        // set the delete flag to delete the docs in the next step
+                        (<ExistingTestDoc>docs[i])._rev = (<BulkDocsInfo>results[i]).rev;
+                        (<ExistingTestDoc>docs[i])._deleted = true;
+                    }
+                    db.put(docs[0], (err, doc) => {
+                        db.bulkDocs({ docs: <ExistingTestDoc[]>docs }, (err, results) => {
+                            expect((<BulkDocsError>results[0]).name).to.equal(
+                                'conflict', 'First doc should be in conflict');
+                            expect((<BulkDocsInfo>results[0]).rev).not.to.exist('no rev in conflict');
+                            for (i = 1; i < 5; i++) {
+                                expect((<BulkDocsInfo>results[i]).id).to.equal(i.toString());
+                                expect((<BulkDocsInfo>results[i]).rev).to.exist;
+                            }
+                            done();
+                        });
+                    });
+                });
+            });
         });
 
         //it('No id in bulk docs', function (done) {
