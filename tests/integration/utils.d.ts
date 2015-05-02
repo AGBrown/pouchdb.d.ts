@@ -36,6 +36,8 @@ declare module pouchdb {
                  * node adapter ones with a db location
                  */
                 adapterUrl(adapter: string, name: string): string;
+
+                isCouchDB<R>(callback: (isCouchDB: boolean) => R) : R;
             }
         }
     }

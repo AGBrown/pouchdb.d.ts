@@ -294,60 +294,60 @@ adapters.forEach(function (adapter) {
             });
         });
 
-        //it('#2935 new_edits=false with single unauthorized', function (done) {
+        it('#2935 new_edits=false with single unauthorized', (done) => {
 
-        //    testUtils.isCouchDB(function (isCouchDB) {
-        //        if (adapter !== 'http' || !isCouchDB) {
-        //            return done();
-        //        }
+            testUtils.isCouchDB((isCouchDB) => {
+                if (adapter !== 'http' || !isCouchDB) {
+                    return done();
+                }
 
-        //        var ddoc = {
-        //            "_id": "_design/validate",
-        //            "validate_doc_update": function (newDoc) {
-        //                if (newDoc.foo === undefined) {
-        //                    throw { unauthorized: 'Document must have a foo.' };
-        //                }
-        //            }.toString()
-        //        };
+                var ddoc = {
+                    "_id": "_design/validate",
+                    "validate_doc_update": function (newDoc) {
+                        if (newDoc.foo === undefined) {
+                            throw { unauthorized: 'Document must have a foo.' };
+                        }
+                    }.toString()
+                };
 
-        //        var db = new PouchDB(dbs.name);
+                var db = new PouchDB(dbs.name);
 
-        //        db.put(ddoc).then(function () {
-        //            return db.bulkDocs({
-        //                docs: [
-        //                    {
-        //                        '_id': 'doc0',
-        //                        '_rev': '1-x',
-        //                        'foo': 'bar',
-        //                        '_revisions': {
-        //                            'start': 1,
-        //                            'ids': ['x']
-        //                        }
-        //                    }, {
-        //                        '_id': 'doc1',
-        //                        '_rev': '1-x',
-        //                        '_revisions': {
-        //                            'start': 1,
-        //                            'ids': ['x']
-        //                        }
-        //                    }, {
-        //                        '_id': 'doc2',
-        //                        '_rev': '1-x',
-        //                        'foo': 'bar',
-        //                        '_revisions': {
-        //                            'start': 1,
-        //                            'ids': ['x']
-        //                        }
-        //                    }
-        //                ]
-        //            }, { new_edits: false });
-        //        }).then(function (res) {
-        //            res.should.have.length(1);
-        //            should.exist(res[0].error);
-        //            res[0].id.should.equal('doc1');
-        //        }).then(done);
-        //    });
-        //});
+                db.put(ddoc).then(() => {
+                    return db.bulkDocs({
+                        docs: [
+                            {
+                                '_id': 'doc0',
+                                '_rev': '1-x',
+                                'foo': 'bar',
+                                '_revisions': {
+                                    'start': 1,
+                                    'ids': ['x']
+                                }
+                            }, {
+                                '_id': 'doc1',
+                                '_rev': '1-x',
+                                '_revisions': {
+                                    'start': 1,
+                                    'ids': ['x']
+                                }
+                            }, {
+                                '_id': 'doc2',
+                                '_rev': '1-x',
+                                'foo': 'bar',
+                                '_revisions': {
+                                    'start': 1,
+                                    'ids': ['x']
+                                }
+                            }
+                        ]
+                    }, { new_edits: false });
+                }).then((res) => {
+                    expect(res).to.have.length(1);
+                    expect((<BulkDocsError>res[0]).error).to.exist;
+                    expect((<BulkDocsError>res[0]).id).to.equal('doc1');
+                }).then(done);
+            });
+        });
 
         //it('Bulk with new_edits=false', function (done) {
         //    var db = new PouchDB(dbs.name);

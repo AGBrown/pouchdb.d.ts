@@ -262,8 +262,10 @@ declare module pouchdb {
                     /** Advanced option: when set to `false` allows you to post and overwrite existing documents. */
                     new_edits?: boolean;
                 }
-                /** Error details for a document in a `bulkDocs()` operation */
-                interface BulkDocsError {
+                /** Error details for a document in a `bulkDocs()` operation 
+                 * @todo - does this really extend OperationResponse, or is `id` just sometimes present?
+                 */
+                interface BulkDocsError extends OperationResponse {
                     /** The error status (e.g. `409`) */
                     status: number;
                     /** The error name (e.g. `'conflict'`) */
@@ -355,6 +357,13 @@ declare module pouchdb {
                 }
                 /** Promise pattern for bulkDocs() */
                 interface Promise {
+                    /**
+                     * Update/Delete each doc in an array of documents.
+                     * @param folder the documents storage object
+                     * @param options
+                     * @todo define options shape - docs don't make it clear what this is
+                     */
+                    bulkDocs(folder: DocumentPouch<ExistingDoc>, options?: BulkDocsOptions): async.Thenable<BulkDocsResponse[]>;
                     /**
                      * Update/Delete each doc in an array of documents.
                      * @param doc the doc
