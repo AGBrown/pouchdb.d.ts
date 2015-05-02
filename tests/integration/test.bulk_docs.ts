@@ -348,7 +348,7 @@ adapters.forEach(function (adapter) {
             });
         });
 
-        //  todo: not sure how to handle res.length in this test
+        //  todo: not sure how to handle res as an [] in this test
         //it('Bulk with new_edits=false', (done) => {
         //    var db = new PouchDB(dbs.name, (e, v) => { });
         //    var docs = [{
@@ -577,85 +577,86 @@ adapters.forEach(function (adapter) {
             });
         });
 
-        //it('Deletion with new_edits=false, no history', function () {
+        it('Deletion with new_edits=false, no history', () => {
 
-        //    var db = new PouchDB(dbs.name);
-        //    var doc1 = {
-        //        '_id': 'foo',
-        //        '_rev': '1-x',
-        //        '_revisions': {
-        //            'start': 1,
-        //            'ids': ['x']
-        //        }
-        //    };
-        //    var doc2 = {
-        //        '_deleted': true,
-        //        '_id': 'foo',
-        //        '_rev': '2-y'
-        //    };
+            var db = new PouchDB(dbs.name);
+            var doc1 = {
+                '_id': 'foo',
+                '_rev': '1-x',
+                '_revisions': {
+                    'start': 1,
+                    'ids': ['x']
+                }
+            };
+            var doc2 = {
+                '_deleted': true,
+                '_id': 'foo',
+                '_rev': '2-y'
+            };
 
-        //    return db.put(doc1, { new_edits: false }).then(function () {
-        //        return db.put(doc2, { new_edits: false });
-        //    }).then(function () {
-        //        return db.allDocs({ keys: ['foo'] });
-        //    }).then(function (res) {
-        //        res.rows[0].value.rev.should.equal('1-x');
-        //        should.equal(!!res.rows[0].value.deleted, false);
-        //    });
-        //});
+            return db.put(doc1, { new_edits: false }).then(() => {
+                return db.put(doc2, { new_edits: false });
+            }).then(() => {
+                return db.allDocs({ keys: ['foo'] });
+            }).then((res) => {
+                expect(res.rows[0].value.rev).to.equal('1-x');
+                expect(!!res.rows[0].value.deleted).to.equal(false);
+            });
+        });
 
-        //it('Modification with new_edits=false, no history', function () {
+        it('Modification with new_edits=false, no history', () => {
 
-        //    var db = new PouchDB(dbs.name);
-        //    var doc1 = {
-        //        '_id': 'foo',
-        //        '_rev': '1-x',
-        //        '_revisions': {
-        //            'start': 1,
-        //            'ids': ['x']
-        //        }
-        //    };
-        //    var doc2 = {
-        //        '_id': 'foo',
-        //        '_rev': '2-y'
-        //    };
+            var db = new PouchDB(dbs.name);
+            var doc1 = {
+                '_id': 'foo',
+                '_rev': '1-x',
+                '_revisions': {
+                    'start': 1,
+                    'ids': ['x']
+                }
+            };
+            var doc2 = {
+                '_id': 'foo',
+                '_rev': '2-y'
+            };
 
-        //    return db.put(doc1, { new_edits: false }).then(function () {
-        //        return db.put(doc2, { new_edits: false });
-        //    }).then(function () {
-        //        return db.allDocs({ keys: ['foo'] });
-        //    }).then(function (res) {
-        //        res.rows[0].value.rev.should.equal('2-y');
-        //    });
-        //});
+            return db.put(doc1, { new_edits: false }).then(() => {
+                return db.put(doc2, { new_edits: false });
+            }).then(() => {
+                return db.allDocs({ keys: ['foo'] });
+            }).then((res) => {
+                expect(res.rows[0].value.rev).to.equal('2-y');
+            });
+        });
 
-        //it('Deletion with new_edits=false, no history, no revisions', function () {
+        it('Deletion with new_edits=false, no history, no revisions',() => {
 
-        //    var db = new PouchDB(dbs.name);
-        //    var doc = {
-        //        '_deleted': true,
-        //        '_id': 'foo',
-        //        '_rev': '2-y'
-        //    };
+            var db = new PouchDB(dbs.name);
+            var doc = {
+                '_deleted': true,
+                '_id': 'foo',
+                '_rev': '2-y'
+            };
 
-        //    return db.put(doc, { new_edits: false }).then(function () {
-        //        return db.allDocs({ keys: ['foo'] });
-        //    }).then(function (res) {
-        //        res.rows[0].value.rev.should.equal('2-y');
-        //        res.rows[0].value.deleted.should.equal(true);
-        //    });
-        //});
-
-        //it('Testing new_edits=false in req body', function (done) {
-        //    var db = new PouchDB(dbs.name);
+            return db.put(doc, { new_edits: false }).then(() => {
+                return db.allDocs({ keys: ['foo'] });
+            }).then((res) => {
+                expect(res.rows[0].value.rev).to.equal('2-y');
+                expect(res.rows[0].value.deleted).to.equal(true);
+            });
+        });
+        
+        //  todo: not sure how to handle res as an [] in this test
+        //it('Testing new_edits=false in req body', (done) => {
+        //    var db = new PouchDB(dbs.name, (e, v) => { });
         //    var docs = [{
-        //        '_id': 'foo',
-        //        '_rev': '2-x',
-        //        '_revisions': {
-        //            'start': 2,
-        //            'ids': ['x', 'a']
-        //        }
-        //    }, {
+        //            '_id': 'foo',
+        //            '_rev': '2-x',
+        //            '_revisions': {
+        //                'start': 2,
+        //                'ids': ['x', 'a']
+        //            }
+        //        }, {
         //            '_id': 'foo',
         //            '_rev': '2-y',
         //            '_revisions': {
@@ -663,61 +664,63 @@ adapters.forEach(function (adapter) {
         //                'ids': ['y', 'a']
         //            }
         //        }];
-        //    db.bulkDocs({ docs: docs, new_edits: false }, function (err, res) {
-        //        db.get('foo', { open_revs: 'all' }, function (err, res) {
-        //            res.sort(function (a, b) {
-        //                return a.ok._rev < b.ok._rev ? -1 :
-        //                    a.ok._rev > b.ok._rev ? 1 : 0;
-        //            });
-        //            res.length.should.equal(2);
-        //            res[0].ok._rev.should.equal('2-x', 'doc1 ok');
-        //            res[1].ok._rev.should.equal('2-y', 'doc2 ok');
+        //    db.bulkDocs({ docs: docs, new_edits: false }, (err, res) => {
+        //        db.get('foo', { open_revs: 'all' }, (err, res) => {
+        //        //    res.sort(function (a, b) {
+        //        //        return a.ok._rev < b.ok._rev ? -1 :
+        //        //            a.ok._rev > b.ok._rev ? 1 : 0;
+        //        //    });
+        //        //    res.length.should.equal(2);
+        //        //    res[0].ok._rev.should.equal('2-x', 'doc1 ok');
+        //        //    res[1].ok._rev.should.equal('2-y', 'doc2 ok');
         //            done();
         //        });
         //    });
         //});
 
-        //it('656 regression in handling deleted docs', function (done) {
-        //    var db = new PouchDB(dbs.name);
-        //    db.bulkDocs({
-        //        docs: [{
-        //            _id: 'foo',
-        //            _rev: '1-a',
-        //            _deleted: true
-        //        }]
-        //    }, { new_edits: false }, function (err, res) {
-        //            db.get('foo', function (err, res) {
-        //                should.exist(err, 'deleted');
-        //                err.status.should.equal(PouchDB.Errors.MISSING_DOC.status,
-        //                    'correct error status returned');
-        //                err.message.should.equal(PouchDB.Errors.MISSING_DOC.message,
-        //                    'correct error message returned');
-        //                // todo: does not work in pouchdb-server.
-        //                // err.reason.should.equal('deleted',
-        //                //                          'correct error reason returned');
-        //                done();
-        //            });
-        //        });
-        //});
+        it('656 regression in handling deleted docs', (done) => {
+            var db = new PouchDB(dbs.name, (e, v) => { });
+            db.bulkDocs({
+                docs: [{
+                    _id: 'foo',
+                    _rev: '1-a',
+                    _deleted: true
+                }]
+            }, { new_edits: false }, (err, res) => {
+                    db.get('foo', (err, res) => {
+                        expect(err).to.exist('deleted');
+                        //  todo: `get` error is a `BulkDocsError`
+                        //  todo: `BulkDocsError` error has similar shape to `ErrorDefinition`
+                        expect((<BulkDocsError>err).status).to.equal(PouchDB.Errors.MISSING_DOC.status,
+                            'correct error status returned');
+                        expect((<BulkDocsError>err).message).to.equal(PouchDB.Errors.MISSING_DOC.message,
+                            'correct error message returned');
+                        // todo: does not work in pouchdb-server.
+                        // err.reason.should.equal('deleted',
+                        //                          'correct error reason returned');
+                        done();
+                    });
+                });
+        });
 
-        //it('Test quotes in doc ids', function (done) {
-        //    var db = new PouchDB(dbs.name);
-        //    var docs = [{ _id: '\'your_sql_injection_script_here\'' }];
-        //    db.bulkDocs({ docs: docs }, function (err, res) {
-        //        should.not.exist(err, 'got error: ' + JSON.stringify(err));
-        //        db.get('foo', function (err, res) {
-        //            should.exist(err, 'deleted');
-        //            done();
-        //        });
-        //    });
-        //});
+        it('Test quotes in doc ids', (done) => {
+            var db = new PouchDB(dbs.name, (e, v) => { });
+            var docs = [{ _id: '\'your_sql_injection_script_here\'' }];
+            db.bulkDocs({ docs: docs }, (err, res) => {
+                expect(err).not.to.exist('got error: ' + JSON.stringify(err));
+                db.get('foo', (err, res) => {
+                    expect(err).to.exist('deleted');
+                    done();
+                });
+            });
+        });
 
-        //it('Bulk docs empty list', function (done) {
-        //    var db = new PouchDB(dbs.name);
-        //    db.bulkDocs({ docs: [] }, function (err, res) {
-        //        done(err);
-        //    });
-        //});
+        it('Bulk docs empty list', (done) => {
+            var db = new PouchDB(dbs.name, (e, v) => { });
+            db.bulkDocs({ docs: [] }, (err, res) => {
+                done(err);
+            });
+        });
 
         //it('handles simultaneous writes', function (done) {
         //    var db1 = new PouchDB(dbs.name);

@@ -344,9 +344,15 @@ declare module pouchdb {
                     _deleted?: boolean;
                 }
                 /** Options for `bulkDocs()` */
-                interface DocumentPouch<D extends NewDoc | MixedDoc> extends options.EmptyOptions {
+                interface DocumentPouch<D extends NewDoc | MixedDoc> {
                     /** The array of documents to update */
-                    docs: D[]
+                    docs: D[];
+                }
+                /** Options for `bulkDocs()` */
+                interface DocumentPouchAndOptions<D extends NewDoc | MixedDoc>
+                    extends BulkDocsOptions {
+                    /** The array of documents to update */
+                    docs: D[];
                 }
                 /** The options type for `bulkDocs()` */
                 interface BulkDocsOptions extends options.EmptyOptions {
@@ -378,7 +384,7 @@ declare module pouchdb {
                      * Update/Delete each doc in an array of documents.
                      * @param options an options object with the documents to update/delete
                      */
-                    bulkDocs(folder: DocumentPouch<ExistingDoc>, callback?: async.Callback<BulkDocsResponse[]>): void;
+                    bulkDocs(folder: DocumentPouchAndOptions<ExistingDoc>, callback?: async.Callback<BulkDocsResponse[]>): void;
                     /**
                      * Update/Delete each doc in an array of documents.
                      * @param options an options object with the documents to update/delete
@@ -402,7 +408,7 @@ declare module pouchdb {
                      * Create multiple documents.
                      * @param doc the doc
                      */
-                    bulkDocs(folder: DocumentPouch<NewDoc>, callback?: async.Callback<BulkDocsResponse[]>): void;
+                    bulkDocs(folder: DocumentPouchAndOptions<NewDoc>, callback?: async.Callback<BulkDocsResponse[]>): void;
                     /**
                      * Create multiple documents.
                      * @param doc the doc
@@ -426,7 +432,7 @@ declare module pouchdb {
                      * Perform mixed Create/Update/Delete operations on multiple documents.
                      * @param options the doc
                      */
-                    bulkDocs(folder: DocumentPouch<MixedDoc>, callback?: async.Callback<BulkDocsResponse[]>): void;
+                    bulkDocs(folder: DocumentPouchAndOptions<MixedDoc>, callback?: async.Callback<BulkDocsResponse[]>): void;
                     /**
                      * Perform mixed Create/Update/Delete operations on multiple documents.
                      * @param options the doc
@@ -1100,20 +1106,26 @@ declare module pouchdb {
          */
         interface PouchDB extends promise.PouchDB, async.Thenable<promise.PouchDB> { }
     }
+
     /** A pouch error definition */
     interface ErrorDefinition {
         /** The error status number */
         status: number;
         /** The error message */
         message: string;
+        /** The error message */
+        reason: string;
     }
     /** The collection of error definitions defined for PouchDB */
     interface ErrorDefinitions {
         /** Indicates that a document _id was set to a reserved id */
         RESERVED_ID: ErrorDefinition;
-        /** Indicates that a document _id was set to a reserved id */
+        /** Missing JSON list of 'docs' */
         MISSING_BULK_DOCS: ErrorDefinition;
+        /** A document was not found */
+        MISSING_DOC: ErrorDefinition;
     }
+    
     /** Static-side interface for PouchDB */
     export interface PouchDB {
         /**  */
