@@ -514,67 +514,68 @@ adapters.forEach(function (adapter) {
                 });
             });
 
-        //it('Testing successive new_edits to two doc', function () {
+        it('Testing successive new_edits to two doc', () => {
 
-        //    var db = new PouchDB(dbs.name);
-        //    var doc1 = {
-        //        '_id': 'foo',
-        //        '_rev': '1-x',
-        //        '_revisions': {
-        //            'start': 1,
-        //            'ids': ['x']
-        //        }
-        //    };
-        //    var doc2 = {
-        //        '_id': 'bar',
-        //        '_rev': '1-x',
-        //        '_revisions': {
-        //            'start': 1,
-        //            'ids': ['x']
-        //        }
-        //    };
+            var db = new PouchDB(dbs.name);
+            var doc1 = {
+                '_id': 'foo',
+                '_rev': '1-x',
+                '_revisions': {
+                    'start': 1,
+                    'ids': ['x']
+                }
+            };
+            var doc2 = {
+                '_id': 'bar',
+                '_rev': '1-x',
+                '_revisions': {
+                    'start': 1,
+                    'ids': ['x']
+                }
+            };
 
-        //    return db.put(doc1, { new_edits: false }).then(function () {
-        //        return db.put(doc2, { new_edits: false });
-        //    }).then(function () {
-        //        return db.put(doc1, { new_edits: false });
-        //    }).then(function () {
-        //        return db.get('foo');
-        //    }).then(function () {
-        //        return db.get('bar');
-        //    });
-        //});
+            return db.put(doc1, { new_edits: false }).then(() => {
+                return db.put(doc2, { new_edits: false });
+            }).then(() => {
+                return db.put(doc1, { new_edits: false });
+            }).then(() => {
+                return db.get('foo');
+            }).then(() => {
+                return db.get('bar');
+            });
+        });
 
-        //it('Deletion with new_edits=false', function () {
+        //  todo: not sure how to handle allDocs with just keys specified
+        it('Deletion with new_edits=false', () => {
 
-        //    var db = new PouchDB(dbs.name);
-        //    var doc1 = {
-        //        '_id': 'foo',
-        //        '_rev': '1-x',
-        //        '_revisions': {
-        //            'start': 1,
-        //            'ids': ['x']
-        //        }
-        //    };
-        //    var doc2 = {
-        //        '_deleted': true,
-        //        '_id': 'foo',
-        //        '_rev': '2-y',
-        //        '_revisions': {
-        //            'start': 2,
-        //            'ids': ['y', 'x']
-        //        }
-        //    };
+            var db = new PouchDB(dbs.name);
+            var doc1 = {
+                '_id': 'foo',
+                '_rev': '1-x',
+                '_revisions': {
+                    'start': 1,
+                    'ids': ['x']
+                }
+            };
+            var doc2 = {
+                '_deleted': true,
+                '_id': 'foo',
+                '_rev': '2-y',
+                '_revisions': {
+                    'start': 2,
+                    'ids': ['y', 'x']
+                }
+            };
 
-        //    return db.put(doc1, { new_edits: false }).then(function () {
-        //        return db.put(doc2, { new_edits: false });
-        //    }).then(function () {
-        //        return db.allDocs({ keys: ['foo'] });
-        //    }).then(function (res) {
-        //        res.rows[0].value.rev.should.equal('2-y');
-        //        res.rows[0].value.deleted.should.equal(true);
-        //    });
-        //});
+            return db.put(doc1, { new_edits: false }).then(() => {
+                return db.put(doc2, { new_edits: false });
+            }).then(() => {
+                return db.allDocs({ keys: ['foo'] });
+            }).then((res) => {
+                expect(res.rows[0].value.rev).to.equal('2-y');
+                expect(res.rows[0].value.deleted).to.equal(true);
+            });
+        });
 
         //it('Deletion with new_edits=false, no history', function () {
 

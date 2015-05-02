@@ -193,6 +193,41 @@ declare module pouchdb {
                 _deleted?: boolean;
             }
 
+            /** Options for `changes()` and `allDocs()` output */
+            interface BasePaginationOptions {
+                /**
+                 * Include the associated document in each row in the `doc` field
+                 * @see conflicts
+                 * @see attachments
+                 * @default `false`
+                 */
+                include_docs?: boolean;
+                /**
+                 * Include conflict information in the `_conflicts` field (see {@linkcode #include_docs})
+                 * @see include_docs
+                 * @see attachments
+                 * @default `false`
+                 */
+                conflicts?: boolean;
+                /**
+                 * Include attachment data as base64-encoded string. (see {@linkcode #include_docs})
+                 * @see include_docs
+                 * @see conflicts
+                 * @default `false`
+                 */
+                attachments?: boolean;
+                /**
+                 * Reverse the order of the output documents
+                 * @default `false`
+                 */
+                descending?: boolean;
+                /**
+                 * Maximum number of documents to return.
+                 * @default undefined
+                 */
+                limit?: number;
+            }
+
             //////////////////////////// Methods ///////////////////////////////
             // Please keep these modules in alphabetical order
 
@@ -212,7 +247,10 @@ declare module pouchdb {
                     /** The document key */
                     key: string;
                     /** @todo not sure what this is */
-                    value: { rev: string; }
+                    value: {
+                        rev: string;
+                        deleted?: boolean;
+                    }
                 }
                 /** Response object for `allDocs()` */
                 interface Response {
@@ -225,15 +263,68 @@ declare module pouchdb {
                      */
                     rows: DocContainer<StoredDoc>[];
                 }
+
+                /** Options for `allDocs()` output */
+                interface RangeOptions extends BasePaginationOptions {
+                    /**
+                     * Get documents with IDs in a certain range from this to {@linkcode #endkey}
+                     * (inclusive/see {@linkcode #inclusive_end}).
+                     */
+                    startkey?: string;
+                    /**
+                     * Get documents with IDs in a certain range from {@linkcode #startkey} to this
+                     * (inclusive/see {@linkcode #inclusive_end}).
+                     */
+                    endkey?: string;
+                    /**
+                     * Include documents having an ID equal to the given {@linkcode #endkey}
+                     * @default false
+                     */
+                    inclusive_end?: boolean;
+
+                    /**
+                     * Number of docs to skip before returning (warning: poor performance on IndexedDB/LevelDB!).
+                     */
+                    skip?: number
+                }
+
+                /** Options for `allDocs()` output */
+                interface PaginationOptions extends BasePaginationOptions {
+                    /**
+                     * Number of docs to skip before returning (warning: poor performance on IndexedDB/LevelDB!).
+                     */
+                    skip?: number
+                }
+
+                /** Options for `allDocs()` output */
+                interface FilterOptions extends BasePaginationOptions {
+                    /** Only return documents with IDs matching this string key. */
+                    key?: string;
+                    /** Array of string keys to fetch in a single shot. */
+                    keys?: string;
+                }
+
                 /** Callback pattern for allDocs() */
                 interface Callback {
                     /** Fetch multiple documents, indexed and sorted by the `_id`. */
-                    allDocs(callback: async.Callback<Response>): void;
+                    allDocs(callback?: async.Callback<Response>): void;
+                    /** Fetch multiple documents, indexed and sorted by the `_id`. */
+                    allDocs(options: RangeOptions, callback?: async.Callback<Response>): void;
+                    /** Fetch multiple documents, indexed and sorted by the `_id`. */
+                    allDocs(options: PaginationOptions, callback?: async.Callback<Response>): void;
+                    /** Fetch multiple documents, indexed and sorted by the `_id`. */
+                    allDocs(options: FilterOptions, callback?: async.Callback<Response>): void;
                 }
                 /** Promise pattern for allDocs() */
                 interface Promise {
                     /** Fetch multiple documents, indexed and sorted by the `_id`. */
                     allDocs(): async.Thenable<Response>;
+                    /** Fetch multiple documents, indexed and sorted by the `_id`. */
+                    allDocs(options: RangeOptions): async.Thenable<Response>;
+                    /** Fetch multiple documents, indexed and sorted by the `_id`. */
+                    allDocs(options: PaginationOptions): async.Thenable<Response>;
+                    /** Fetch multiple documents, indexed and sorted by the `_id`. */
+                    allDocs(options: FilterOptions): async.Thenable<Response>;
                 }
             }
 
@@ -402,50 +493,20 @@ declare module pouchdb {
 
             /** Contains the method and call/return types for changes() */
             module changes {
+
                 /** Options for `changes()` output */
-                interface BaseOptions {
+                interface BaseOptions extends BasePaginationOptions {
                     /**
                      * Does "live" changes, using CouchDB’s `_longpoll_` feed if remote.
                      * @default `false`
                      */
                     live?: boolean;
                     /**
-                     * Include the associated document with each change
-                     * @see conflicts
-                     * @see attachments
-                     * @default `false`
-                     */
-                    include_docs?: boolean;
-                    /**
-                     * Include conflicts (see {@linkcode #include_docs})
-                     * @see include_docs
-                     * @see attachments
-                     * @default `false`
-                     */
-                    conflicts?: boolean;
-                    /**
-                     * Include attachments (see {@linkcode #include_docs})
-                     * @see include_docs
-                     * @see conflicts
-                     * @default `false`
-                     */
-                    attachments?: boolean;
-                    /**
-                     * Reverse the order of output documents
-                     * @default `false`
-                     */
-                    descending?: boolean;
-                    /**
                      * Start the results from the change immediately after the given sequence number. 
                      * You can also pass `'now'` if you want only new changes (when `live` is `true`).
                      * @default undefined
                      */
                     since?: any; // string | number
-                    /**
-                     * Limit the number of results to this number.
-                     * @default undefined
-                     */
-                    limit?: number;
                     /**
                      * Request timeout (in milliseconds).
                      * @default undefined
