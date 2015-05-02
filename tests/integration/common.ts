@@ -9,7 +9,6 @@
 /// <reference path="../../typings/mocha/mocha.d.ts" />
 /// <reference path="../../pouchdb.d.ts" />
 /// <reference path="utils.d.ts" />
-/// <reference path="test.basics.extra.ts" />
 'use strict';
 
 type BulkDocsInfo = pouchdb.api.methods.OperationResponse;
@@ -19,4 +18,32 @@ var adapters: string[] = ['http', 'local'];
 
 interface dbsShape {
     name?: string;
+}
+
+/**
+ * contains pouchdb code
+ */
+declare module pouchdb {
+    /**
+     * contains test code
+     */
+    module test {
+        /**
+         * contains integration test code
+         */
+        module integration {
+            interface TestDoc extends pouchdb.api.methods.ExistingDoc {
+                test: string;
+            }
+            interface NewValueDoc extends pouchdb.api.methods.NewDoc {
+                value: string;
+            }
+            interface ValueDoc extends pouchdb.api.methods.ExistingDoc, NewValueDoc {
+                value: string;
+            }
+            interface BarDoc extends pouchdb.api.methods.ExistingDoc {
+                bar?: string;
+            }
+        }
+    }
 }

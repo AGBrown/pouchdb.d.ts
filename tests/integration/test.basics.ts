@@ -11,7 +11,6 @@
 /// <reference path="../../pouchdb.d.ts" />
 /// <reference path="common.ts" />
 /// <reference path="utils.d.ts" />
-/// <reference path="test.basics.extra.ts" />
 'use strict';
 
 import expect = chai.expect;

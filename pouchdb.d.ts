@@ -536,7 +536,7 @@ declare module pouchdb {
                     /** 
                      * The `change` event listener. This event fires when a change has been found.
                      */
-                    onChange: (change: ChangeInfo) => void;
+                    onChange?: (change: ChangeInfo) => void;
 
                     ///** The `create` event listener */
                     //create?: (???) => void;

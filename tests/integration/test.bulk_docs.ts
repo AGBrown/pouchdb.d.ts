@@ -11,7 +11,6 @@
 /// <reference path="../../pouchdb.d.ts" />
 /// <reference path="common.ts" />
 /// <reference path="utils.d.ts" />
-/// <reference path="test.basics.extra.ts" />
 'use strict';
 
 interface NewTestDoc extends pouchdb.api.methods.NewDoc {
@@ -349,16 +348,17 @@ adapters.forEach(function (adapter) {
             });
         });
 
-        //it('Bulk with new_edits=false', function (done) {
-        //    var db = new PouchDB(dbs.name);
+        //  todo: not sure how to handle res.length in this test
+        //it('Bulk with new_edits=false', (done) => {
+        //    var db = new PouchDB(dbs.name, (e, v) => { });
         //    var docs = [{
-        //        '_id': 'foo',
-        //        '_rev': '2-x',
-        //        '_revisions': {
-        //            'start': 2,
-        //            'ids': ['x', 'a']
-        //        }
-        //    }, {
+        //            '_id': 'foo',
+        //            '_rev': '2-x',
+        //            '_revisions': {
+        //                'start': 2,
+        //                'ids': ['x', 'a']
+        //            }
+        //        }, {
         //            '_id': 'foo',
         //            '_rev': '2-y',
         //            '_revisions': {
@@ -366,63 +366,66 @@ adapters.forEach(function (adapter) {
         //                'ids': ['y', 'a']
         //            }
         //        }];
-        //    db.bulkDocs({ docs: docs }, { new_edits: false }, function (err, res) {
-        //        db.get('foo', { open_revs: 'all' }, function (err, res) {
-        //            res.sort(function (a, b) {
-        //                return a.ok._rev < b.ok._rev ? -1 :
-        //                    a.ok._rev > b.ok._rev ? 1 : 0;
-        //            });
-        //            res.length.should.equal(2);
-        //            res[0].ok._rev.should.equal('2-x', 'doc1 ok');
-        //            res[1].ok._rev.should.equal('2-y', 'doc2 ok');
+        //    db.bulkDocs({ docs: docs }, { new_edits: false }, (err, res) => {
+        //        db.get('foo', { open_revs: 'all' }, (err, res) => {
+        //            // todo: these lines
+        //            //res.sort(function (a, b) {
+        //            //    return a.ok._rev < b.ok._rev ? -1 :
+        //            //        a.ok._rev > b.ok._rev ? 1 : 0;
+        //            //});
+        //            expect(res.length).to.equal(2);
+        //            // todo: these lines
+        //            //res[0].ok._rev.should.equal('2-x', 'doc1 ok');
+        //            //res[1].ok._rev.should.equal('2-y', 'doc2 ok');
         //            done();
         //        });
         //    });
         //});
 
-        //it('Testing successive new_edits to the same doc', function (done) {
+        it('Testing successive new_edits to the same doc', (done) => {
 
-        //    var db = new PouchDB(dbs.name);
-        //    var docs = [{
-        //        '_id': 'foo',
-        //        '_rev': '1-x',
-        //        '_revisions': {
-        //            'start': 1,
-        //            'ids': ['x']
-        //        }
-        //    }];
+            var db = new PouchDB(dbs.name, (e, v) => { });
+            var docs = [{
+                '_id': 'foo',
+                '_rev': '1-x',
+                '_revisions': {
+                    'start': 1,
+                    'ids': ['x']
+                }
+            }];
 
-        //    db.bulkDocs({ docs: docs, new_edits: false }, function (err, result) {
-        //        should.not.exist(err);
-        //        db.bulkDocs({ docs: docs, new_edits: false }, function (err, result) {
-        //            should.not.exist(err);
-        //            db.get('foo', function (err, res) {
-        //                res._rev.should.equal('1-x');
-        //                done();
-        //            });
-        //        });
-        //    });
-        //});
+            db.bulkDocs({ docs: docs, new_edits: false }, (err, result) => {
+                expect(err).not.to.exist;
+                db.bulkDocs({ docs: docs, new_edits: false }, (err, result) => {
+                    expect(err).not.to.exist;
+                    db.get('foo', (err, res) => {
+                        expect(res._rev).to.equal('1-x');
+                        done();
+                    });
+                });
+            });
+        });
 
-        //it('#3062 bulkDocs with staggered seqs', function () {
-        //    return new PouchDB(dbs.name).then(function (db) {
+        // todo: not sure how to define x.error object
+        //it('#3062 bulkDocs with staggered seqs', () => {
+        //    return new PouchDB(dbs.name).then((db) => {
         //        var docs = [];
         //        for (var i = 10; i <= 20; i++) {
         //            docs.push({ _id: 'doc-' + i });
         //        }
-        //        return db.bulkDocs({ docs: docs }).then(function (infos) {
-        //            docs.forEach(function (doc, i) {
+        //        return db.bulkDocs({ docs: docs }).then((infos) => {
+        //            docs.forEach((doc, i) => {
         //                doc._rev = infos[i].rev;
         //            });
-        //            var docsToUpdate = docs.filter(function (doc, i) {
+        //            var docsToUpdate = docs.filter((doc, i) => {
         //                return i % 2 === 1;
         //            });
         //            docsToUpdate.reverse();
         //            return db.bulkDocs({ docs: docsToUpdate });
-        //        }).then(function (infos) {
-        //            infos.map(function (x) {
-        //                return { id: x.id, error: !!x.error, rev: (typeof x.rev) };
-        //            }).should.deep.equal([
+        //        }).then((infos) => {
+        //                expect(infos.map((x) => {
+        //                    return { id: x.id, error: !!x.error, rev: (typeof x.rev) };
+        //                })).to.deep.equal([
         //                { error: false, id: 'doc-19', rev: 'string' },
         //                { error: false, id: 'doc-17', rev: 'string' },
         //                { error: false, id: 'doc-15', rev: 'string' },
@@ -432,84 +435,84 @@ adapters.forEach(function (adapter) {
         //        });
         //    });
         //});
+        
+        it('Testing successive new_edits to the same doc, different content',
+            (done) => {
 
-        //it('Testing successive new_edits to the same doc, different content',
-        //    function (done) {
+                var db = new PouchDB(dbs.name, (e, v) => { });
+                var docsA = [{
+                        '_id': 'foo',
+                        '_rev': '1-x',
+                        'bar': 'baz',
+                        '_revisions': {
+                            'start': 1,
+                            'ids': ['x']
+                        }
+                    }, {
+                        '_id': 'fee',
+                        '_rev': '1-x',
+                        '_revisions': {
+                            'start': 1,
+                            'ids': ['x']
+                        }
+                    }];
 
-        //        var db = new PouchDB(dbs.name);
-        //        var docsA = [{
-        //            '_id': 'foo',
-        //            '_rev': '1-x',
-        //            'bar': 'baz',
-        //            '_revisions': {
-        //                'start': 1,
-        //                'ids': ['x']
-        //            }
-        //        }, {
-        //                '_id': 'fee',
-        //                '_rev': '1-x',
-        //                '_revisions': {
-        //                    'start': 1,
-        //                    'ids': ['x']
-        //                }
-        //            }];
+                var docsB = [{
+                        '_id': 'foo',
+                        '_rev': '1-x',
+                        'bar': 'zam', // this update should be rejected
+                        '_revisions': {
+                            'start': 1,
+                            'ids': ['x']
+                        }
+                    }, {
+                        '_id': 'faa',
+                        '_rev': '1-x',
+                        '_revisions': {
+                            'start': 1,
+                            'ids': ['x']
+                        }
+                    }];
 
-        //        var docsB = [{
-        //            '_id': 'foo',
-        //            '_rev': '1-x',
-        //            'bar': 'zam', // this update should be rejected
-        //            '_revisions': {
-        //                'start': 1,
-        //                'ids': ['x']
-        //            }
-        //        }, {
-        //                '_id': 'faa',
-        //                '_rev': '1-x',
-        //                '_revisions': {
-        //                    'start': 1,
-        //                    'ids': ['x']
-        //                }
-        //            }];
+                db.bulkDocs({ docs: docsA, new_edits: false }, (err, result) => {
+                    expect(err).not.to.exist;
+                    db.changes({
+                        complete: (err, result) => {
+                            var ids = result.results.map((row) => {
+                                return row.id;
+                            });
+                            expect(ids).to.include("foo");
+                            expect(ids).to.include("fee");
+                            expect(ids).not.to.include("faa");
 
-        //        db.bulkDocs({ docs: docsA, new_edits: false }, function (err, result) {
-        //            should.not.exist(err);
-        //            db.changes({
-        //                complete: function (err, result) {
-        //                    var ids = result.results.map(function (row) {
-        //                        return row.id;
-        //                    });
-        //                    ids.should.include("foo");
-        //                    ids.should.include("fee");
-        //                    ids.should.not.include("faa");
+                            var update_seq = result.last_seq;
+                            db.bulkDocs({ docs: docsB, new_edits: false }, (err, result) => {
+                                expect(err).not.to.exist;
+                                db.changes({
+                                    since: update_seq,
+                                    complete: (err, result) => {
+                                        var ids = result.results.map((row) => {
+                                            return row.id;
+                                        });
+                                        expect(ids).not.to.include("foo");
+                                        expect(ids).not.to.include("fee");
+                                        expect(ids).to.include("faa");
 
-        //                    var update_seq = result.last_seq;
-        //                    db.bulkDocs({ docs: docsB, new_edits: false }, function (err, result) {
-        //                        should.not.exist(err);
-        //                        db.changes({
-        //                            since: update_seq,
-        //                            complete: function (err, result) {
-        //                                var ids = result.results.map(function (row) {
-        //                                    return row.id;
-        //                                });
-        //                                ids.should.not.include("foo");
-        //                                ids.should.not.include("fee");
-        //                                ids.should.include("faa");
-
-        //                                db.get('foo', function (err, res) {
-        //                                    res._rev.should.equal('1-x');
-        //                                    res.bar.should.equal("baz");
-        //                                    db.info(function (err, info) {
-        //                                        info.doc_count.should.equal(3);
-        //                                        done();
-        //                                    });
-        //                                });
-        //                            }
-        //                        });
-        //                    });
-        //                }
-        //            });
-        //        });
-        //    });
+                                        db.get('foo', (err, res) => {
+                                            expect(res._rev).to.equal('1-x');
+                                            expect((<pouchdb.test.integration.BarDoc>res).bar).to.equal("baz");
+                                            db.info((err, info) => {
+                                                expect(info.doc_count).to.equal(3);
+                                                done();
+                                            });
+                                        });
+                                    }
+                                });
+                            });
+                        }
+                    });
+                });
+            });
 
         //it('Testing successive new_edits to two doc', function () {
 
