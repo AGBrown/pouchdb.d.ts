@@ -189,8 +189,8 @@ adapters.forEach(function (adapter) {
             });
         });
 
-        it('No docs', function (done) {
-            var db = new PouchDB(dbs.name,(e, v) => { });
+        it('No docs', (done) => {
+            var db = new PouchDB(dbs.name, (e, v) => { });
             var docs: pouchdb.api.methods.bulkDocs.MixedDoc[] = [{ 'foo': 'bar' }];
             //  typescript: have to set docs to undefined to make this test possible
             //      as ts overloads that are defined try and prevent us omitting the docs property
@@ -205,34 +205,34 @@ adapters.forEach(function (adapter) {
             });
         });
 
-        //it('Jira 911', function (done) {
-        //    var db = new PouchDB(dbs.name);
-        //    var docs = [
-        //        { '_id': '0', 'a': 0 },
-        //        { '_id': '1', 'a': 1 },
-        //        { '_id': '1', 'a': 1 },
-        //        { '_id': '3', 'a': 3 }
-        //    ];
-        //    db.bulkDocs({ docs: docs }, function (err, results) {
-        //        results[1].id.should.equal('1', 'check ordering');
-        //        should.not.exist(results[1].name, 'first id succeded');
-        //        results[2].name.should.equal('conflict', 'second conflicted');
-        //        results.should.have.length(4, 'got right amount of results');
-        //        done();
-        //    });
-        //});
+        it('Jira 911', (done) => {
+            var db = new PouchDB(dbs.name, (e, v) => { });
+            var docs = [
+                { '_id': '0', 'a': 0 },
+                { '_id': '1', 'a': 1 },
+                { '_id': '1', 'a': 1 },
+                { '_id': '3', 'a': 3 }
+            ];
+            db.bulkDocs({ docs: docs }, (err, results) => {
+                expect((<BulkDocsInfo>results[1]).id).to.equal('1', 'check ordering');
+                expect((<BulkDocsError>results[1]).name).not.to.exist('first id succeded');
+                expect((<BulkDocsError>results[2]).name).to.equal('conflict', 'second conflicted');
+                expect(results).to.have.length(4, 'got right amount of results');
+                done();
+            });
+        });
 
-        //it('Test multiple bulkdocs', function (done) {
-        //    var db = new PouchDB(dbs.name);
-        //    db.bulkDocs({ docs: authors }, function (err, res) {
-        //        db.bulkDocs({ docs: authors }, function (err, res) {
-        //            db.allDocs(function (err, result) {
-        //                result.total_rows.should.equal(8, 'correct number of results');
-        //                done();
-        //            });
-        //        });
-        //    });
-        //});
+        it('Test multiple bulkdocs', (done) => {
+            var db = new PouchDB(dbs.name, (e, v) => { });
+            db.bulkDocs({ docs: authors }, (err, res) => {
+                db.bulkDocs({ docs: authors }, (err, res) => {
+                    db.allDocs((err, result) => {
+                        expect(result.total_rows).to.equal(8, 'correct number of results');
+                        done();
+                    });
+                });
+            });
+        });
 
         //it('#2935 new_edits=false correct number', function () {
         //    var docs = [

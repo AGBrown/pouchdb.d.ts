@@ -196,6 +196,47 @@ declare module pouchdb {
             //////////////////////////// Methods ///////////////////////////////
             // Please keep these modules in alphabetical order
 
+            /** Contains the method and call/return types for allDocs() */
+            module allDocs {
+                /** A stored document returned for `allDocs` */
+                interface StoredDoc extends ExistingDoc {
+                    /** The document attachments */
+                    _attachments?: {};
+                }
+                /** A container for a document as returned by `allDocs()` */
+                interface DocContainer<D> extends ExistingDoc {
+                    /** The document */
+                    doc: D;
+                    /** The document id */
+                    id: string;
+                    /** The document key */
+                    key: string;
+                    /** @todo not sure what this is */
+                    value: { rev: string; }
+                }
+                /** Response object for `allDocs()` */
+                interface Response {
+                    /** The `skip` if provided, or in CouchDB the actual offset */
+                    offset: number;
+                    /** the total number of non-deleted documents in the database */
+                    total_rows: number;
+                    /** rows containing the documents, or just the `_id`/`_revs` if you didn't
+                     *  set `include_docs` to `true`
+                     */
+                    rows: DocContainer<StoredDoc>[];
+                }
+                /** Callback pattern for allDocs() */
+                interface Callback {
+                    /** Fetch multiple documents, indexed and sorted by the `_id`. */
+                    allDocs(callback: async.Callback<Response>): void;
+                }
+                /** Promise pattern for allDocs() */
+                interface Promise {
+                    /** Fetch multiple documents, indexed and sorted by the `_id`. */
+                    allDocs(): async.Thenable<Response>;
+                }
+            }
+
             /** Contains the method and call/return types for bulkDocs() */
             module bulkDocs {
                 /** Interface for a bulk update array member (with `_id?`, `_rev?`, `_deleted?`) 
@@ -903,6 +944,7 @@ declare module pouchdb {
             /** pouchDB api: callback based */
             interface Callback extends
                 Properties
+                , methods.allDocs.Callback
                 , methods.bulkDocs.Callback
                 , methods.changes.Overloads
                 , methods.close.Callback
@@ -916,6 +958,7 @@ declare module pouchdb {
             /** pouchDB api: promise based */
             interface Promise extends
                 Properties
+                , methods.allDocs.Promise
                 , methods.bulkDocs.Promise
                 , methods.changes.Overloads
                 , methods.close.Promise
