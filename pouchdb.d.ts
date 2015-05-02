@@ -710,17 +710,50 @@ declare module pouchdb {
                 }
             }
 
-            /** Contains the method and call/return types for id() */
+            /** Contains the method and call/return types for `id()` */
             module id {
-                /** Callback pattern for id() */
+                /** Callback pattern for `id()` */
                 interface Callback {
                     /** Returns the instance id for the pouchdb */
                     id(callback?: async.Callback<string>): void;
                 }
-                /** Promise pattern for id() */
+                /** Promise pattern for `id()` */
                 interface Promise {
                     /** Returns the instance id for the pouchdb */
                     id(): async.Thenable<string>;
+                }
+            }
+
+            /** Contains the method and call/return types for `info()` */
+            module info {
+                /** Response object for `info()` */
+                interface Response {
+                    /** the name of the database, and also the unique identifier for the database */
+                    db_name: string;
+                    /** the total number of non-deleted documents in the database */
+                    doc_count: number;
+                    /** the sequence number of the database. It starts at 0 and gets incremented 
+                     * every time a document is added or modified. */
+                    update_seq: number
+                }
+                /** Response object for `info()` */
+                interface ResponseDebug extends Response {
+                    /** (IndexedDB) either `'base64'` or `'binary'` */
+                    idb_attachment_format: string;
+                    /** (WebSQL) true if the SQLite Plugin is being used */
+                    sqlite_plugin: string;
+                    /** (WebSQL) either `'UTF-8'` or `'UTF-16'`. */
+                    websql_encoding: string
+                }
+                /** Callback pattern for `info()` */
+                interface Callback {
+                    /** Returns the instance info for the pouchdb */
+                    info(callback?: async.Callback<Response|ResponseDebug>): void;
+                }
+                /** Promise pattern for `info()` */
+                interface Promise {
+                    /** Returns the instance info for the pouchdb */
+                    info(): async.Thenable<Response|ResponseDebug>;
                 }
             }
             
@@ -951,6 +984,7 @@ declare module pouchdb {
                 , methods.destroy.Callback
                 , methods.get.Callback
                 , methods.id.Callback
+                , methods.info.Callback
                 , methods.post.Callback
                 , methods.put.Callback
                 , methods.remove.Callback
@@ -965,6 +999,7 @@ declare module pouchdb {
                 , methods.destroy.Promise
                 , methods.get.Promise
                 , methods.id.Promise
+                , methods.info.Promise
                 , methods.post.Promise
                 , methods.put.Promise
                 , methods.remove.Promise

@@ -234,65 +234,65 @@ adapters.forEach(function (adapter) {
             });
         });
 
-        //it('#2935 new_edits=false correct number', function () {
-        //    var docs = [
-        //        {
-        //            "_id": "EE35E",
-        //            "_rev": "4-70b26",
-        //            "_deleted": true,
-        //            "_revisions": {
-        //                "start": 4,
-        //                "ids": ["70b26", "9f454", "914bf", "7fdf8"]
-        //            }
-        //        }, {
-        //            "_id": "EE35E",
-        //            "_rev": "3-f6d28",
-        //            "_revisions": { "start": 3, "ids": ["f6d28", "914bf", "7fdf8"] }
-        //        }
-        //    ];
+        it('#2935 new_edits=false correct number', () => {
+            var docs = [
+                {
+                    "_id": "EE35E",
+                    "_rev": "4-70b26",
+                    "_deleted": true,
+                    "_revisions": {
+                        "start": 4,
+                        "ids": ["70b26", "9f454", "914bf", "7fdf8"]
+                    }
+                }, {
+                    "_id": "EE35E",
+                    "_rev": "3-f6d28",
+                    "_revisions": { "start": 3, "ids": ["f6d28", "914bf", "7fdf8"] }
+                }
+            ];
 
-        //    var db = new PouchDB(dbs.name);
+            var db = new PouchDB(dbs.name);
 
-        //    return db.bulkDocs({ docs: docs, new_edits: false }).then(function (res) {
-        //        res.should.deep.equal([]);
-        //        return db.allDocs();
-        //    }).then(function (res) {
-        //        res.total_rows.should.equal(1);
-        //        return db.info();
-        //    }).then(function (info) {
-        //        info.doc_count.should.equal(1);
-        //    });
-        //});
+            return db.bulkDocs({ docs: docs, new_edits: false }).then((res) => {
+                expect(res).to.deep.equal([]);
+                return db.allDocs();
+            }).then((res) => {
+                expect(res.total_rows).to.equal(1);
+                return db.info();
+            }).then((info) => {
+                expect(info.doc_count).to.equal(1);
+            });
+        });
 
-        //it('#2935 new_edits=false correct number 2', function () {
-        //    var docs = [
-        //        {
-        //            "_id": "EE35E",
-        //            "_rev": "3-f6d28",
-        //            "_revisions": { "start": 3, "ids": ["f6d28", "914bf", "7fdf8"] }
-        //        }, {
-        //            "_id": "EE35E",
-        //            "_rev": "4-70b26",
-        //            "_deleted": true,
-        //            "_revisions": {
-        //                "start": 4,
-        //                "ids": ["70b26", "9f454", "914bf", "7fdf8"]
-        //            }
-        //        }
-        //    ];
+        it('#2935 new_edits=false correct number 2', () => {
+            var docs = [
+                {
+                    "_id": "EE35E",
+                    "_rev": "3-f6d28",
+                    "_revisions": { "start": 3, "ids": ["f6d28", "914bf", "7fdf8"] }
+                }, {
+                    "_id": "EE35E",
+                    "_rev": "4-70b26",
+                    "_deleted": true,
+                    "_revisions": {
+                        "start": 4,
+                        "ids": ["70b26", "9f454", "914bf", "7fdf8"]
+                    }
+                }
+            ];
 
-        //    var db = new PouchDB(dbs.name);
+            var db = new PouchDB(dbs.name);
 
-        //    return db.bulkDocs({ docs: docs, new_edits: false }).then(function (res) {
-        //        res.should.deep.equal([]);
-        //        return db.allDocs();
-        //    }).then(function (res) {
-        //        res.total_rows.should.equal(1);
-        //        return db.info();
-        //    }).then(function (info) {
-        //        info.doc_count.should.equal(1);
-        //    });
-        //});
+            return db.bulkDocs({ docs: docs, new_edits: false }).then((res) => {
+                expect(res).to.deep.equal([]);
+                return db.allDocs();
+            }).then((res) => {
+                expect(res.total_rows).to.equal(1);
+                return db.info();
+            }).then((info) => {
+                expect(info.doc_count).to.equal(1);
+            });
+        });
 
         //it('#2935 new_edits=false with single unauthorized', function (done) {
 
