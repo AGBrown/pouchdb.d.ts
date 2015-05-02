@@ -161,7 +161,7 @@ adapters.forEach(function (adapter) {
                 expect((<BulkDocsError>err).status).to.equal(
                     PouchDB.Errors.RESERVED_ID.status,
                     'correct error status returned');
-                expect((<BulkDocsError>err).status).to.equal(
+                expect((<BulkDocsError>err).message).to.equal(
                     PouchDB.Errors.RESERVED_ID.message,
                     'correct error message returned');
                 expect(info).not.to.exist('info is empty');
@@ -180,7 +180,7 @@ adapters.forEach(function (adapter) {
                 expect((<BulkDocsError>err).status).to.equal(
                     PouchDB.Errors.RESERVED_ID.status,
                     'correct error status returned');
-                expect((<BulkDocsError>err).status).to.equal(
+                expect((<BulkDocsError>err).message).to.equal(
                     PouchDB.Errors.RESERVED_ID.message,
                     'correct error message returned');
                 expect(info).not.to.exist('info is empty');
@@ -197,7 +197,7 @@ adapters.forEach(function (adapter) {
                 expect((<BulkDocsError>err).status).to.equal(
                     PouchDB.Errors.MISSING_BULK_DOCS.status,
                     'correct error returned');
-                expect((<BulkDocsError>err).status).to.equal(
+                expect((<BulkDocsError>err).message).to.equal(
                     PouchDB.Errors.MISSING_BULK_DOCS.message,
                     'correct error message returned');
                 done();
@@ -747,81 +747,87 @@ adapters.forEach(function (adapter) {
             db2.bulkDocs({ docs: [{ _id: id }] }, callback);
         });
 
-        //it('bulk docs input by array', function (done) {
-        //    var db = new PouchDB(dbs.name);
-        //    var docs = makeDocs(5);
-        //    db.bulkDocs(docs, function (err, results) {
-        //        results.should.have.length(5, 'results length matches');
-        //        for (var i = 0; i < 5; i++) {
-        //            results[i].id.should.equal(docs[i]._id, 'id matches');
-        //            should.exist(results[i].rev, 'rev is set');
-        //            // Update the doc
-        //            docs[i]._rev = results[i].rev;
-        //            docs[i].string = docs[i].string + '.00';
-        //        }
-        //        db.bulkDocs(docs, function (err, results) {
-        //            results.should.have.length(5, 'results length matches');
-        //            for (i = 0; i < 5; i++) {
-        //                results[i].id.should.equal(i.toString(), 'id matches again');
-        //                // set the delete flag to delete the docs in the next step
-        //                docs[i]._rev = results[i].rev;
-        //                docs[i]._deleted = true;
-        //            }
-        //            db.put(docs[0], function (err, doc) {
-        //                db.bulkDocs(docs, function (err, results) {
-        //                    results[0].name.should.equal(
-        //                        'conflict', 'First doc should be in conflict');
-        //                    should.not.exist(results[0].rev, 'no rev in conflict');
-        //                    for (i = 1; i < 5; i++) {
-        //                        results[i].id.should.equal(i.toString());
-        //                        should.exist(results[i].rev);
-        //                    }
-        //                    done();
-        //                });
-        //            });
-        //        });
-        //    });
-        //});
+        it('bulk docs input by array',(done) => {
+            var db = new PouchDB(dbs.name, (e, v) => { });
+            var docs = makeDocs(5);
+            db.bulkDocs(docs, (err, results) => {
+                expect(results).to.have.length(5, 'results length matches');
+                for (var i = 0; i < 5; i++) {
+                    expect(results[i].id).to.equal(docs[i]._id, 'id matches');
+                    expect(results[i].rev).to.exist('rev is set');
+                    // Update the doc
+                    (<ExistingTestDoc>docs[i])._rev = results[i].rev;
+                    docs[i].string = docs[i].string + '.00';
+                }
+                db.bulkDocs(<ExistingTestDoc[]>docs, (err, results) => {
+                    expect(results).to.have.length(5, 'results length matches');
+                    for (i = 0; i < 5; i++) {
+                        expect(results[i].id).to.equal(i.toString(), 'id matches again');
+                        // set the delete flag to delete the docs in the next step
+                        (<ExistingTestDoc>docs[i])._rev = results[i].rev;
+                        (<ExistingTestDoc>docs[i])._deleted = true;
+                    }
+                    db.put(docs[0], (err, doc) => {
+                        db.bulkDocs(docs, (err, results) => {
+                            expect((<BulkDocsError>results[0]).name).to.equal(
+                                'conflict', 'First doc should be in conflict');
+                            expect(results[0].rev).not.to.exist('no rev in conflict');
+                            for (i = 1; i < 5; i++) {
+                                expect(results[i].id).to.equal(i.toString());
+                                expect(results[i].rev).to.exist;
+                            }
+                            done();
+                        });
+                    });
+                });
+            });
+        });
 
-        //it('Bulk empty list', function (done) {
-        //    var db = new PouchDB(dbs.name);
-        //    db.bulkDocs([], function (err, res) {
-        //        done(err);
-        //    });
-        //});
+        it('Bulk empty list', (done) => {
+            var db = new PouchDB(dbs.name, (e, v) => { });
+            db.bulkDocs([], (err, res) => {
+                done(err);
+            });
+        });
 
-        //it('Bulk docs not an array', function (done) {
-        //    var db = new PouchDB(dbs.name);
-        //    db.bulkDocs({ docs: 'foo' }, function (err, res) {
-        //        should.exist(err, 'error reported');
-        //        err.status.should.equal(PouchDB.Errors.MISSING_BULK_DOCS.status,
+        //  typescript: not a test that we can do as ts enforces that docs _is_ an array
+        //it('Bulk docs not an array', (done) => {
+        //    var db = new PouchDB(dbs.name,(e, v) => { });
+        //    db.bulkDocs({ docs: 'foo' }, (err, res) => {
+        //        expect(err).to.exist('error reported');
+        //        expect(err.status).to.equal(PouchDB.Errors.MISSING_BULK_DOCS.status,
         //            'correct error status returned');
-        //        err.message.should.equal(PouchDB.Errors.MISSING_BULK_DOCS.message,
+        //        expect(err.message).to.equal(PouchDB.Errors.MISSING_BULK_DOCS.message,
         //            'correct error message returned');
         //        done();
         //    });
         //});
+        
+        it('Bulk docs not an array', (done) => {
+            var db = new PouchDB(dbs.name,(e, v) => { });
+            db.bulkDocs({ docs: ['foo'] }, (err, res) => {
+                expect(err).to.exist('error reported');
+                expect((<BulkDocsError>err).status).to.equal(
+                    PouchDB.Errors.NOT_AN_OBJECT.status,
+                    'correct error status returned');
+                expect((<BulkDocsError>err).message).to.equal(
+                    PouchDB.Errors.NOT_AN_OBJECT.message,
+                    'correct error message returned');
+            });
+            db.bulkDocs({ docs: [[]] }, (err, res) => {
+                expect(err).to.exist('error reported');
+                expect((<BulkDocsError>err).status).to.equal(
+                    PouchDB.Errors.NOT_AN_OBJECT.status,
+                    'correct error status returned');
+                expect((<BulkDocsError>err).message).to.equal(
+                    PouchDB.Errors.NOT_AN_OBJECT.message,
+                    'correct error message returned');
+                done();
+            });
+        });
 
-        //it('Bulk docs not an object', function (done) {
-        //    var db = new PouchDB(dbs.name);
-        //    db.bulkDocs({ docs: ['foo'] }, function (err, res) {
-        //        should.exist(err, 'error reported');
-        //        err.status.should.equal(PouchDB.Errors.NOT_AN_OBJECT.status,
-        //            'correct error status returned');
-        //        err.message.should.equal(PouchDB.Errors.NOT_AN_OBJECT.message,
-        //            'correct error message returned');
-        //    });
-        //    db.bulkDocs({ docs: [[]] }, function (err, res) {
-        //        should.exist(err, 'error reported');
-        //        err.status.should.equal(PouchDB.Errors.NOT_AN_OBJECT.status,
-        //            'correct error status returned');
-        //        err.message.should.equal(PouchDB.Errors.NOT_AN_OBJECT.message,
-        //            'correct error message returned');
-        //        done();
-        //    });
-        //});
-
-        //it('Bulk docs two different revisions to same document id', function (done) {
+        //  todo: get returning an array
+        //it('Bulk docs two different revisions to same document id', (done) => {
         //    var db = new PouchDB(dbs.name);
         //    var docid = "mydoc";
 
@@ -841,6 +847,7 @@ adapters.forEach(function (adapter) {
         //    var a_doc = {
         //        _id: docid,
         //        _rev: numRevs + '-' + a_conflict,
+        //        //  todo: revisions array in d.ts
         //        _revisions: {
         //            start: numRevs,
         //            ids: [a_conflict].concat(uuids)
@@ -862,20 +869,20 @@ adapters.forEach(function (adapter) {
         //    return db.bulkDocs([a_doc, b_doc], { new_edits: false })
 
         //        .then(function () {
-        //        return db.get(docid, { open_revs: "all" }).then(function (resp) {
-        //            resp.length.should.equal(2, 'correct number of open revisions');
-        //            resp[0].ok._id.should.equal(docid, 'rev 1, correct document id');
-        //            resp[1].ok._id.should.equal(docid, 'rev 2, correct document id');
+        ////        return db.get(docid, { open_revs: "all" }).then(function (resp) {
+        ////            resp.length.should.equal(2, 'correct number of open revisions');
+        ////            resp[0].ok._id.should.equal(docid, 'rev 1, correct document id');
+        ////            resp[1].ok._id.should.equal(docid, 'rev 2, correct document id');
           
-        //            // order of revisions is not specified
-        //            ((resp[0].ok._rev === a_doc._rev &&
-        //                resp[1].ok._rev === b_doc._rev) ||
-        //                (resp[0].ok._rev === b_doc._rev &&
-        //                    resp[1].ok._rev === a_doc._rev)).should.equal(true);
-        //        });
+        ////            // order of revisions is not specified
+        ////            ((resp[0].ok._rev === a_doc._rev &&
+        ////                resp[1].ok._rev === b_doc._rev) ||
+        ////                (resp[0].ok._rev === b_doc._rev &&
+        ////                    resp[1].ok._rev === a_doc._rev)).should.equal(true);
+        ////        });
         //    })
 
-        //        .then(function () { done(); }, done);
+        //        .then(() => { done(); }, done);
         //});
 
     });

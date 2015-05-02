@@ -1124,6 +1124,8 @@ declare module pouchdb {
         MISSING_BULK_DOCS: ErrorDefinition;
         /** A document was not found */
         MISSING_DOC: ErrorDefinition;
+        /** Document must be a JSON object */
+        NOT_AN_OBJECT: ErrorDefinition;
     }
     
     /** Static-side interface for PouchDB */
