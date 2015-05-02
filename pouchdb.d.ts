@@ -1,6 +1,6 @@
 // Type definitions for pouchdb v3.4.0
 // Project: http://pouchdb.com/, https://github.com/pouchdb/pouchdb
-// Definitions by: Andy Brown <https://github.com/AGBrown>
+// Definitions by: Andy Brown <https://github.com/AGBrown> (https://github.com/AGBrown/pouchdb.d.ts)
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 
 //  Progress: up to http://pouchdb.com/api.html#fetch_document
@@ -12,6 +12,7 @@
 declare module "pouchdb" {
     export = pouchdb;
 }
+/** The PouchDB type */
 declare var PouchDB: pouchdb.PouchDB;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -179,7 +180,8 @@ declare module pouchdb {
                 _id: string;
             }
 
-            /** Interface for a doc (with `_id`, `_rev`, `_deleted`) passed to the put() method */
+            /** Interface for a doc (with `_id`, `_rev`, `_deleted`) passed to 
+             *    the `put()` and `bulkDocs()` method */
             interface ExistingDoc extends NewDoc {
                 /** The revision of the doc to be operated on */
                 _rev: string;
@@ -191,55 +193,326 @@ declare module pouchdb {
                 _deleted?: boolean;
             }
 
+            /** Options for `changes()` and `allDocs()` output */
+            interface BasePaginationOptions {
+                /**
+                 * Include the associated document in each row in the `doc` field
+                 * @see conflicts
+                 * @see attachments
+                 * @default `false`
+                 */
+                include_docs?: boolean;
+                /**
+                 * Include conflict information in the `_conflicts` field (see {@linkcode #include_docs})
+                 * @see include_docs
+                 * @see attachments
+                 * @default `false`
+                 */
+                conflicts?: boolean;
+                /**
+                 * Include attachment data as base64-encoded string. (see {@linkcode #include_docs})
+                 * @see include_docs
+                 * @see conflicts
+                 * @default `false`
+                 */
+                attachments?: boolean;
+                /**
+                 * Reverse the order of the output documents
+                 * @default `false`
+                 */
+                descending?: boolean;
+                /**
+                 * Maximum number of documents to return.
+                 * @default undefined
+                 */
+                limit?: number;
+            }
+
             //////////////////////////// Methods ///////////////////////////////
             // Please keep these modules in alphabetical order
 
+            /** Contains the method and call/return types for allDocs() */
+            module allDocs {
+                /** A stored document returned for `allDocs` */
+                interface StoredDoc extends ExistingDoc {
+                    /** The document attachments */
+                    _attachments?: {};
+                }
+                /** A container for a document as returned by `allDocs()` */
+                interface DocContainer<D> extends ExistingDoc {
+                    /** The document */
+                    doc: D;
+                    /** The document id */
+                    id: string;
+                    /** The document key */
+                    key: string;
+                    /** @todo not sure what this is */
+                    value: {
+                        rev: string;
+                        deleted?: boolean;
+                    }
+                }
+                /** Response object for `allDocs()` */
+                interface Response {
+                    /** The `skip` if provided, or in CouchDB the actual offset */
+                    offset: number;
+                    /** the total number of non-deleted documents in the database */
+                    total_rows: number;
+                    /** rows containing the documents, or just the `_id`/`_revs` if you didn't
+                     *  set `include_docs` to `true`
+                     */
+                    rows: DocContainer<StoredDoc>[];
+                }
+
+                /** Options for `allDocs()` output */
+                interface RangeOptions extends BasePaginationOptions {
+                    /**
+                     * Get documents with IDs in a certain range from this to {@linkcode #endkey}
+                     * (inclusive/see {@linkcode #inclusive_end}).
+                     */
+                    startkey?: string;
+                    /**
+                     * Get documents with IDs in a certain range from {@linkcode #startkey} to this
+                     * (inclusive/see {@linkcode #inclusive_end}).
+                     */
+                    endkey?: string;
+                    /**
+                     * Include documents having an ID equal to the given {@linkcode #endkey}
+                     * @default false
+                     */
+                    inclusive_end?: boolean;
+
+                    /**
+                     * Number of docs to skip before returning (warning: poor performance on IndexedDB/LevelDB!).
+                     */
+                    skip?: number
+                }
+
+                /** Options for `allDocs()` output */
+                interface PaginationOptions extends BasePaginationOptions {
+                    /**
+                     * Number of docs to skip before returning (warning: poor performance on IndexedDB/LevelDB!).
+                     */
+                    skip?: number
+                }
+
+                /** Options for `allDocs()` output */
+                interface FilterOptions extends BasePaginationOptions {
+                    /** Only return documents with IDs matching this string key. */
+                    key?: string;
+                    /** Array of string keys to fetch in a single shot. */
+                    keys?: string;
+                }
+
+                /** Callback pattern for allDocs() */
+                interface Callback {
+                    /** Fetch multiple documents, indexed and sorted by the `_id`. */
+                    allDocs(callback?: async.Callback<Response>): void;
+                    /** Fetch multiple documents, indexed and sorted by the `_id`. */
+                    allDocs(options: RangeOptions, callback?: async.Callback<Response>): void;
+                    /** Fetch multiple documents, indexed and sorted by the `_id`. */
+                    allDocs(options: PaginationOptions, callback?: async.Callback<Response>): void;
+                    /** Fetch multiple documents, indexed and sorted by the `_id`. */
+                    allDocs(options: FilterOptions, callback?: async.Callback<Response>): void;
+                }
+                /** Promise pattern for allDocs() */
+                interface Promise {
+                    /** Fetch multiple documents, indexed and sorted by the `_id`. */
+                    allDocs(): async.Thenable<Response>;
+                    /** Fetch multiple documents, indexed and sorted by the `_id`. */
+                    allDocs(options: RangeOptions): async.Thenable<Response>;
+                    /** Fetch multiple documents, indexed and sorted by the `_id`. */
+                    allDocs(options: PaginationOptions): async.Thenable<Response>;
+                    /** Fetch multiple documents, indexed and sorted by the `_id`. */
+                    allDocs(options: FilterOptions): async.Thenable<Response>;
+                }
+            }
+
+            /** Contains the method and call/return types for bulkDocs() */
+            module bulkDocs {
+                /** Interface for a bulk update array member (with `_id?`, `_rev?`, `_deleted?`) 
+                 *    passed to the bulkDocs() method */
+                interface MixedDoc {
+                    /** The id of the doc to be operated on */
+                    _id?: string;
+                    /** The revision of the doc to be operated on */
+                    _rev?: string;
+                    /**
+                     * indicates the deleted status of a doc
+                     * @default: false
+                     */
+                    _deleted?: boolean;
+                }
+                /** Options for `bulkDocs()` */
+                interface DocumentPouch<D extends NewDoc | MixedDoc> {
+                    /** The array of documents to update */
+                    docs: D[];
+                }
+                /** Options for `bulkDocs()` */
+                interface DocumentPouchAndOptions<D extends NewDoc | MixedDoc>
+                    extends BulkDocsOptions {
+                    /** The array of documents to update */
+                    docs: D[];
+                }
+                /** The options type for `bulkDocs()` */
+                interface BulkDocsOptions extends options.EmptyOptions {
+                    /** Advanced option: when set to `false` allows you to post and overwrite existing documents. */
+                    new_edits?: boolean;
+                }
+                /** Error details for a document in a `bulkDocs()` operation 
+                 * @todo - does this really extend OperationResponse, or is `id` just sometimes present?
+                 */
+                interface BulkDocsError extends OperationResponse {
+                    /** The error status (e.g. `409`) */
+                    status: number;
+                    /** The error name (e.g. `'conflict'`) */
+                    name: string;
+                    /** The error message */
+                    message: string;
+                    /** `true` if this is an error */
+                    error: boolean;
+                }
+                /** Type union for the possible info/error type alternates returned by `bulkDocs()` */
+                type BulkDocsResponse = OperationResponse | BulkDocsError;
+                /** 
+                 * Callback pattern for bulkDocs() 
+                 * @todo a mixed doc array for mixed CUD updates
+                 * @todo new_edits
+                 */
+                interface Callback {
+                    /**
+                     * Update/Delete each doc in an array of documents.
+                     * @param options an options object with the documents to update/delete
+                     */
+                    bulkDocs(folder: DocumentPouchAndOptions<ExistingDoc>, callback?: async.Callback<BulkDocsResponse[]>): void;
+                    /**
+                     * Update/Delete each doc in an array of documents.
+                     * @param options an options object with the documents to update/delete
+                     */
+                    bulkDocs(folder: DocumentPouch<ExistingDoc>, options: BulkDocsOptions, callback?: async.Callback<BulkDocsResponse[]>): void;
+                    /**
+                     * Update/Delete each doc in an array of documents.
+                     * @param doc the doc
+                     * @todo define options shape - docs don't make it clear what this is
+                     */
+                    bulkDocs(docs: ExistingDoc[], callback?: async.Callback<BulkDocsResponse[]>): void;
+                    /**
+                     * Update/Delete each doc in an array of documents.
+                     * @param doc the doc
+                     * @param options
+                     * @todo define options shape - docs don't make it clear what this is
+                     */
+                    bulkDocs(docs: ExistingDoc[], options: BulkDocsOptions, callback?: async.Callback<BulkDocsResponse[]>): void;                    
+                    
+                    /**
+                     * Create multiple documents.
+                     * @param doc the doc
+                     */
+                    bulkDocs(folder: DocumentPouchAndOptions<NewDoc>, callback?: async.Callback<BulkDocsResponse[]>): void;
+                    /**
+                     * Create multiple documents.
+                     * @param doc the doc
+                     */
+                    bulkDocs(folder: DocumentPouch<NewDoc>, options: BulkDocsOptions, callback?: async.Callback<BulkDocsResponse[]>): void;
+                    /**
+                     * Create multiple documents.
+                     * @param doc the doc
+                     * @todo define options shape - docs don't make it clear what this is
+                     */
+                    bulkDocs(docs: NewDoc[], callback?: async.Callback<BulkDocsResponse[]>): void;
+                    /**
+                     * Create multiple documents.
+                     * @param doc the doc
+                     * @param options
+                     * @todo define options shape - docs don't make it clear what this is
+                     */
+                    bulkDocs(docs: NewDoc[], options: BulkDocsOptions, callback?: async.Callback<BulkDocsResponse[]>): void;                    
+                    
+                    /**
+                     * Perform mixed Create/Update/Delete operations on multiple documents.
+                     * @param options the doc
+                     */
+                    bulkDocs(folder: DocumentPouchAndOptions<MixedDoc>, callback?: async.Callback<BulkDocsResponse[]>): void;
+                    /**
+                     * Perform mixed Create/Update/Delete operations on multiple documents.
+                     * @param options the doc
+                     */
+                    bulkDocs(folder: DocumentPouch<MixedDoc>, options: BulkDocsOptions, callback?: async.Callback<BulkDocsResponse[]>): void;
+                    /**
+                     * Perform mixed Create/Update/Delete operations on multiple documents.
+                     * @param doc the doc
+                     * @todo define options shape - docs don't make it clear what this is
+                     */
+                    bulkDocs(docs: MixedDoc[], callback?: async.Callback<BulkDocsResponse[]>): void;
+                    /**
+                     * Perform mixed Create/Update/Delete operations on multiple documents.
+                     * @param doc the doc
+                     * @param options
+                     * @todo define options shape - docs don't make it clear what this is
+                     */
+                    bulkDocs(docs: MixedDoc[], options: BulkDocsOptions, callback?: async.Callback<BulkDocsResponse[]>): void;                    
+                }
+                /** Promise pattern for bulkDocs() */
+                interface Promise {
+                    /**
+                     * Update/Delete each doc in an array of documents.
+                     * @param folder the documents storage object
+                     * @param options
+                     * @todo define options shape - docs don't make it clear what this is
+                     */
+                    bulkDocs(folder: DocumentPouch<ExistingDoc>, options?: BulkDocsOptions): async.Thenable<BulkDocsResponse[]>;
+                    /**
+                     * Update/Delete each doc in an array of documents.
+                     * @param doc the doc
+                     * @param options
+                     * @todo define options shape - docs don't make it clear what this is
+                     */
+                    bulkDocs(docs: ExistingDoc[], options?: BulkDocsOptions): async.Thenable<BulkDocsResponse[]>;
+                    /**
+                     * Create multiple documents.
+                     * @param doc the doc
+                     * @param options
+                     */
+                    bulkDocs(folder: DocumentPouch<NewDoc>): async.Thenable<BulkDocsResponse[]>;
+                    /**
+                     * Create multiple documents.
+                     * @param doc the doc
+                     * @param options
+                     * @todo define options shape - docs don't make it clear what this is
+                     */
+                    bulkDocs(docs: NewDoc[], options?: BulkDocsOptions): async.Thenable<BulkDocsResponse[]>;
+                    /**
+                     * Perform mixed Create/Update/Delete operations on multiple documents.
+                     * @param docs the documents to act on
+                     * @param options
+                     */
+                    bulkDocs(folder: DocumentPouch<MixedDoc>): async.Thenable<BulkDocsResponse[]>;
+                    /**
+                     * Perform mixed Create/Update/Delete operations on multiple documents.
+                     * @param docs the documents to act on
+                     * @param options
+                     * @todo define options shape - docs don't make it clear what this is
+                     */
+                    bulkDocs(docs: MixedDoc[], options?: BulkDocsOptions): async.Thenable<BulkDocsResponse[]>;
+                }
+            }
+
             /** Contains the method and call/return types for changes() */
             module changes {
+
                 /** Options for `changes()` output */
-                interface BaseOptions {
+                interface BaseOptions extends BasePaginationOptions {
                     /**
                      * Does "live" changes, using CouchDB’s `_longpoll_` feed if remote.
                      * @default `false`
                      */
                     live?: boolean;
                     /**
-                     * Include the associated document with each change
-                     * @see conflicts
-                     * @see attachments
-                     * @default `false`
-                     */
-                    include_docs?: boolean;
-                    /**
-                     * Include conflicts (see {@linkcode #include_docs})
-                     * @see include_docs
-                     * @see attachments
-                     * @default `false`
-                     */
-                    conflicts?: boolean;
-                    /**
-                     * Include attachments (see {@linkcode #include_docs})
-                     * @see include_docs
-                     * @see conflicts
-                     * @default `false`
-                     */
-                    attachments?: boolean;
-                    /**
-                     * Reverse the order of output documents
-                     * @default `false`
-                     */
-                    descending?: boolean;
-                    /**
                      * Start the results from the change immediately after the given sequence number. 
                      * You can also pass `'now'` if you want only new changes (when `live` is `true`).
                      * @default undefined
                      */
                     since?: any; // string | number
-                    /**
-                     * Limit the number of results to this number.
-                     * @default undefined
-                     */
-                    limit?: number;
                     /**
                      * Request timeout (in milliseconds).
                      * @default undefined
@@ -330,7 +603,7 @@ declare module pouchdb {
                     /** 
                      * The `change` event listener. This event fires when a change has been found.
                      */
-                    onChange: (change: ChangeInfo) => void;
+                    onChange?: (change: ChangeInfo) => void;
 
                     ///** The `create` event listener */
                     //create?: (???) => void;
@@ -513,17 +786,50 @@ declare module pouchdb {
                 }
             }
 
-            /** Contains the method and call/return types for id() */
+            /** Contains the method and call/return types for `id()` */
             module id {
-                /** Callback pattern for id() */
+                /** Callback pattern for `id()` */
                 interface Callback {
                     /** Returns the instance id for the pouchdb */
                     id(callback?: async.Callback<string>): void;
                 }
-                /** Promise pattern for id() */
+                /** Promise pattern for `id()` */
                 interface Promise {
                     /** Returns the instance id for the pouchdb */
                     id(): async.Thenable<string>;
+                }
+            }
+
+            /** Contains the method and call/return types for `info()` */
+            module info {
+                /** Response object for `info()` */
+                interface Response {
+                    /** the name of the database, and also the unique identifier for the database */
+                    db_name: string;
+                    /** the total number of non-deleted documents in the database */
+                    doc_count: number;
+                    /** the sequence number of the database. It starts at 0 and gets incremented 
+                     * every time a document is added or modified. */
+                    update_seq: number
+                }
+                /** Response object for `info()` */
+                interface ResponseDebug extends Response {
+                    /** (IndexedDB) either `'base64'` or `'binary'` */
+                    idb_attachment_format: string;
+                    /** (WebSQL) true if the SQLite Plugin is being used */
+                    sqlite_plugin: string;
+                    /** (WebSQL) either `'UTF-8'` or `'UTF-16'`. */
+                    websql_encoding: string
+                }
+                /** Callback pattern for `info()` */
+                interface Callback {
+                    /** Returns the instance info for the pouchdb */
+                    info(callback?: async.Callback<Response|ResponseDebug>): void;
+                }
+                /** Promise pattern for `info()` */
+                interface Promise {
+                    /** Returns the instance info for the pouchdb */
+                    info(): async.Thenable<Response|ResponseDebug>;
                 }
             }
             
@@ -747,26 +1053,32 @@ declare module pouchdb {
             /** pouchDB api: callback based */
             interface Callback extends
                 Properties
-                , methods.destroy.Callback
+                , methods.allDocs.Callback
+                , methods.bulkDocs.Callback
+                , methods.changes.Overloads
                 , methods.close.Callback
+                , methods.destroy.Callback
                 , methods.get.Callback
                 , methods.id.Callback
+                , methods.info.Callback
                 , methods.post.Callback
                 , methods.put.Callback
                 , methods.remove.Callback
-                , methods.changes.Overloads
             {}
             /** pouchDB api: promise based */
             interface Promise extends
                 Properties
-                , methods.destroy.Promise
+                , methods.allDocs.Promise
+                , methods.bulkDocs.Promise
+                , methods.changes.Overloads
                 , methods.close.Promise
+                , methods.destroy.Promise
                 , methods.get.Promise
                 , methods.id.Promise
+                , methods.info.Promise
                 , methods.post.Promise
                 , methods.put.Promise
                 , methods.remove.Promise
-                , methods.changes.Overloads
             {}
         }
         /** The main pouchDB interface properties */
@@ -793,6 +1105,33 @@ declare module pouchdb {
          * the `then` of the constructor.
          */
         interface PouchDB extends promise.PouchDB, async.Thenable<promise.PouchDB> { }
+    }
+
+    /** A pouch error definition */
+    interface ErrorDefinition {
+        /** The error status number */
+        status: number;
+        /** The error message */
+        message: string;
+        /** The error message */
+        reason: string;
+    }
+    /** The collection of error definitions defined for PouchDB */
+    interface ErrorDefinitions {
+        /** Indicates that a document _id was set to a reserved id */
+        RESERVED_ID: ErrorDefinition;
+        /** Missing JSON list of 'docs' */
+        MISSING_BULK_DOCS: ErrorDefinition;
+        /** A document was not found */
+        MISSING_DOC: ErrorDefinition;
+        /** Document must be a JSON object */
+        NOT_AN_OBJECT: ErrorDefinition;
+    }
+    
+    /** Static-side interface for PouchDB */
+    export interface PouchDB {
+        /**  */
+        Errors: ErrorDefinitions;
     }
     /**
      * The main pouchDB entry point. The constructors here will return either a 
