@@ -722,29 +722,30 @@ adapters.forEach(function (adapter) {
             });
         });
 
-        //it('handles simultaneous writes', function (done) {
-        //    var db1 = new PouchDB(dbs.name);
-        //    var db2 = new PouchDB(dbs.name);
-        //    var id = 'fooId';
-        //    var errorNames = [];
-        //    var ids = [];
-        //    var numDone = 0;
-        //    function callback(err, res) {
-        //        should.not.exist(err);
-        //        if (res[0].error) {
-        //            errorNames.push(res[0].name);
-        //        } else {
-        //            ids.push(res[0].id);
-        //        }
-        //        if (++numDone === 2) {
-        //            errorNames.should.deep.equal(['conflict']);
-        //            ids.should.deep.equal([id]);
-        //            done();
-        //        }
-        //    }
-        //    db1.bulkDocs({ docs: [{ _id: id }] }, callback);
-        //    db2.bulkDocs({ docs: [{ _id: id }] }, callback);
-        //});
+        it('handles simultaneous writes', (done) => {
+            var db1 = new PouchDB(dbs.name, (e, v) => { });
+            var db2 = new PouchDB(dbs.name, (e, v) => { });
+            var id = 'fooId';
+            var errorNames = [];
+            var ids = [];
+            var numDone = 0;
+            var callback: pouchdb.async.Callback<pouchdb.api.methods.bulkDocs.BulkDocsResponse[]> =
+                (err, res) => {
+                    expect(err).not.to.exist;
+                    if ((<BulkDocsError>res[0]).error) {
+                        errorNames.push((<BulkDocsError>res[0]).name);
+                    } else {
+                        ids.push(res[0].id);
+                    }
+                    if (++numDone === 2) {
+                        expect(errorNames).to.deep.equal(['conflict']);
+                        expect(ids).to.deep.equal([id]);
+                        done();
+                    }
+                };
+            db1.bulkDocs({ docs: [{ _id: id }] }, callback);
+            db2.bulkDocs({ docs: [{ _id: id }] }, callback);
+        });
 
         //it('bulk docs input by array', function (done) {
         //    var db = new PouchDB(dbs.name);
