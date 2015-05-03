@@ -20,7 +20,7 @@ type ValueDoc = pouchdb.test.integration.ValueDoc;
 var adapters: string[] = ['http', 'local'];
 
 adapters.forEach((adapter: string) => {
-    describe("test.basics.js-" + adapter,() => {
+    describe("test.basics.js-" + adapter, () => {
         var dbs: dbsShape = {};
         beforeEach((done) => {
             dbs.name = testUtils.adapterUrl(adapter, 'testdb');
@@ -31,7 +31,7 @@ adapters.forEach((adapter: string) => {
             testUtils.cleanup([dbs.name], done);
         });
 
-        it("create a pouch",(done) => {
+        it("create a pouch", (done) => {
             new PouchDB(dbs.name, (err, db) => {
                 //  typescript: can't really handle should, so need to use expect instead
                 expect(err).not.to.exist;
@@ -79,7 +79,7 @@ adapters.forEach((adapter: string) => {
         });
 
         it('Add a doc', (done) => {
-            var db = new PouchDB(dbs.name,(err, val) => { });
+            var db = new PouchDB(dbs.name, (err, val) => { });
             db.post({ test: 'somestuff' }, (err, info) => {
                 expect(err).not.to.exist;
                 done();
@@ -109,7 +109,7 @@ adapters.forEach((adapter: string) => {
         });
 
         it('Modify a doc with sugar syntax', (done) => {
-            var db = new PouchDB(dbs.name,(err, val) => { });
+            var db = new PouchDB(dbs.name, (err, val) => { });
             db.post({ test: 'somestuff' }, (err, info) => {
                 db.put({ another: 'test' }, info.id, info.rev, (err, info2) => {
                     expect(info.rev).not.to.equal(info2.rev);
@@ -122,9 +122,9 @@ adapters.forEach((adapter: string) => {
             });
         });
 
-        it('Modify a doc with sugar syntax and omit the _id',(done) => {
-            var db = new PouchDB(dbs.name,(err, db) => { });
-            db.post({ test: 'somestuff' },(err, info) => {
+        it('Modify a doc with sugar syntax and omit the _id', (done) => {
+            var db = new PouchDB(dbs.name, (err, db) => { });
+            db.post({ test: 'somestuff' }, (err, info) => {
                 db.put({ another: 'test', _id: info.id }, info.rev,
                     (err, info2) => {
                         expect(info.rev).not.to.equal(info2.rev);
@@ -153,7 +153,7 @@ adapters.forEach((adapter: string) => {
         });
 
         it('Read db id', (done) => {
-            var db = new PouchDB(dbs.name,(err, db) => { });
+            var db = new PouchDB(dbs.name, (err, db) => { });
             db.id(function (err, id) {
                 expect(id).to.be.a('string');
                 done(err);
@@ -168,22 +168,22 @@ adapters.forEach((adapter: string) => {
             });
         });
 
-        it('Close db',(done) => {
+        it('Close db', (done) => {
             new PouchDB(dbs.name, (err, db) => {
                 db.close(done);
             });
         });
 
-        it('Close db with a promise',(done) => {
+        it('Close db with a promise', (done) => {
             new PouchDB(dbs.name).then((db) => {
                 db.close();
             }).then(done, done);
         });
 
-        it('Read db id after closing Close',(done) => {
+        it('Read db id after closing Close', (done) => {
             new PouchDB(dbs.name, (err, db) => {
                 db.close((error) => {
-                    db = new PouchDB(dbs.name,() => { });
+                    db = new PouchDB(dbs.name, () => { });
                     db.id((err, id) => {
                         expect(id).to.be.a('string');
                         done();
@@ -192,15 +192,15 @@ adapters.forEach((adapter: string) => {
             });
         });
 
-        it('Modify a doc with incorrect rev',(done) => {
-            var db = new PouchDB(dbs.name,(err, db) => { });
-            db.post({ test: 'somestuff' },(err, info) => {
+        it('Modify a doc with incorrect rev', (done) => {
+            var db = new PouchDB(dbs.name, (err, db) => { });
+            db.post({ test: 'somestuff' }, (err, info) => {
                 var nDoc = {
                     _id: info.id,
                     _rev: info.rev + 'broken',
                     another: 'test'
                 };
-                db.put(nDoc,(err, info2) => {
+                db.put(nDoc, (err, info2) => {
                     expect(err).to.exist;
                     done();
                 });
@@ -208,8 +208,8 @@ adapters.forEach((adapter: string) => {
         });
 
         it('Remove doc', (done) => {
-            var db = new PouchDB(dbs.name,(err, db) => { });
-            db.post({ test: 'somestuff' },(err, info) => {
+            var db = new PouchDB(dbs.name, (err, db) => { });
+            db.post({ test: 'somestuff' }, (err, info) => {
                 db.remove({
                     test: 'somestuff',
                     _id: info.id,
@@ -223,7 +223,7 @@ adapters.forEach((adapter: string) => {
             });
         });
 
-        it('Remove doc with a promise',(done) => {
+        it('Remove doc with a promise', (done) => {
             var db = new PouchDB(dbs.name);
             db.post({ test: 'someotherstuff' }).then((info) => {
                 return db.remove({
@@ -242,8 +242,8 @@ adapters.forEach((adapter: string) => {
         });
 
         it('Remove doc with new syntax', (done) => {
-            var db = new PouchDB(dbs.name,(err, db) => { });
-            db.post({ test: 'somestuff' },(err, info) => {
+            var db = new PouchDB(dbs.name, (err, db) => { });
+            db.post({ test: 'somestuff' }, (err, info) => {
                 db.remove(info.id, info.rev, (err) => {
                     expect(err).not.to.exist;
                     db.get(info.id, (err) => {
@@ -271,10 +271,10 @@ adapters.forEach((adapter: string) => {
         });
 
         it('Doc removal leaves only stub', (done) => {
-            var db = new PouchDB(dbs.name,(err, db) => { });
+            var db = new PouchDB(dbs.name, (err, db) => { });
             db.put({ _id: 'foo', value: 'test' }, (err, res) => {
-                db.get<ValueDoc>('foo',(err, doc) => {
-                    db.remove(doc,(err, res) => {
+                db.get<ValueDoc>('foo', (err, doc) => {
+                    db.remove(doc, (err, res) => {
                         //  typescript: this is a bit of a lie - it is only an "ExistingDoc" after deletion
                         db.get<ValueDoc>('foo', { rev: res.rev },
                             (err, doc) => {
@@ -309,7 +309,7 @@ adapters.forEach((adapter: string) => {
         });
 
         it('Remove doc, no callback', (done) => {
-            var db = new PouchDB(dbs.name,(e, v) => { });
+            var db = new PouchDB(dbs.name, (e, v) => { });
             var changes = db.changes({
                 live: true,
                 include_docs: true,
@@ -338,7 +338,7 @@ adapters.forEach((adapter: string) => {
                 test: 'ing',
                 _id: undefined,
                 _rev: undefined
-            },(err) => {
+            }, (err) => {
                 expect(err).to.exist;
                 done();
             });
@@ -375,7 +375,7 @@ adapters.forEach((adapter: string) => {
         it('Delete doc with id + rev + no opts, callback style', (done) => {
             var db = new PouchDB(dbs.name, (e, v) => { });
             var doc: pouchdb.api.methods.NewDoc = { _id: 'foo' };
-            db.put(doc,(err, info) => {
+            db.put(doc, (err, info) => {
                 expect(err).not.to.exist;
                 db.remove(doc._id, info.rev, (err) => {
                     expect(err).not.to.exist;
@@ -418,14 +418,14 @@ adapters.forEach((adapter: string) => {
         //    });
         //});
 
-        it('Bulk docs', function (done) {
+        it('Bulk docs', (done) => {
             var db = new PouchDB(dbs.name, (e, v) => { });
             db.bulkDocs({
                 docs: [
                     { test: 'somestuff' },
                     { test: 'another' }
                 ]
-            }, function (err, infos) {
+            }, (err, infos) => {
                     expect(infos.length).to.equal(2);
                     expect((<BulkDocsInfo>infos[0]).ok).to.equal(true);
                     expect((<BulkDocsInfo>infos[1]).ok).to.equal(true);
@@ -434,12 +434,12 @@ adapters.forEach((adapter: string) => {
         });
 
         //  todo: see: https://github.com/AGBrown/pouchdb.d.ts/issues/4
-        it('Bulk docs - api version', function (done) {
+        it('Bulk docs - api version', (done) => {
             var db = new PouchDB(dbs.name, (e, v) => { });
             db.bulkDocs([
                 { test: 'somestuff' },
                 { test: 'another' }
-            ], function (err, infos) {
+            ], (err, infos) => {
                     expect(infos.length).to.equal(2);
                     expect((<BulkDocsInfo>infos[0]).ok).to.equal(true);
                     expect((<BulkDocsInfo>infos[1]).ok).to.equal(true);
@@ -447,14 +447,14 @@ adapters.forEach((adapter: string) => {
                 });
         });
 
-        it('Bulk docs with a promise', function (done) {
+        it('Bulk docs with a promise', (done) => {
             var db = new PouchDB(dbs.name);
             db.bulkDocs({
                 docs: [
                     { test: 'somestuff' },
                     { test: 'another' }
                 ]
-            }).then(function (infos) {
+            }).then((infos) => {
                 expect(infos.length).to.equal(2);
                 expect((<BulkDocsInfo>infos[0]).ok).to.equal(true);
                 expect((<BulkDocsInfo>infos[1]).ok).to.equal(true);
@@ -462,69 +462,76 @@ adapters.forEach((adapter: string) => {
             }).catch(done);
         });
 
-        //it('Basic checks', function (done) {
-        //    var db = new PouchDB(dbs.name);
-        //    db.info(function (err, info) {
-        //        var updateSeq = info.update_seq;
-        //        var doc = { _id: '0', a: 1, b: 1 };
-        //        info.doc_count.should.equal(0);
-        //        db.put(doc, function (err, res) {
-        //            res.ok.should.equal(true);
-        //            res.should.have.property('id');
-        //            res.should.have.property('rev');
-        //            db.info(function (err, info) {
-        //                info.doc_count.should.equal(1);
-        //                info.update_seq.should.not.equal(updateSeq);
-        //                db.get(doc._id, function (err, doc) {
-        //                    doc._id.should.equal(res.id);
-        //                    doc._rev.should.equal(res.rev);
-        //                    db.get(doc._id, { revs_info: true }, function (err, doc) {
-        //                        doc._revs_info[0].status.should.equal('available');
-        //                        done();
-        //                    });
-        //                });
-        //            });
-        //        });
-        //    });
-        //});
+        it('Basic checks', (done) => {
+            var db = new PouchDB(dbs.name, (e, v) => {});
+            db.info((err, info) => {
+                var updateSeq = info.update_seq;
+                var doc = { _id: '0', a: 1, b: 1 };
+                expect(info.doc_count).to.equal(0);
+                db.put(doc, (err, res) => {
+                    expect(res.ok).to.equal(true);
+                    expect(res).to.have.property('id');
+                    // typescript: propery check
+                    expect(res.id).not.to.be.undefined;
+                    expect(res).to.have.property('rev');
+                    // typescript: propery check
+                    expect(res.rev).not.to.be.undefined;
+                    db.info((err, info) => {
+                        expect(info.doc_count).to.equal(1);
+                        expect(info.update_seq).not.to.equal(updateSeq);
+                        db.get(doc._id, (err, doc) => {
+                            expect(doc._id).to.equal(res.id);
+                            expect(doc._rev).to.equal(res.rev);
+                            db.get(doc._id, { revs_info: true }, (err, doc) => {
+                                doc._revs_info[0].status.should.equal('available');
+                                done();
+                            });
+                        });
+                    });
+                });
+            });
+        });
 
-        //it('update with invalid rev', function (done) {
-        //    var db = new PouchDB(dbs.name);
-        //    db.post({ test: 'somestuff' }, function (err, info) {
-        //        should.not.exist(err);
-        //        db.put({
-        //            _id: info.id,
-        //            _rev: 'undefined',
-        //            another: 'test'
-        //        }, function (err, info2) {
-        //                should.exist(err);
-        //                err.status.should.equal(PouchDB.Errors.INVALID_REV.status);
-        //                err.message.should.equal(PouchDB.Errors.INVALID_REV.message,
-        //                    'correct error message returned');
-        //                done();
-        //            });
-        //    });
-        //});
+        it('update with invalid rev', (done) => {
+            var db = new PouchDB(dbs.name, (e, v) => { }); 
+            db.post({ test: 'somestuff' }, (err, info) => {
+                expect(err).not.to.exist;
+                db.put({
+                    _id: info.id,
+                    _rev: 'undefined',
+                    another: 'test'
+                }, (err, info2) => {
+                    expect(err).not.to.exist;
+                    //  todo: `put` error is a `BulkDocsError`
+                    //  todo: `BulkDocsError` error has similar shape to `ErrorDefinition`
+                    expect((<BulkDocsError>err).status).to.equal(PouchDB.Errors.INVALID_REV.status);
+                    expect((<BulkDocsError>err).message).to.equal(PouchDB.Errors.INVALID_REV.message,
+                        'correct error message returned');
+                    done();
+                });
+            });
+        });
 
-        //it('Doc validation', function (done) {
-        //    var bad_docs = [
-        //        { '_zing': 4 },
-        //        { '_zoom': 'hello' },
-        //        {
-        //            'zane': 'goldfish',
-        //            '_fan': 'something smells delicious'
-        //        },
-        //        { '_bing': { 'wha?': 'soda can' } }
-        //    ];
-        //    var db = new PouchDB(dbs.name);
-        //    db.bulkDocs({ docs: bad_docs }, function (err, res) {
-        //        err.status.should.equal(PouchDB.Errors.DOC_VALIDATION.status);
-        //        err.message.should.equal(PouchDB.Errors.DOC_VALIDATION.message +
-        //            ': _zing',
-        //            'correct error message returned');
-        //        done();
-        //    });
-        //});
+        it('Doc validation', (done) => {
+            var bad_docs = [
+                { '_zing': 4 },
+                { '_zoom': 'hello' },
+                {
+                    'zane': 'goldfish',
+                    '_fan': 'something smells delicious'
+                },
+                { '_bing': { 'wha?': 'soda can' } }
+            ];
+            var db = new PouchDB(dbs.name, (e, v) => {});
+            db.bulkDocs({ docs: bad_docs }, (err, res) => {
+                //  todo: `err` error is a `BulkDocsError` - was returning this from `res`
+                expect((<BulkDocsError>err).status).to.equal(PouchDB.Errors.DOC_VALIDATION.status);
+                expect((<BulkDocsError>err).message).to.equal(PouchDB.Errors.DOC_VALIDATION.message +
+                    ': _zing',
+                    'correct error message returned');
+                done();
+            });
+        });
 
         //it('Replication fields (#2442)', function (done) {
         //    var doc = {

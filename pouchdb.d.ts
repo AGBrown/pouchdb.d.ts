@@ -754,8 +754,12 @@ declare module pouchdb {
                     /** An object of options to be sent to the ajax requester */
                     ajax?: options.AjaxOptions;
                 }
+                /** Response interface for `get()` */
                 interface Response extends ExistingDoc {
+                    /** @todo what shape are the array elements? */
                     _conflicts?: any; // some kind of []
+                    /** @todo what shape are the array elements? */
+                    _revs_info?: any; // some kind of []
                 }
                 /**
                  * Callback pattern for remove
@@ -767,13 +771,13 @@ declare module pouchdb {
                       * Retrieves a document, specified by `docId`.
                       * @param docId the doc id
                       */
-                    get<R extends ExistingDoc>(docId: string, callback?: async.Callback<R>): void;
+                    get<R extends Response>(docId: string, callback?: async.Callback<R>): void;
                     /**
                       * Retrieves a document, specified by `docId`.
                       * @param docId the doc id
                       * @param options
                       */
-                    get<R extends ExistingDoc>(docId: string, options: Options, callback?: async.Callback<R>): void;
+                    get<R extends Response>(docId: string, options: Options, callback?: async.Callback<R>): void;
                 }
                 /** Promise pattern for remove */
                 interface Promise {
@@ -1116,16 +1120,23 @@ declare module pouchdb {
         /** The error message */
         reason: string;
     }
-    /** The collection of error definitions defined for PouchDB */
+    /** 
+     * The collection of error definitions defined for PouchDB 
+     * @todo are these adapter dependent?
+     * */
     interface ErrorDefinitions {
-        /** Indicates that a document _id was set to a reserved id */
-        RESERVED_ID: ErrorDefinition;
+        /** Bad special document member */
+        DOC_VALIDATION: ErrorDefinition;
+        /** Invalid rev format */
+        INVALID_REV: ErrorDefinition;
         /** Missing JSON list of 'docs' */
         MISSING_BULK_DOCS: ErrorDefinition;
         /** A document was not found */
         MISSING_DOC: ErrorDefinition;
         /** Document must be a JSON object */
         NOT_AN_OBJECT: ErrorDefinition;
+        /** Indicates that a document _id was set to a reserved id */
+        RESERVED_ID: ErrorDefinition;
     }
     
     /** Static-side interface for PouchDB */
