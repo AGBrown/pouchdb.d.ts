@@ -365,6 +365,7 @@ module PouchDBTest {
         module remove {
             var oe = {};
             var of = { foo: "test" };
+            var or = { rev: "1" };
             var eDoc: pouchdb.api.methods.ExistingDoc = { foo: "test", _id: "1", _rev: "1" };
             var nDoc: pouchdb.api.methods.NewDoc = { foo: "test", _id: "1" };
             var bDoc: pouchdb.api.methods.BaseDoc = { foo: "test" };
@@ -383,11 +384,29 @@ module PouchDBTest {
                 
                 db.remove(eDoc, {});
                 db.remove(eDoc, {}, (err, val) => { });
+                
+                db.remove(nDoc, or, (err, val) => { });
             }
             function promise() {
                 var db1: pouchdb.thenable.PouchDB = new PouchDB("dbname");
                 var db2: pouchdb.promise.PouchDB = new PouchDB("dbname");
 
+                db1.remove(id, rv);
+                db2.remove(id, rv);
+                db1.remove(id, rv, {});
+                db2.remove(id, rv, {});
+                db1.remove(id, rv, of);
+                db2.remove(id, rv, of);
+
+                db1.remove(eDoc);
+                db2.remove(eDoc);
+                db1.remove(eDoc, {});
+                db2.remove(eDoc, {});
+                db1.remove(eDoc, of);
+                db2.remove(eDoc, of);
+
+                db1.remove(nDoc, or);
+                db2.remove(nDoc, or);
             }
         }
     }

@@ -410,13 +410,13 @@ adapters.forEach((adapter: string) => {
             });
         });
 
-        //it('Delete doc with rev in opts', () => {
-        //    var db = new PouchDB(dbs.name);
-        //    var doc: pouchdb.api.methods.NewDoc = { _id: 'foo' };
-        //    return db.put(doc).then((info) => {
-        //        return db.remove(doc, { rev: info.rev });
-        //    });
-        //});
+        it('Delete doc with rev in opts', () => {
+            var db = new PouchDB(dbs.name);
+            var doc: pouchdb.api.methods.NewDoc = { _id: 'foo' };
+            return db.put(doc).then((info) => {
+                return db.remove(doc, { rev: info.rev });
+            });
+        });
 
         it('Bulk docs', (done) => {
             var db = new PouchDB(dbs.name, (e, v) => { });
@@ -522,7 +522,7 @@ adapters.forEach((adapter: string) => {
                 },
                 { '_bing': { 'wha?': 'soda can' } }
             ];
-            var db = new PouchDB(dbs.name, (e, v) => {});
+            var db = new PouchDB(dbs.name,(e, v) => { });
             db.bulkDocs({ docs: bad_docs }, (err, res) => {
                 //  todo: `err` error is a `BulkDocsError` - was returning this from `res`
                 expect((<BulkDocsError>err).status).to.equal(PouchDB.Errors.DOC_VALIDATION.status);

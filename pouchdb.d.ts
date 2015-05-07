@@ -983,6 +983,11 @@ declare module pouchdb {
             
             /** Contains the method and call/return types for remove() */
             module remove {
+                /** Options used in overlaods for `remove()` */
+                interface RevOptions {
+                    /** The current revision for the document to remove */
+                    rev: string;
+                }
                 /**
                  * Callback pattern for remove
                  * @todo: overload resolution if options not specified. Callback value type becomes any
@@ -1027,6 +1032,13 @@ declare module pouchdb {
                      * @todo define options shape - docs don't make it clear what this is
                      */
                     remove(doc: ExistingDoc, options: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
+                    /**
+                     * Deletes the document. 
+                     * `doc` is required to be a document with at least an `_id` property, `rev` is specified in the `options`.
+                     * @param doc the doc (with only an `id` property)
+                     * @param options options that specify 
+                     */
+                    remove(doc: NewDoc, options: RevOptions, callback?: async.Callback<OperationResponse>): void;
                  }
                 /** Promise pattern for remove */
                 interface Promise {
@@ -1049,6 +1061,13 @@ declare module pouchdb {
                      * @todo define options shape - docs don't make it clear what this is
                      */
                     remove(doc: ExistingDoc, options?: options.EmptyOptions): async.Thenable<OperationResponse>;
+                    /**
+                     * Deletes the document. 
+                     * `doc` is required to be a document with at least an `_id` property, `rev` is specified in the `options`.
+                     * @param doc the doc (with only an `id` property)
+                     * @param options options that specify 
+                     */
+                    remove(doc: NewDoc, options: RevOptions): async.Thenable<OperationResponse>;
                 }
             }
         }
@@ -1085,10 +1104,40 @@ declare module pouchdb {
                 , methods.remove.Promise
             {}
         }
+
         /** The main pouchDB interface properties */
         interface Properties {
             /** The adapter being used by this db instance */
             adapter: string;
+        }
+        
+        /** A PouchDB error definition */
+        interface StandardError {
+            /** The error status number */
+            status: number;
+            /** The error message */
+            message: string;
+            /** The error message */
+            reason: string;
+        }
+
+        /** 
+         * The collection of error definitions defined for PouchDB 
+         * @todo are these adapter dependent?
+         * */
+        interface StandardErrors {
+            /** Bad special document member (`message` will include the bad member name(s)) */
+            DOC_VALIDATION: StandardError;
+            /** Invalid rev format */
+            INVALID_REV: StandardError;
+            /** Missing JSON list of 'docs' */
+            MISSING_BULK_DOCS: StandardError;
+            /** A document was not found */
+            MISSING_DOC: StandardError;
+            /** Document must be a JSON object */
+            NOT_AN_OBJECT: StandardError;
+            /** Indicates that a document _id was set to a reserved id */
+            RESERVED_ID: StandardError;
         }
     }
     /** The api module for the pouchdb callback pattern */
@@ -1110,39 +1159,11 @@ declare module pouchdb {
          */
         interface PouchDB extends promise.PouchDB, async.Thenable<promise.PouchDB> { }
     }
-
-    /** A pouch error definition */
-    interface ErrorDefinition {
-        /** The error status number */
-        status: number;
-        /** The error message */
-        message: string;
-        /** The error message */
-        reason: string;
-    }
-    /** 
-     * The collection of error definitions defined for PouchDB 
-     * @todo are these adapter dependent?
-     * */
-    interface ErrorDefinitions {
-        /** Bad special document member */
-        DOC_VALIDATION: ErrorDefinition;
-        /** Invalid rev format */
-        INVALID_REV: ErrorDefinition;
-        /** Missing JSON list of 'docs' */
-        MISSING_BULK_DOCS: ErrorDefinition;
-        /** A document was not found */
-        MISSING_DOC: ErrorDefinition;
-        /** Document must be a JSON object */
-        NOT_AN_OBJECT: ErrorDefinition;
-        /** Indicates that a document _id was set to a reserved id */
-        RESERVED_ID: ErrorDefinition;
-    }
     
     /** Static-side interface for PouchDB */
     export interface PouchDB {
         /**  */
-        Errors: ErrorDefinitions;
+        Errors: api.StandardErrors;
     }
     /**
      * The main pouchDB entry point. The constructors here will return either a 
