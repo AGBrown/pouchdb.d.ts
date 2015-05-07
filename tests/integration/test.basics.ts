@@ -589,55 +589,61 @@ adapters.forEach((adapter: string) => {
         //    timer = setInterval(save, 10);
         //});
 
-        //it('Testing valid id', function (done) {
-        //    var db = new PouchDB(dbs.name);
-        //    db.post({
-        //        '_id': 123,
-        //        test: 'somestuff'
-        //    }, function (err, info) {
-        //            should.exist(err);
-        //            err.message.should.equal(PouchDB.Errors.INVALID_ID.message,
-        //                'correct error message returned');
-        //            done();
-        //        });
-        //});
+        it('Testing valid id', (done) => {
+            var db = new PouchDB(dbs.name, (e, v) => { });
+            //  d.ts: one would hope that ts prevents this, but due to the BaseDoc overloads
+            //      it is still possible to use an incorrect type on _id. ts is not
+            //      really about rigidly enforcing contracts, just gentle persuasion to use the 
+            //      right forms, evidently!
+            db.post({
+                '_id': 123,
+                test: 'somestuff'
+            }, (err, info) => {
+                    expect(err).to.exist;
+                    expect(err.message).to.equal(PouchDB.Errors.INVALID_ID.message,
+                        'correct error message returned');
+                    done();
+                });
+        });
 
-        //it('Put doc without _id should fail', function (done) {
-        //    var db = new PouchDB(dbs.name);
-        //    db.put({ test: 'somestuff' }, function (err, info) {
-        //        should.exist(err);
-        //        err.message.should.equal(PouchDB.Errors.MISSING_ID.message,
-        //            'correct error message returned');
-        //        done();
-        //    });
-        //});
+        it('Put doc without _id should fail', (done) => {
+            var db = new PouchDB(dbs.name, (e, v) => { });
+            //  d.ts: must put _id as undefined to be able to write this in ts
+            //      but not sure if the right error will return as a result
+            db.put({ test: 'somestuff', _id: undefined }, (err, info) => {
+                expect(err).to.exist;
+                expect(err.message).to.equal(PouchDB.Errors.MISSING_ID.message,
+                    'correct error message returned');
+                done();
+            });
+        });
 
-        //it('Put doc with bad reserved id should fail', function (done) {
-        //    var db = new PouchDB(dbs.name);
-        //    db.put({
-        //        _id: '_i_test',
-        //        test: 'somestuff'
-        //    }, function (err, info) {
-        //            should.exist(err);
-        //            err.status.should.equal(PouchDB.Errors.RESERVED_ID.status);
-        //            err.message.should.equal(PouchDB.Errors.RESERVED_ID.message,
-        //                'correct error message returned');
-        //            done();
-        //        });
-        //});
+        it('Put doc with bad reserved id should fail', (done) => {
+            var db = new PouchDB(dbs.name, (e, v) => { });
+            db.put({
+                _id: '_i_test',
+                test: 'somestuff'
+            }, (err, info) => {
+                    expect(err).to.exist;
+                    expect(err.status).to.equal(PouchDB.Errors.RESERVED_ID.status);
+                    expect(err.message).to.equal(PouchDB.Errors.RESERVED_ID.message,
+                        'correct error message returned');
+                    done();
+                });
+        });
 
-        //it('update_seq persists', function (done) {
-        //    var db = new PouchDB(dbs.name);
-        //    db.post({ test: 'somestuff' }, function (err, info) {
-        //        new PouchDB(dbs.name, function (err, db) {
-        //            db.info(function (err, info) {
-        //                info.update_seq.should.not.equal(0);
-        //                info.doc_count.should.equal(1);
-        //                done();
-        //            });
-        //        });
-        //    });
-        //});
+        it('update_seq persists', (done) => {
+            var db = new PouchDB(dbs.name, (e, v) => { });
+            db.post({ test: 'somestuff' }, (err, info) => {
+                new PouchDB(dbs.name, (err, db) => {
+                    db.info((err, info) => {
+                        expect(info.update_seq).not.to.equal(0);
+                        expect(info.doc_count).to.equal(1);
+                        done();
+                    });
+                });
+            });
+        });
 
         //it('deletions persists', function (done) {
 

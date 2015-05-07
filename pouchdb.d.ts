@@ -129,10 +129,13 @@ declare module pouchdb {
     module async {
         /** 
          * shape for the error returns 
-         * @todo what (and what type) is `.error`
+         * @todo what (and what type) is `.error`. Is `.message` always there, or should this
+         * be a union type with StandardError
          */
         interface Error {
-            error?: any
+            error?: any;
+            message?: string;
+            status?: number;
         }
         /** An interface to represent a promise object */
         interface Thenable<T> {
@@ -1136,12 +1139,16 @@ declare module pouchdb {
         interface StandardErrors {
             /** Bad special document member (`message` will include the bad member name(s)) */
             DOC_VALIDATION: StandardError;
+            /** _id field must contain a string */
+            INVALID_ID: StandardError;
             /** Invalid rev format */
             INVALID_REV: StandardError;
             /** Missing JSON list of 'docs' */
             MISSING_BULK_DOCS: StandardError;
             /** A document was not found */
             MISSING_DOC: StandardError;
+            /** _id is required for puts */
+            MISSING_ID: StandardError;
             /** Document must be a JSON object */
             NOT_AN_OBJECT: StandardError;
             /** Indicates that a document _id was set to a reserved id */
