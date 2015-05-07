@@ -193,6 +193,14 @@ declare module pouchdb {
                 _deleted?: boolean;
             }
 
+            /** A doc with special replication fields */
+            interface ReplicationDoc extends NewDoc {
+                _replication_id: string;
+                _replication_state: string;
+                _replication_state_time: number;
+                _replication_stats: {}
+            }
+
             /** Options for `changes()` and `allDocs()` output */
             interface BasePaginationOptions {
                 /**

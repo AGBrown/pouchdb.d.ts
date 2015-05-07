@@ -533,29 +533,31 @@ adapters.forEach((adapter: string) => {
             });
         });
 
-        //it('Replication fields (#2442)', function (done) {
-        //    var doc = {
-        //        '_replication_id': 'test',
-        //        '_replication_state': 'triggered',
-        //        '_replication_state_time': 1,
-        //        '_replication_stats': {}
-        //    };
-        //    var db = new PouchDB(dbs.name);
-        //    db.post(doc, function (err, resp) {
-        //        should.not.exist(err);
+        it('Replication fields (#2442)', (done) => {
+            var doc = {
+                '_replication_id': 'test',
+                '_replication_state': 'triggered',
+                '_replication_state_time': 1,
+                '_replication_stats': {}
+            };
+            var db = new PouchDB(dbs.name, (e, v) => { });
+            db.post(doc, (err, resp) => {
+                expect(err).not.to.exist;
 
-        //        db.get(resp.id, function (err, doc2) {
-        //            should.not.exist(err);
+                db.get(resp.id, (err, doc2) => {
+                    expect(err).not.to.exist;
 
-        //            doc2._replication_id.should.equal('test');
-        //            doc2._replication_state.should.equal('triggered');
-        //            doc2._replication_state_time.should.equal(1);
-        //            doc2._replication_stats.should.eql({});
+                    //  typescript: as these are special case fields I'm not adding them to the advertised interfaces
+                    //      therefore do a hacky cast to {} then to ReplicationDoc to get the intellisense
+                    expect((<pouchdb.api.methods.ReplicationDoc><{}>doc2)._replication_id        ).to.equal('test');
+                    expect((<pouchdb.api.methods.ReplicationDoc><{}>doc2)._replication_state     ).to.equal('triggered');
+                    expect((<pouchdb.api.methods.ReplicationDoc><{}>doc2)._replication_state_time).to.equal(1);
+                    expect((<pouchdb.api.methods.ReplicationDoc><{}>doc2)._replication_stats     ).to.eql({});
 
-        //            done();
-        //        });
-        //    });
-        //});
+                    done();
+                });
+            });
+        });
 
         //it('Testing issue #48', function (done) {
         //    var docs = [
