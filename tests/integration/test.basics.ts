@@ -559,26 +559,27 @@ adapters.forEach((adapter: string) => {
             });
         });
 
-        //it('Testing issue #48', function (done) {
-        //    var docs = [
-        //        { 'id': '0' }, { 'id': '1' }, { 'id': '2' },
-        //        { 'id': '3' }, { 'id': '4' }, { 'id': '5' }
+        // d.ts: waiting on #5 in pouchdb.d.ts
+        //it('Testing issue #48', (done) => {
+        //    var docs: pouchdb.api.methods.NewDoc[] = [
+        //        { id: '0' }, { id: '1' }, { id: '2' },
+        //        { id: '3' }, { id: '4' }, { id: '5' }
         //    ];
         //    var TO_SEND = 5;
         //    var sent = 0;
         //    var complete = 0;
         //    var timer;
 
-        //    var db = new PouchDB(dbs.name);
+        //    var db = new PouchDB(dbs.name, (e, v) => { });
 
-        //    var bulkCallback = function (err, res) {
-        //        should.not.exist(err);
+        //    var bulkCallback: pouchdb.async.Callback<pouchdb.api.methods.OperationResponse> = (err, res) => {
+        //        expect(err).not.to.exist;
         //        if (++complete === TO_SEND) {
         //            done();
         //        }
         //    };
 
-        //    var save = function () {
+        //    var save = () => {
         //        if (++sent === TO_SEND) {
         //            clearInterval(timer);
         //        }
