@@ -560,11 +560,9 @@ adapters.forEach((adapter: string) => {
         });
 
         it('Testing issue #48',(done) => {
-            //  d.ts: note that this test should probably use BaseDoc, but possibly has a typo
-            //      and so requires MixedDoc (pouchdb.d.ts #5)
             var docs: pouchdb.api.methods.bulkDocs.MixedDoc[] = [
-                { id: '0' }, { id: '1' }, { id: '2' },
-                { id: '3' }, { id: '4' }, { id: '5' }
+                { _id: '0' }, { _id: '1' }, { _id: '2' },
+                { _id: '3' }, { _id: '4' }, { _id: '5' }
             ];
             var TO_SEND = 5;
             var sent = 0;
