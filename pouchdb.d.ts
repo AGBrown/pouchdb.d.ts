@@ -165,7 +165,9 @@ declare module pouchdb {
                 ok: boolean;
             }
 
-            /** Promise/callback result for various methods */
+            /** Promise/callback result for various methods. Note that documents use `_id` 
+             * and responses provide `id`.
+              */
             interface OperationResponse extends BaseResponse {
                 /** The id of the doc operated on */
                 id: string;

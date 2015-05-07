@@ -559,35 +559,36 @@ adapters.forEach((adapter: string) => {
             });
         });
 
-        // d.ts: waiting on #5 in pouchdb.d.ts
-        //it('Testing issue #48', (done) => {
-        //    var docs: pouchdb.api.methods.NewDoc[] = [
-        //        { id: '0' }, { id: '1' }, { id: '2' },
-        //        { id: '3' }, { id: '4' }, { id: '5' }
-        //    ];
-        //    var TO_SEND = 5;
-        //    var sent = 0;
-        //    var complete = 0;
-        //    var timer;
+        it('Testing issue #48',(done) => {
+            //  d.ts: note that this test should probably use BaseDoc, but possibly has a typo
+            //      and so requires MixedDoc (pouchdb.d.ts #5)
+            var docs: pouchdb.api.methods.bulkDocs.MixedDoc[] = [
+                { id: '0' }, { id: '1' }, { id: '2' },
+                { id: '3' }, { id: '4' }, { id: '5' }
+            ];
+            var TO_SEND = 5;
+            var sent = 0;
+            var complete = 0;
+            var timer;
 
-        //    var db = new PouchDB(dbs.name, (e, v) => { });
+            var db = new PouchDB(dbs.name, (e, v) => { });
 
-        //    var bulkCallback: pouchdb.async.Callback<pouchdb.api.methods.OperationResponse> = (err, res) => {
-        //        expect(err).not.to.exist;
-        //        if (++complete === TO_SEND) {
-        //            done();
-        //        }
-        //    };
+            var bulkCallback: pouchdb.async.Callback<pouchdb.api.methods.OperationResponse> = (err, res) => {
+                expect(err).not.to.exist;
+                if (++complete === TO_SEND) {
+                    done();
+                }
+            };
 
-        //    var save = () => {
-        //        if (++sent === TO_SEND) {
-        //            clearInterval(timer);
-        //        }
-        //        db.bulkDocs({ docs: docs }, bulkCallback);
-        //    };
+            var save = () => {
+                if (++sent === TO_SEND) {
+                    clearInterval(timer);
+                }
+                db.bulkDocs({ docs: docs }, bulkCallback);
+            };
 
-        //    timer = setInterval(save, 10);
-        //});
+            timer = setInterval(save, 10);
+        });
 
         it('Testing valid id', (done) => {
             var db = new PouchDB(dbs.name, (e, v) => { });
@@ -645,33 +646,33 @@ adapters.forEach((adapter: string) => {
             });
         });
 
-        //it('deletions persists', function (done) {
+        it('deletions persists', (done) => {
 
-        //    var db = new PouchDB(dbs.name);
-        //    var doc = { _id: 'staticId', contents: 'stuff' };
+            var db = new PouchDB(dbs.name, (e, v) => { });
+            var doc = { _id: 'staticId', contents: 'stuff' };
 
-        //    function writeAndDelete(cb) {
-        //        db.put(doc, function (err, info) {
-        //            db.remove({
-        //                _id: info.id,
-        //                _rev: info.rev
-        //            }, function (doc) {
-        //                    cb();
-        //                });
-        //        });
-        //    }
+            function writeAndDelete(cb) {
+                db.put(doc, (err, info) => {
+                    db.remove({
+                        _id: info.id,
+                        _rev: info.rev
+                    }, (doc) => {
+                            cb();
+                        });
+                });
+            }
 
-        //    writeAndDelete(function () {
-        //        writeAndDelete(function () {
-        //            db.put(doc, function () {
-        //                db.get(doc._id, { conflicts: true }, function (err, details) {
-        //                    details.should.not.have.property('_conflicts');
-        //                    done();
-        //                });
-        //            });
-        //        });
-        //    });
-        //});
+            writeAndDelete(() => {
+                writeAndDelete(() => {
+                    db.put(doc, () => {
+                        db.get(doc._id, { conflicts: true }, (err, details) => {
+                            expect(details).not.to.have.property('_conflicts');
+                            done();
+                        });
+                    });
+                });
+            });
+        });
 
         //it('Error when document is not an object', function (done) {
         //    var db = new PouchDB(dbs.name);
@@ -685,6 +686,7 @@ adapters.forEach((adapter: string) => {
         //            done();
         //        }
         //    };
+            //  todo: d.ts definitions use BaseDoc, which may be flawed as it should prevent all these, but doesn't?
         //    db.post(doc1, callback);
         //    db.post(doc2, callback);
         //    db.put(doc1, callback);
