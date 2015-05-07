@@ -672,12 +672,12 @@ adapters.forEach((adapter: string) => {
             });
         });
 
-        it('Error when document is not an object', function (done) {
+        it('Error when document is not an object', (done) => {
             var db = new PouchDB(dbs.name);
             var doc1 = [{ _id: 'foo' }, { _id: 'bar' }];
             var doc2 = 'this is not an object';
             var count = 5;
-            var callback = function (err, resp) {
+            var callback = (err, resp) => {
                 expect(err).not.to.exist;
                 count--;
                 if (count === 0) {
@@ -695,30 +695,30 @@ adapters.forEach((adapter: string) => {
             //db.bulkDocs({ docs: [doc1, doc2] }, callback);
         });
 
-        //it('Test instance update_seq updates correctly', function (done) {
-        //    new PouchDB(dbs.name, function (err, db1) {
-        //        var db2 = new PouchDB(dbs.name);
-        //        db1.post({ a: 'doc' }, function () {
-        //            db1.info(function (err, db1Info) {
-        //                db2.info(function (err, db2Info) {
-        //                    db1Info.update_seq.should.not.equal(0);
-        //                    db2Info.update_seq.should.not.equal(0);
-        //                    done();
-        //                });
-        //            });
-        //        });
-        //    });
-        //});
+        it('Test instance update_seq updates correctly', (done) => {
+            new PouchDB(dbs.name, (err, db1) => {
+                var db2 = new PouchDB(dbs.name, (e, v) => { });
+                db1.post({ a: 'doc' }, () => {
+                    db1.info((err, db1Info) => {
+                        db2.info((err, db2Info) => {
+                            expect(db1Info.update_seq).not.to.equal(0);
+                            expect(db2Info.update_seq).not.to.equal(0);
+                            done();
+                        });
+                    });
+                });
+            });
+        });
 
-        //it('Error works', function () {
-        //    var newError = PouchDB.Errors
-        //        .error(PouchDB.Errors.BAD_REQUEST, 'love needs no message');
-        //    newError.status.should.equal(PouchDB.Errors.BAD_REQUEST.status);
-        //    newError.name.should.equal(PouchDB.Errors.BAD_REQUEST.name);
-        //    newError.message.should.equal(PouchDB.Errors.BAD_REQUEST.message,
-        //        'correct error message returned');
-        //    newError.reason.should.equal('love needs no message');
-        //});
+        it('Error works',(done) => {
+            var newError = PouchDB.Errors
+                .error(PouchDB.Errors.BAD_REQUEST, 'love needs no message');
+            expect(newError.status).to.equal(PouchDB.Errors.BAD_REQUEST.status);
+            expect(newError.name).to.equal(PouchDB.Errors.BAD_REQUEST.name);
+            expect(newError.message).to.equal(PouchDB.Errors.BAD_REQUEST.message,
+                'correct error message returned');
+            expect(newError.reason).to.equal('love needs no message');
+        });
 
         //it('Fail to fetch a doc after db was deleted', function (done) {
         //    new PouchDB(dbs.name, function (err, db) {

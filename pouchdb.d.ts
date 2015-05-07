@@ -1127,13 +1127,17 @@ declare module pouchdb {
             adapter: string;
         }
         
+        //  Errors (see pouchdb/lib/deps/errors.js
+
         /** A PouchDB error definition */
         interface StandardError {
             /** The error status number */
             status: number;
-            /** The error message */
+            /** The error name */
+            name: string;
+            /** The standard error message property */
             message: string;
-            /** The error message */
+            /** The error reason */
             reason: string;
         }
 
@@ -1142,6 +1146,9 @@ declare module pouchdb {
          * @todo are these adapter dependent?
          * */
         interface StandardErrors {
+            error(base: StandardError, reason: string): StandardError;
+            /** Check `reason` on the returned error for the underlying cause */
+            BAD_REQUEST: StandardError;
             /** Bad special document member (`message` will include the bad member name(s)) */
             DOC_VALIDATION: StandardError;
             /** _id field must contain a string */
