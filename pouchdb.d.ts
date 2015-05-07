@@ -176,7 +176,10 @@ declare module pouchdb {
             }
             
             //////////////////////////// Doc Shapes ////////////////////////////
-            /** Interface for an empty doc */
+            /** Interface for an empty doc.
+             * @todo see https://github.com/Microsoft/TypeScript/issues/1809: 
+             * cannot yet specify docs are objects, and not primitives, so use this type as a placeholder.
+              */
             interface BaseDoc { }
 
             /** Interface for a doc (with `_id`) passed to the put() method */

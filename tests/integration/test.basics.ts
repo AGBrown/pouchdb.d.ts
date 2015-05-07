@@ -674,25 +674,28 @@ adapters.forEach((adapter: string) => {
             });
         });
 
-        //it('Error when document is not an object', function (done) {
-        //    var db = new PouchDB(dbs.name);
-        //    var doc1 = [{ _id: 'foo' }, { _id: 'bar' }];
-        //    var doc2 = 'this is not an object';
-        //    var count = 5;
-        //    var callback = function (err, resp) {
-        //        should.exist(err);
-        //        count--;
-        //        if (count === 0) {
-        //            done();
-        //        }
-        //    };
-            //  todo: d.ts definitions use BaseDoc, which may be flawed as it should prevent all these, but doesn't?
-        //    db.post(doc1, callback);
-        //    db.post(doc2, callback);
-        //    db.put(doc1, callback);
-        //    db.put(doc2, callback);
-        //    db.bulkDocs({ docs: [doc1, doc2] }, callback);
-        //});
+        it('Error when document is not an object', function (done) {
+            var db = new PouchDB(dbs.name);
+            var doc1 = [{ _id: 'foo' }, { _id: 'bar' }];
+            var doc2 = 'this is not an object';
+            var count = 5;
+            var callback = function (err, resp) {
+                expect(err).not.to.exist;
+                count--;
+                if (count === 0) {
+                    done();
+                }
+            };
+            //  todo: d.ts definitions use BaseDoc as cannot yet specify "not a primitive"
+            //      (see https://github.com/Microsoft/TypeScript/issues/1809)
+            //      it should not therefore be possible to write any of these in ts
+            //      but currently it is
+            db.post(doc1, callback);
+            db.post(doc2, callback);
+            //db.put(doc1, callback);
+            //db.put(doc2, callback);
+            //db.bulkDocs({ docs: [doc1, doc2] }, callback);
+        });
 
         //it('Test instance update_seq updates correctly', function (done) {
         //    new PouchDB(dbs.name, function (err, db1) {
