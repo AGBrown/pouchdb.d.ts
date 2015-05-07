@@ -1127,18 +1127,34 @@ declare module pouchdb {
             adapter: string;
         }
         
-        //  Errors (see pouchdb/lib/deps/errors.js
+        //  Errors (see pouchdb/lib/deps/errors.js /////////////////////////////
 
         /** A PouchDB error definition */
-        interface StandardError {
+        interface PouchError {
             /** The error status number */
             status: number;
-            /** The error name */
-            name: string;
             /** The standard error message property */
             message: string;
+            /** The error name */
+            name: string;
+            /** set to `true` for an error */
+            error: boolean;
+        }
+
+        /** A PouchDB error definition with a reason property */
+        interface CustomPouchError extends PouchError {
             /** The error reason */
             reason: string;
+        }
+
+        /** A PouchDB error definition created from a response */
+        interface ResponsePouchError extends CustomPouchError {
+            /** the response id */
+            id?: string;
+            /** todo description
+             * @todo type annotation
+              */
+            missing?: any;
         }
 
         /** 
@@ -1146,25 +1162,61 @@ declare module pouchdb {
          * @todo are these adapter dependent?
          * */
         interface StandardErrors {
-            error(base: StandardError, reason: string): StandardError;
-            /** Check `reason` on the returned error for the underlying cause */
-            BAD_REQUEST: StandardError;
-            /** Bad special document member (`message` will include the bad member name(s)) */
-            DOC_VALIDATION: StandardError;
-            /** _id field must contain a string */
-            INVALID_ID: StandardError;
-            /** Invalid rev format */
-            INVALID_REV: StandardError;
-            /** Missing JSON list of 'docs' */
-            MISSING_BULK_DOCS: StandardError;
-            /** A document was not found */
-            MISSING_DOC: StandardError;
-            /** _id is required for puts */
-            MISSING_ID: StandardError;
-            /** Document must be a JSON object */
-            NOT_AN_OBJECT: StandardError;
-            /** Indicates that a document _id was set to a reserved id */
-            RESERVED_ID: StandardError;
+            /** Create a new error */
+            error(base: PouchError, reason?: string, name?: string): CustomPouchError;
+            /** Create a new error */
+            error<R extends CustomPouchError>(base: PouchError, reason?: string, name?: string): R;
+            /** Create an error from a response */
+            generateErrorFromResponse(response: any): ResponsePouchError;
+
+            /** (401): Name or password is incorrect. */
+            UNAUTHORIZED: PouchError
+            /** (400): Missing JSON list of 'docs' */
+            MISSING_BULK_DOCS: PouchError
+            /** (404): missing */
+            MISSING_DOC: PouchError
+            /** (409): Document update conflict */
+            REV_CONFLICT: PouchError
+            /** (400): _id field must contain a string */
+            INVALID_ID: PouchError
+            /** (412): _id is required for puts */
+            MISSING_ID: PouchError
+            /** (400): Only reserved document ids may start with underscore. */
+            RESERVED_ID: PouchError
+            /** (412): Database not open */
+            NOT_OPEN: PouchError
+            /** (500): Database encountered an unknown error */
+            UNKNOWN_ERROR: PouchError
+            /** (500): Some query argument is invalid */
+            BAD_ARG: PouchError
+            /** (400): Request was invalid */
+            INVALID_REQUEST: PouchError
+            /** (400): Some query parameter is invalid */
+            QUERY_PARSE_ERROR: PouchError
+            /** (500): Bad special document member 
+             * Bad special document member (`message` will include the bad member name(s)) */
+            DOC_VALIDATION: PouchError
+            /** (400): Something wrong with the request. 
+             *      Check `reason` on the returned error for the underlying cause */
+            BAD_REQUEST: PouchError
+            /** (400): Document must be a JSON object */
+            NOT_AN_OBJECT: PouchError
+            /** (404): Database not found */
+            DB_MISSING: PouchError
+            /** (500): unknown */
+            IDB_ERROR: PouchError
+            /** (500): unknown */
+            WSQ_ERROR: PouchError
+            /** (500): unknown */
+            LDB_ERROR: PouchError
+            /** (403): Forbidden by design doc validate_doc_update function */
+            FORBIDDEN: PouchError
+            /** (400): Invalid rev format */
+            INVALID_REV: PouchError
+            /** (412): The database could not be created, the file already exists. */
+            FILE_EXISTS: PouchError
+            /** (412): missing_stub */
+            MISSING_STUB: PouchError
         }
     }
     /** The api module for the pouchdb callback pattern */
