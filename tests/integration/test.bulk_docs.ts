@@ -138,12 +138,12 @@ adapters.forEach(function (adapter) {
         });
 
         it('Test empty bulkDocs', () => {
-            var db = new PouchDB(dbs.name);
+            var db = <pouchdb.thenable.PouchDB>new PouchDB(dbs.name);
             return db.bulkDocs([]);
         });
 
         it('Test many bulkDocs',() => {
-            var db = new PouchDB(dbs.name);
+            var db = <pouchdb.thenable.PouchDB>new PouchDB(dbs.name);
             var docs: pouchdb.api.methods.NewDoc[] = [];
             for (var i = 0; i < 201; i++) {
                 docs.push({ _id: i.toString() });
@@ -250,7 +250,7 @@ adapters.forEach(function (adapter) {
                 }
             ];
 
-            var db = new PouchDB(dbs.name);
+            var db = <pouchdb.thenable.PouchDB>new PouchDB(dbs.name);
 
             return db.bulkDocs({ docs: docs, new_edits: false }).then((res) => {
                 expect(res).to.deep.equal([]);
@@ -280,7 +280,7 @@ adapters.forEach(function (adapter) {
                 }
             ];
 
-            var db = new PouchDB(dbs.name);
+            var db = <pouchdb.thenable.PouchDB>new PouchDB(dbs.name);
 
             return db.bulkDocs({ docs: docs, new_edits: false }).then((res) => {
                 expect(res).to.deep.equal([]);
@@ -309,7 +309,7 @@ adapters.forEach(function (adapter) {
                     }.toString()
                 };
 
-                var db = new PouchDB(dbs.name);
+                var db = <pouchdb.thenable.PouchDB>new PouchDB(dbs.name);
 
                 db.put(ddoc).then(() => {
                     return db.bulkDocs({
@@ -516,7 +516,7 @@ adapters.forEach(function (adapter) {
 
         it('Testing successive new_edits to two doc', () => {
 
-            var db = new PouchDB(dbs.name);
+            var db = <pouchdb.thenable.PouchDB>new PouchDB(dbs.name);
             var doc1 = {
                 '_id': 'foo',
                 '_rev': '1-x',
@@ -548,7 +548,7 @@ adapters.forEach(function (adapter) {
         //  todo: not sure how to handle allDocs with just keys specified
         it('Deletion with new_edits=false', () => {
 
-            var db = new PouchDB(dbs.name);
+            var db = <pouchdb.thenable.PouchDB>new PouchDB(dbs.name);
             var doc1 = {
                 '_id': 'foo',
                 '_rev': '1-x',
@@ -579,7 +579,7 @@ adapters.forEach(function (adapter) {
 
         it('Deletion with new_edits=false, no history', () => {
 
-            var db = new PouchDB(dbs.name);
+            var db = <pouchdb.thenable.PouchDB>new PouchDB(dbs.name);
             var doc1 = {
                 '_id': 'foo',
                 '_rev': '1-x',
@@ -606,7 +606,7 @@ adapters.forEach(function (adapter) {
 
         it('Modification with new_edits=false, no history', () => {
 
-            var db = new PouchDB(dbs.name);
+            var db = <pouchdb.thenable.PouchDB>new PouchDB(dbs.name);
             var doc1 = {
                 '_id': 'foo',
                 '_rev': '1-x',
@@ -631,7 +631,7 @@ adapters.forEach(function (adapter) {
 
         it('Deletion with new_edits=false, no history, no revisions',() => {
 
-            var db = new PouchDB(dbs.name);
+            var db = <pouchdb.thenable.PouchDB>new PouchDB(dbs.name);
             var doc = {
                 '_deleted': true,
                 '_id': 'foo',

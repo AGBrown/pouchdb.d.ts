@@ -1252,11 +1252,12 @@ declare module pouchdb {
         //////////////////////////////  local db  /////////////////////////////
         /**
          * Creates a new local pouchDb with the name specified and 
-         * all the default options
+         * all the default options. To use this overload specify a cast:
+         * `<pouchdb.thenable.PouchDB>` or `<pouchdb.callback.PouchDB>`
          * @param name the database name
-         * @returns a Thenable<PouchDB>
+         * @returns a PouchDB
          */
-        new (name: string): thenable.PouchDB;
+        new (name: string): callback.PouchDB | thenable.PouchDB;
         /**
          * Creates a new local pouchDb with the name specified and 
          * all the default options

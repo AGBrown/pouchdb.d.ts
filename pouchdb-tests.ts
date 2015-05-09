@@ -23,7 +23,7 @@ module promise {
     }
     function chainedThen() {
         var fooOut: string;
-        new PouchDB("dbname")
+        (<pouchdb.thenable.PouchDB>new PouchDB("dbname"))
             .then((db) => new fakePromise<Foo>())
             .then((value: Foo) => { fooOut = value.foo; });
     }
@@ -43,9 +43,9 @@ module PouchDBTest {
         module localDbGeneral {
             function nameOnly() {
                 //  create local db just using name
-                dbt = new PouchDB("dbname");
+                dbt = <pouchdb.thenable.PouchDB>new PouchDB("dbname");
                 dbc = new PouchDB("dbname", undefined);
-                new PouchDB("dbname").then(myThen, myErr);
+                (<pouchdb.thenable.PouchDB>new PouchDB("dbname")).then(myThen, myErr);
                 dbc = new PouchDB("dbname", myCb);
             }
 
@@ -226,8 +226,8 @@ module PouchDBTest {
                 db.close((err, msg) => { });
             }
             function promise() {
-                var db1: pouchdb.thenable.PouchDB = new PouchDB("dbname");
-                var db2: pouchdb.promise.PouchDB = new PouchDB("dbname");
+                var db1 = <pouchdb.thenable.PouchDB>new PouchDB("dbname");
+                var db2: pouchdb.promise.PouchDB = <pouchdb.thenable.PouchDB>new PouchDB("dbname");
                 db1.close();
                 db1.close().then(msg => { }, err => { });
             }
@@ -250,8 +250,8 @@ module PouchDBTest {
             function promise() {
                 var myThen = (db: pouchdb.api.methods.destroy.Info) => { };
                 var myErr = (err: any) => { };
-                var db1: pouchdb.thenable.PouchDB = new PouchDB("dbname");
-                var db2: pouchdb.promise.PouchDB = new PouchDB("dbname");
+                var db1 = <pouchdb.thenable.PouchDB>new PouchDB("dbname");
+                var db2: pouchdb.promise.PouchDB = <pouchdb.thenable.PouchDB>new PouchDB("dbname");
 
                 db1.destroy(destroyOpts).then(myThen, myErr);
                 db1.destroy().then(myThen, myErr);
@@ -273,8 +273,8 @@ module PouchDBTest {
                 db.get<TestDoc>(id, {}, (err, doc) => { test = doc.test; });
             }
             function promise() {
-                var db1: pouchdb.thenable.PouchDB = new PouchDB("dbname");
-                var db2: pouchdb.promise.PouchDB = new PouchDB("dbname");
+                var db1 = <pouchdb.thenable.PouchDB>new PouchDB("dbname");
+                var db2: pouchdb.promise.PouchDB = <pouchdb.thenable.PouchDB>new PouchDB("dbname");
                 db1.get<TestDoc>(id);
                 db1.get<TestDoc>(id).then(doc => { test = doc.test; }, err => { });
 
@@ -332,8 +332,8 @@ module PouchDBTest {
                 db.put(bDoc, id, of, (err) => { err.error; });
             }
             function promise() {
-                var db1: pouchdb.thenable.PouchDB = new PouchDB("dbname");
-                var db2: pouchdb.promise.PouchDB = new PouchDB("dbname");
+                var db1 = <pouchdb.thenable.PouchDB>new PouchDB("dbname");
+                var db2: pouchdb.promise.PouchDB = <pouchdb.thenable.PouchDB>new PouchDB("dbname");
 
                 db1.put(eDoc).then(resp => { }, err => { }).catch(err => { });
                 db2.put(eDoc).then(resp => { }, err => { }).catch(err => { });
@@ -388,8 +388,8 @@ module PouchDBTest {
                 db.remove(nDoc, or, (err, val) => { });
             }
             function promise() {
-                var db1: pouchdb.thenable.PouchDB = new PouchDB("dbname");
-                var db2: pouchdb.promise.PouchDB = new PouchDB("dbname");
+                var db1 = <pouchdb.thenable.PouchDB>new PouchDB("dbname");
+                var db2: pouchdb.promise.PouchDB = <pouchdb.thenable.PouchDB>new PouchDB("dbname");
 
                 db1.remove(id, rv);
                 db2.remove(id, rv);
