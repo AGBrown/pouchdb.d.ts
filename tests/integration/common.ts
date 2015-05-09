@@ -16,6 +16,9 @@ type BulkDocsError = pouchdb.api.methods.bulkDocs.BulkDocsError;
 
 var adapters: string[] = ['http', 'local'];
 
+var expect = chai.expect;
+var should = chai.should();
+
 interface dbsShape {
     name?: string;
 }

@@ -13,7 +13,6 @@
 /// <reference path="utils.d.ts" />
 'use strict';
 
-import expect = chai.expect;
 type TestDoc = pouchdb.test.integration.TestDoc;
 type ValueDoc = pouchdb.test.integration.ValueDoc;
 
@@ -33,9 +32,9 @@ adapters.forEach((adapter: string) => {
 
         it("create a pouch", (done) => {
             new PouchDB(dbs.name, (err, db) => {
-                //  typescript: can't really handle should, so need to use expect instead
-                expect(err).not.to.exist;
-                expect(db).to.be.an.instanceOf(PouchDB);
+                should.not.exist(err);
+                db.should.be.an.instanceof(PouchDB);
+                done();
             });
         });
 
