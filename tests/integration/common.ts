@@ -22,6 +22,7 @@ var should = chai.should();
 interface dbsShape {
     name?: string;
 }
+var noop = (e, v) => { };
 
 /**
  * contains pouchdb code
