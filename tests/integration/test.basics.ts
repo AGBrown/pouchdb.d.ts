@@ -920,94 +920,94 @@ adapters.forEach((adapter: string) => {
       });
     });
 
-    //it('issue 2888, successive deletes and writes', function () {
-    //  var db = new PouchDB(dbs.name);
-    //  var rev;
+    it('issue 2888, successive deletes and writes', () => {
+      var db = new PouchDB(dbs.name);
+      var rev;
 
-    //  function checkNumRevisions(num) {
-    //    return db.get('foo', {
-    //      open_revs: 'all',
-    //      revs: true
-    //    }).then(function (fullDocs) {
-    //      fullDocs[0].ok._revisions.ids.should.have.length(num);
-    //    });
-    //  }
-    //  return db.put({ _id: 'foo' }).then(function (resp) {
-    //    rev = resp.rev;
-    //    return checkNumRevisions(1);
-    //  }).then(function () {
-    //    return db.remove('foo', rev);
-    //  }).then(function () {
-    //    return checkNumRevisions(2);
-    //  }).then(function () {
-    //    return db.put({ _id: 'foo' });
-    //  }).then(function (res) {
-    //    rev = res.rev;
-    //    return checkNumRevisions(3);
-    //  }).then(function () {
-    //    return db.remove('foo', rev);
-    //  }).then(function () {
-    //    return checkNumRevisions(4);
-    //  });
-    //});
+      function checkNumRevisions(num) {
+        return db.get('foo', {
+          open_revs: 'all',
+          revs: true
+        }).then((fullDocs) => {
+          fullDocs[0].ok._revisions.ids.should.have.length(num);
+        });
+      }
+      return db.put({ _id: 'foo' }).then((resp) => {
+        rev = resp.rev;
+        return checkNumRevisions(1);
+      }).then(() => {
+        return db.remove('foo', rev);
+      }).then(() => {
+        return checkNumRevisions(2);
+      }).then(() => {
+        return db.put({ _id: 'foo' });
+      }).then((res) => {
+        rev = res.rev;
+        return checkNumRevisions(3);
+      }).then(() => {
+        return db.remove('foo', rev);
+      }).then(() => {
+        return checkNumRevisions(4);
+      });
+    });
 
-    //it('2 invalid puts', function (done) {
-    //  var db = new PouchDB(dbs.name);
-    //  var called = 0;
-    //  var cb = function () {
-    //    if (++called === 2) {
-    //      done();
-    //    }
-    //  };
-    //  db.put({ _id: 'foo', _zing: 'zing' }, cb);
-    //  db.put({ _id: 'bar', _zing: 'zing' }, cb);
-    //});
+    it('2 invalid puts', function (done) {
+      var db = new PouchDB(dbs.name, noop);
+      var called = 0;
+      var cb = () => {
+        if (++called === 2) {
+          done();
+        }
+      };
+      db.put({ _id: 'foo', _zing: 'zing' }, cb);
+      db.put({ _id: 'bar', _zing: 'zing' }, cb);
+    });
 
-    //if (adapter === 'local') {
-    //  // TODO: this test fails in the http adapter in Chrome
-    //  it('should allow unicode doc ids', function (done) {
-    //    var db = new PouchDB(dbs.name);
-    //    var ids = [
-    //    // "PouchDB is awesome" in Japanese, contains 1-3 byte chars
-    //      '\u30d1\u30a6\u30c1\u30e5DB\u306f\u6700\u9ad8\u3060',
-    //      '\u03B2', // 2-byte utf-8 char: 3b2
-    //      '\uD843\uDF2D', // exotic 4-byte utf-8 char: 20f2d
-    //      '\u0000foo\u0000bar\u0001baz\u0002quux', // like mapreduce
-    //      '\u0000',
-    //      '\u30d1'
-    //    ];
-    //    var numDone = 0;
-    //    ids.forEach(function (id) {
-    //      var doc = { _id: id, foo: 'bar' };
-    //      db.put(doc).then(function (info) {
-    //        doc._rev = info.rev;
-    //        return db.put(doc);
-    //      }).then(function () {
-    //        return db.get(id);
-    //      }).then(function (resp) {
-    //        resp._id.should.equal(id);
-    //        if (++numDone === ids.length) {
-    //          done();
-    //        }
-    //      }, done);
-    //    });
-    //  });
+    if (adapter === 'local') {
+      // TODO: this test fails in the http adapter in Chrome
+      it('should allow unicode doc ids', (done) => {
+        var db = new PouchDB(dbs.name);
+        var ids = [
+        // "PouchDB is awesome" in Japanese, contains 1-3 byte chars
+          '\u30d1\u30a6\u30c1\u30e5DB\u306f\u6700\u9ad8\u3060',
+          '\u03B2', // 2-byte utf-8 char: 3b2
+          '\uD843\uDF2D', // exotic 4-byte utf-8 char: 20f2d
+          '\u0000foo\u0000bar\u0001baz\u0002quux', // like mapreduce
+          '\u0000',
+          '\u30d1'
+        ];
+        var numDone = 0;
+        ids.forEach((id) => {
+          var doc = <pouchdb.api.methods.NewDoc>{ _id: id, foo: 'bar' };
+          db.put(doc).then((info) => {
+            (<pouchdb.api.methods.ExistingDoc>doc)._rev = info.rev;
+            return db.put(doc);
+          }).then(() => {
+            return db.get(id);
+          }).then((resp) => {
+            resp._id.should.equal(id);
+            if (++numDone === ids.length) {
+              done();
+            }
+          }, done);
+        });
+      });
 
-    //  // this test only really makes sense for IDB
-    //  it('should have same blob support for 2 dbs', function () {
-    //    var db1 = new PouchDB(dbs.name);
-    //    return db1.info().then(function () {
-    //      var db2 = new PouchDB(dbs.name);
-    //      return db2.info().then(function () {
-    //        if (typeof db1._blobSupport !== 'undefined') {
-    //          db1._blobSupport.should.equal(db2._blobSupport,
-    //            'same blob support');
-    //        } else {
-    //          true.should.equal(true);
-    //        }
-    //      });
-    //    });
-    //  });
-    //}
+      // this test only really makes sense for IDB
+      it('should have same blob support for 2 dbs', () => {
+        var db1 = new PouchDB(dbs.name);
+        return db1.info().then(() => {
+          var db2 = new PouchDB(dbs.name);
+          return db2.info().then(() => {
+            if (typeof db1._blobSupport !== 'undefined') {
+              db1._blobSupport.should.equal(db2._blobSupport,
+                'same blob support');
+            } else {
+              true.should.equal(true);
+            }
+          });
+        });
+      });
+    }
   });
 });

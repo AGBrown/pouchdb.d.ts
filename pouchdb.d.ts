@@ -1129,6 +1129,8 @@ declare module pouchdb {
             adapter: string;
             /** The database type */
             type(): string;
+            /** undocumented */
+            _blobSupport: boolean;
         }
         
         //  Errors (see pouchdb/lib/deps/errors.js /////////////////////////////
