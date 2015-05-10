@@ -712,31 +712,30 @@ adapters.forEach((adapter: string) => {
       });
     });
 
-    //it('Fail to fetch a doc after db was deleted', function (done) {
-    //  new PouchDB(dbs.name, function (err, db) {
-    //    var db2 = new PouchDB(dbs.name);
-    //    var doc = { _id: 'foodoc' };
-    //    var doc2 = { _id: 'foodoc2' };
-    //    db.put(doc, function () {
-    //      db2.put(doc2, function () {
-    //        db.allDocs(function (err, docs) {
-    //          docs.total_rows.should.equal(2);
-    //          db.destroy().then(function () {
-    //            db2 = new PouchDB(dbs.name);
-    //            db2.get(doc._id, function (err, doc) {
-    //              should.not.exist(doc);
-    //              err.status.should.equal(404);
-    //              done();
-    //            });
-    //          });
-    //        });
-    //      });
-    //    });
-    //  });
-    //});
+    it('Fail to fetch a doc after db was deleted', () => {
+      var doc = { _id: 'foodoc' };
+      var doc2 = { _id: 'foodoc2' };
+      return new PouchDB(dbs.name).then((db) => {
+        var db2 = new PouchDB(dbs.name);
+        return db.put(doc)
+          .then(() => { return db2.put(doc2); })
+          .then(() => { return db.allDocs(); })
+          .then((docs) => {
+          docs.total_rows.should.equal(2);
+          return db.destroy();
+        });
+      }).then(() => {
+        var db2 = new PouchDB(dbs.name);
+        return db2.get(doc._id);
+      }).then((doc) => {
+        throw new Error('get doc after db.destroy should fail');
+      },(err) => {
+        err.status.should.equal(404);
+      });
+    });
 
     //it('Cant add docs with empty ids', function (done) {
-    //  var docs = [
+    //  var docs: pouchdb.api.methods.NewDoc[] = [
     //    {},
     //    { _id: null },
     //    { _id: undefined },
@@ -745,7 +744,7 @@ adapters.forEach((adapter: string) => {
     //    { _id: '_underscored_id' }
     //  ];
     //  var num = docs.length;
-    //  var db = new PouchDB(dbs.name);
+    //  var db = new PouchDB(dbs.name, noop);
     //  docs.forEach(function (doc) {
     //    db.put(doc, function (err, info) {
     //      should.exist(err);
