@@ -38,11 +38,10 @@ adapters.forEach((adapter: string) => {
             });
         });
 
-        it('Create a pouch with a promise', (done) => {
-            new PouchDB(dbs.name).then((db) => {
+        it('Create a pouch with a promise', () => {
+            return new PouchDB(dbs.name).then((db) => {
                 db.should.be.an.instanceof(PouchDB);
-                done();
-            }, done);
+            });
         });
 
         it('Catch an error when creating a pouch with a promise', (done) => {
@@ -139,7 +138,7 @@ adapters.forEach((adapter: string) => {
                     _id: info.id,
                     _rev: info.rev,
                     another: 'test'
-                }).then(function (info2) {
+                }).then((info2) => {
                     info.rev.should.not.equal(info2.rev);
                 });
             });
@@ -215,19 +214,18 @@ adapters.forEach((adapter: string) => {
             });
         });
 
-        it('Remove doc with a promise', (done) => {
+        it('Remove doc with a promise', () => {
             var db = new PouchDB(dbs.name);
-            db.post({ test: 'someotherstuff' }).then((info) => {
+            return db.post({ test: 'someotherstuff' }).then((info) => {
                 return db.remove({
                     test: 'someotherstuff',
                     _id: info.id,
                     _rev: info.rev
                 }).then(() => {
                     return db.get<TestDoc>(info.id).then((doc) => {
-                        done(true);
+                        throw new Error('shouldn\'t have gotten here');
                     }, (err) => {
                             should.exist(err.error);
-                            done();
                         });
                 });
             });
@@ -246,20 +244,19 @@ adapters.forEach((adapter: string) => {
             });
         });
 
-        it('Remove doc with new syntax and a promise', (done) => {
+        it('Remove doc with new syntax and a promise', () => {
             var db = new PouchDB(dbs.name);
             var id;
-            db.post({ test: 'someotherstuff' }).then((info) => {
+            return db.post({ test: 'someotherstuff' }).then((info) => {
                 id = info.id;
                 return db.remove(info.id, info.rev);
             }).then(() => {
                 return db.get<TestDoc>(id);
             }).then((doc) => {
-                done(true);
+                throw new Error('shouldn\'t have gotten here');
             }, (err) => {
-                    should.exist(err.error);
-                    done();
-                });
+                should.exist(err.error);
+            });
         });
 
         it('Doc removal leaves only stub', (done) => {
@@ -692,28 +689,28 @@ adapters.forEach((adapter: string) => {
             newError.reason.should.equal('love needs no message');
         });
 
-        //it('Fail to fetch a doc after db was deleted', function (done) {
-        //    new PouchDB(dbs.name, function (err, db) {
-        //        var db2 = new PouchDB(dbs.name);
-        //        var doc = { _id: 'foodoc' };
-        //        var doc2 = { _id: 'foodoc2' };
-        //        db.put(doc, function () {
-        //            db2.put(doc2, function () {
-        //                db.allDocs(function (err, docs) {
-        //                    docs.total_rows.should.equal(2);
-        //                    db.destroy(function (err) {
-        //                        should.not.exist(err);
-        //                        db2 = new PouchDB(dbs.name);
-        //                        db2.get(doc._id, function (err, doc) {
-        //                            err.status.should.equal(404);
-        //                            done();
-        //                        });
-        //                    });
-        //                });
-        //            });
-        //        });
-        //    });
-        //});
+        it('Fail to fetch a doc after db was deleted', (done) => {
+            new PouchDB(dbs.name, (err, db) => {
+                var db2 = new PouchDB(dbs.name, noop);
+                var doc = { _id: 'foodoc' };
+                var doc2 = { _id: 'foodoc2' };
+                db.put(doc, () => {
+                    db2.put(doc2,() => {
+                        db.allDocs((err, docs) => {
+                            docs.total_rows.should.equal(2);
+                            db.destroy((err) => {
+                                should.not.exist(err);
+                                db2 = new PouchDB(dbs.name, noop);
+                                db2.get(doc._id, (err, doc) => {
+                                    err.status.should.equal(404);
+                                    done();
+                                });
+                            });
+                        });
+                    });
+                });
+            });
+        });
 
         //it('Fail to fetch a doc after db was deleted', function (done) {
         //    new PouchDB(dbs.name, function (err, db) {
