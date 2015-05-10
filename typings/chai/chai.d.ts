@@ -7,6 +7,7 @@ declare module Chai {
 
     interface ChaiStatic {
         expect: ExpectStatic;
+        should(): Should;
         /**
          * Provides a way to extend the internals of Chai
          */
@@ -23,6 +24,18 @@ declare module Chai {
 
     export interface AssertionStatic {
         (target: any, message?: string): Assertion;
+    }
+
+    interface ShouldAssertion {
+        equal(val1, val2, msg?: string);
+        Throw(fn: Function, errt: Function, errs: string | RegExp, msg?: string);
+        throw(fn: Function, errt: Function, errs: string | RegExp, msg?: string);
+        exist(val: any, msg?: string);
+    }
+
+    interface Should extends ShouldAssertion {
+        not: ShouldAssertion;
+        fail(actual, expected, message?: string, operator?: string);
     }
 
     interface Assertion extends LanguageChains, NumericComparison, TypeComparison {
@@ -280,4 +293,8 @@ declare var chai: Chai.ChaiStatic;
 
 declare module "chai" {
     export = chai;
+}
+
+interface Object {
+    should: Chai.Assertion;
 }
