@@ -27,6 +27,7 @@ declare module pouchdb {
        * Helpful test utilities
        */
       interface TestUtils {
+        isCouchMaster(): boolean;
         /**
          * Delete specified databases
          */
@@ -37,7 +38,7 @@ declare module pouchdb {
          */
         adapterUrl(adapter: string, name: string): string;
 
-        isCouchDB<R>(callback: (isCouchDB: boolean) => R) : R;
+        isCouchDB<R>(callback: (isCouchDB: boolean) => R): R;
       }
     }
   }

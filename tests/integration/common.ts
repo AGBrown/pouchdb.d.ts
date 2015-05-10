@@ -48,6 +48,9 @@ declare module pouchdb {
       interface BarDoc extends pouchdb.api.methods.ExistingDoc {
         bar?: string;
       }
+      interface FooDoc extends pouchdb.api.methods.ExistingDoc {
+        foo?: string;
+      }
     }
   }
 }

@@ -799,47 +799,44 @@ adapters.forEach((adapter: string) => {
       });
     });
 
-    //it('db.info should give correct doc_count', function (done) {
-    //  new PouchDB(dbs.name).then(function (db) {
-    //    db.info().then(function (info) {
-    //      info.doc_count.should.equal(0);
-    //      return db.bulkDocs({ docs: [{ _id: '1' }, { _id: '2' }, { _id: '3' }] });
-    //    }).then(function () {
-    //      return db.info();
-    //    }).then(function (info) {
-    //      info.doc_count.should.equal(3);
-    //      return db.get('1');
-    //    }).then(function (doc) {
-    //      return db.remove(doc);
-    //    }).then(function () {
-    //      return db.info();
-    //    }).then(function (info) {
-    //      info.doc_count.should.equal(2);
-    //      done();
-    //    }, done);
-    //  }, done);
-    //});
+    it('db.info should give correct doc_count', () => {
+      return new PouchDB(dbs.name).then((db) => {
+        return db.info().then((info) => {
+          info.doc_count.should.equal(0);
+          return db.bulkDocs({ docs: [{ _id: '1' }, { _id: '2' }, { _id: '3' }] });
+        }).then(() => { return db.info(); })
+        .then((info) => {
+          info.doc_count.should.equal(3);
+          return db.get('1');
+        }).then((doc) => { return db.remove(doc); })
+        .then(() => { return db.info(); })
+        .then((info) => {
+          info.doc_count.should.equal(2);
+        });
+      });
+    });
 
-    //it('putting returns {ok: true}', function () {
-    //  // in couch, it's {ok: true} and in cloudant it's {},
-    //  // but the http adapter smooths this out
-    //  return new PouchDB(dbs.name).then(function (db) {
-    //    return db.put({ _id: '_local/foo' }).then(function (info) {
-    //      true.should.equal(info.ok, 'putting local returns ok=true');
-    //      return db.put({ _id: 'quux' });
-    //    }).then(function (info) {
-    //      true.should.equal(info.ok, 'putting returns ok=true');
-    //      return db.bulkDocs([{ _id: '_local/bar' }, { _id: 'baz' }]);
-    //    }).then(function (info) {
-    //      info.should.have.length(2, 'correct num bulk docs');
-    //      true.should.equal(info[0].ok, 'bulk docs says ok=true #1');
-    //      true.should.equal(info[1].ok, 'bulk docs says ok=true #2');
-    //      return db.post({});
-    //    }).then(function (info) {
-    //      true.should.equal(info.ok, 'posting returns ok=true');
-    //    });
-    //  });
-    //});
+    it('putting returns {ok: true}', () => {
+      // in couch, it's {ok: true} and in cloudant it's {},
+      // but the http adapter smooths this out
+      return new PouchDB(dbs.name).then((db) => {
+        return db.put({ _id: '_local/foo' }).then((info) => {
+          true.should.equal(info.ok, 'putting local returns ok=true');
+          return db.put({ _id: 'quux' });
+        }).then((info) => {
+          true.should.equal(info.ok, 'putting returns ok=true');
+          return db.bulkDocs([{ _id: '_local/bar' }, { _id: 'baz' }]);
+        }).then((info) => {
+          info.should.have.length(2, 'correct num bulk docs');
+          true.should.equal(info[0].ok, 'bulk docs says ok=true #1');
+          true.should.equal(info[1].ok, 'bulk docs says ok=true #2');
+          return db.post({});
+        }).then((info) => {
+          true.should.equal(info.ok, 'posting returns ok=true');
+        });
+      });
+    });
+
     //it('putting is override-able', function (done) {
     //  var db = new PouchDB(dbs.name);
     //  var called = 0;
@@ -869,59 +866,59 @@ adapters.forEach((adapter: string) => {
     //  }, done);
     //});
 
-    //it('issue 2779, deleted docs, old revs COUCHDB-292', function (done) {
-    //  var db = new PouchDB(dbs.name);
-    //  var rev;
+    it('issue 2779, deleted docs, old revs COUCHDB-292', () => {
+      var db = new PouchDB(dbs.name);
+      var rev;
 
-    //  db.put({ _id: 'foo' }).then(function (resp) {
-    //    rev = resp.rev;
-    //    return db.remove('foo', rev);
-    //  }).then(function () {
-    //    return db.get('foo');
-    //  }).catch(function (err) {
-    //    return db.put({ _id: 'foo', _rev: rev });
-    //  }).then(function () {
-    //    done(new Error('should never have got here'));
-    //  }, function (err) {
-    //      should.exist(err);
-    //      done();
-    //    });
-    //});
+      return db.put({ _id: 'foo' }).then((resp) => {
+        rev = resp.rev;
+        return db.remove('foo', rev);
+      }).then(() => {
+        return db.get('foo');
+      }).catch((err) => {
+        return db.put({ _id: 'foo', _rev: rev });
+      }).then(() => {
+        throw new Error('should never have got here');
+      },(err) => {
+        should.exist(err);
+      });
+    });
 
-    //it('issue 2779, correct behavior for undeleting', function () {
+    it('issue 2779, correct behavior for undeleting', function () {
 
-    //  if (testUtils.isCouchMaster()) {
-    //    return true;
-    //  }
+      if (testUtils.isCouchMaster()) {
+        return true;
+      }
 
-    //  var db = new PouchDB(dbs.name);
-    //  var rev;
+      var db = new PouchDB(dbs.name);
+      var rev;
 
-    //  function checkNumRevisions(num) {
-    //    return db.get('foo', {
-    //      open_revs: 'all',
-    //      revs: true
-    //    }).then(function (fullDocs) {
-    //      fullDocs[0].ok._revisions.ids.should.have.length(num);
-    //    });
-    //  }
+      function checkNumRevisions(num) {
+        return db.get('foo', {
+          open_revs: 'all',
+          revs: true
+        }).then((fullDocs) => {
+          // todo: d.ts - ok and ok._revisions not defined on this response object
+          fullDocs[0].ok._revisions.ids.should.have.length(num);
+        });
+      }
 
-    //  return db.put({ _id: 'foo' }).then(function (resp) {
-    //    rev = resp.rev;
-    //    return checkNumRevisions(1);
-    //  }).then(function () {
-    //    return db.remove('foo', rev);
-    //  }).then(function () {
-    //    return checkNumRevisions(2);
-    //  }).then(function () {
-    //    return db.allDocs({ keys: ['foo'] });
-    //  }).then(function (res) {
-    //    rev = res.rows[0].value.rev;
-    //    return db.put({ _id: 'foo', _rev: rev });
-    //  }).then(function () {
-    //    return checkNumRevisions(3);
-    //  });
-    //});
+      return db.put({ _id: 'foo' }).then((resp) => {
+        rev = resp.rev;
+        return checkNumRevisions(1);
+      }).then(() => {
+        return db.remove('foo', rev);
+      }).then(() => {
+        return checkNumRevisions(2);
+      }).then(() => {
+        return db.allDocs({ keys: ['foo'] });
+      }).then((res) => {
+        rev = res.rows[0].value.rev;
+        return db.put({ _id: 'foo', _rev: rev });
+      }).then(() => {
+        return checkNumRevisions(3);
+      });
+    });
 
     //it('issue 2888, successive deletes and writes', function () {
     //  var db = new PouchDB(dbs.name);
