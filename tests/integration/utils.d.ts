@@ -4,7 +4,7 @@
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 // THIS FILE:
 //  This file defines the shape of the test utilities in
-//      pouchdb/tests/integration/util.js
+//    pouchdb/tests/integration/util.js
 
 /**
  * Helpful test utilities
@@ -15,30 +15,31 @@ declare var testUtils: pouchdb.test.integration.TestUtils;
  * contains pouchdb code
  */
 declare module pouchdb {
+  /**
+   * contains test code
+   */
+  module test {
     /**
-     * contains test code
+     * contains integration test code
      */
-    module test {
+    module integration {
+      /**
+       * Helpful test utilities
+       */
+      interface TestUtils {
+        isCouchMaster(): boolean;
         /**
-         * contains integration test code
+         * Delete specified databases
          */
-        module integration {
-            /**
-             * Helpful test utilities
-             */
-            interface TestUtils {
-                /**
-                 * Delete specified databases
-                 */
-                cleanup(dbs: string[], done: () => void): void;
-                /**
-                 * Prefix http adapter database names with their host and 
-                 * node adapter ones with a db location
-                 */
-                adapterUrl(adapter: string, name: string): string;
+        cleanup(dbs: string[], done: () => void): void;
+        /**
+         * Prefix http adapter database names with their host and
+         * node adapter ones with a db location
+         */
+        adapterUrl(adapter: string, name: string): string;
 
-                isCouchDB<R>(callback: (isCouchDB: boolean) => R) : R;
-            }
-        }
+        isCouchDB<R>(callback: (isCouchDB: boolean) => R): R;
+      }
     }
+  }
 }
