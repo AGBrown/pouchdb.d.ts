@@ -321,12 +321,7 @@ adapters.forEach((adapter: string) => {
 
     it('Delete document without id', (done) => {
       var db = new PouchDB(dbs.name, noop);
-      //  typescript won't let this test compile unless we specify _id and _rev to be undefined
-      db.remove({
-        test: 'ing',
-        _id: undefined,
-        _rev: undefined
-      }, (err) => {
+      db.remove(<pouchdb.api.methods.ExistingDoc><{}>{ test: 'ing' }, (err) => {
         should.exist(err);
         done();
       });
@@ -576,9 +571,7 @@ adapters.forEach((adapter: string) => {
 
     it('Put doc without _id should fail', (done) => {
       var db = new PouchDB(dbs.name, noop);
-      //  d.ts: must put _id as undefined to be able to write this in ts
-      //    but not sure if the right error will return as a result
-      db.put({ test: 'somestuff', _id: undefined }, (err, info) => {
+      db.put(<pouchdb.api.methods.NewDoc><{}>{ test: 'somestuff' }, (err, info) => {
         should.exist(err);
         err.message.should.equal(PouchDB.Errors.MISSING_ID.message,
           'correct error message returned');
@@ -642,7 +635,7 @@ adapters.forEach((adapter: string) => {
     });
 
     it('Error when document is not an object', (done) => {
-      var db = new PouchDB(dbs.name);
+      var db = new PouchDB(dbs.name, noop);
       var doc1 = [{ _id: 'foo' }, { _id: 'bar' }];
       var doc2 = 'this is not an object';
       var count = 5;
@@ -659,9 +652,11 @@ adapters.forEach((adapter: string) => {
       //    but currently it is
       db.post(doc1, callback);
       db.post(doc2, callback);
-      //db.put(doc1, callback);
-      //db.put(doc2, callback);
-      //db.bulkDocs({ docs: [doc1, doc2] }, callback);
+      //  d.ts allows us to fake this by double-casting to {} then ExistingDoc
+      db.put(<pouchdb.api.methods.ExistingDoc><{}>doc1, callback);
+      db.put(<pouchdb.api.methods.ExistingDoc><{}>doc2, callback);
+      //  todo: d.ts overloads allow this even though it is invalid
+      db.bulkDocs({ docs: [doc1, doc2] }, callback);
     });
 
     it('Test instance update_seq updates correctly', (done) => {
