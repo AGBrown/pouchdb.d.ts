@@ -20,7 +20,7 @@ var expect = chai.expect;
 var should = chai.should();
 
 interface dbsShape {
-    name?: string;
+  name?: string;
 }
 var noop = (e, v) => { };
 
@@ -28,26 +28,26 @@ var noop = (e, v) => { };
  * contains pouchdb code
  */
 declare module pouchdb {
+  /**
+   * contains test code
+   */
+  module test {
     /**
-     * contains test code
+     * contains integration test code
      */
-    module test {
-        /**
-         * contains integration test code
-         */
-        module integration {
-            interface TestDoc extends pouchdb.api.methods.ExistingDoc {
-                test: string;
-            }
-            interface NewValueDoc extends pouchdb.api.methods.NewDoc {
-                value: string;
-            }
-            interface ValueDoc extends pouchdb.api.methods.ExistingDoc, NewValueDoc {
-                value: string;
-            }
-            interface BarDoc extends pouchdb.api.methods.ExistingDoc {
-                bar?: string;
-            }
-        }
+    module integration {
+      interface TestDoc extends pouchdb.api.methods.ExistingDoc {
+        test: string;
+      }
+      interface NewValueDoc extends pouchdb.api.methods.NewDoc {
+        value: string;
+      }
+      interface ValueDoc extends pouchdb.api.methods.ExistingDoc, NewValueDoc {
+        value: string;
+      }
+      interface BarDoc extends pouchdb.api.methods.ExistingDoc {
+        bar?: string;
+      }
     }
+  }
 }
