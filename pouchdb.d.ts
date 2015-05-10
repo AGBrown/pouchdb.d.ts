@@ -839,7 +839,9 @@ declare module pouchdb {
                     /** (WebSQL) true if the SQLite Plugin is being used */
                     sqlite_plugin: string;
                     /** (WebSQL) either `'UTF-8'` or `'UTF-16'`. */
-                    websql_encoding: string
+                    websql_encoding: string;
+                    /** reflects the `auto_compaction` used to create the database */
+                    auto_compaction: boolean;
                 }
                 /** Callback pattern for `info()` */
                 interface Callback {
@@ -1091,7 +1093,7 @@ declare module pouchdb {
         module db {
             /** pouchDB api: callback based */
             interface Callback extends
-                Properties
+                PouchInstance
                 , methods.allDocs.Callback
                 , methods.bulkDocs.Callback
                 , methods.changes.Overloads
@@ -1106,7 +1108,7 @@ declare module pouchdb {
             {}
             /** pouchDB api: promise based */
             interface Promise extends
-                Properties
+                PouchInstance
                 , methods.allDocs.Promise
                 , methods.bulkDocs.Promise
                 , methods.changes.Overloads
@@ -1121,10 +1123,12 @@ declare module pouchdb {
             {}
         }
 
-        /** The main pouchDB interface properties */
-        interface Properties {
+        /** The main pouchDB interface */
+        interface PouchInstance {
             /** The adapter being used by this db instance */
             adapter: string;
+            /** The database type */
+            type(): string;
         }
         
         //  Errors (see pouchdb/lib/deps/errors.js /////////////////////////////
@@ -1241,7 +1245,7 @@ declare module pouchdb {
     
     /** Static-side interface for PouchDB */
     export interface PouchDB {
-        /**  */
+        /** Error helpers */
         Errors: api.StandardErrors;
     }
     /**

@@ -734,71 +734,70 @@ adapters.forEach((adapter: string) => {
       });
     });
 
-    //it('Cant add docs with empty ids', function (done) {
-    //  var docs: pouchdb.api.methods.NewDoc[] = [
-    //    {},
-    //    { _id: null },
-    //    { _id: undefined },
-    //    { _id: '' },
-    //    { _id: {} },
-    //    { _id: '_underscored_id' }
-    //  ];
-    //  var num = docs.length;
-    //  var db = new PouchDB(dbs.name, noop);
-    //  docs.forEach(function (doc) {
-    //    db.put(doc, function (err, info) {
-    //      should.exist(err);
-    //      if (!--num) {
-    //        done();
-    //      }
-    //    });
-    //  });
-    //});
+    it('Cant add docs with empty ids', (done) => {
+      var docs: pouchdb.api.methods.NewDoc[] = [
+        <any>{},
+        { _id: null },
+        { _id: undefined },
+        { _id: '' },
+        { _id: <any>{} },
+        { _id: '_underscored_id' }
+      ];
+      var num = docs.length;
+      var db = new PouchDB(dbs.name, noop);
+      docs.forEach((doc) => {
+        db.put(doc, (err, info) => {
+          should.exist(err);
+          if (!--num) {
+            done();
+          }
+        });
+      });
+    });
 
-    //it('Test doc with percent in ID', function () {
-    //  var db = new PouchDB(dbs.name);
-    //  var doc = {
-    //    foo: 'bar',
-    //    _id: 'foo%bar'
-    //  };
-    //  return db.put(doc).then(function (res) {
-    //    res.id.should.equal('foo%bar');
-    //    doc.foo.should.equal('bar');
-    //    return db.get('foo%bar');
-    //  }).then(function (doc) {
-    //    doc._id.should.equal('foo%bar');
-    //    return db.allDocs({ include_docs: true });
-    //  }).then(function (res) {
-    //    var x = res.rows[0];
-    //    x.id.should.equal('foo%bar');
-    //    x.doc._id.should.equal('foo%bar');
-    //    x.key.should.equal('foo%bar');
-    //    should.exist(x.doc._rev);
-    //  });
-    //});
+    it('Test doc with percent in ID', () => {
+      var db = new PouchDB(dbs.name);
+      var doc = {
+        foo: 'bar',
+        _id: 'foo%bar'
+      };
+      return db.put(doc).then((res) => {
+        res.id.should.equal('foo%bar');
+        doc.foo.should.equal('bar');
+        return db.get('foo%bar');
+      }).then((doc) => {
+        doc._id.should.equal('foo%bar');
+        return db.allDocs({ include_docs: true });
+      }).then((res) => {
+        var x = res.rows[0];
+        x.id.should.equal('foo%bar');
+        x.doc._id.should.equal('foo%bar');
+        x.key.should.equal('foo%bar');
+        should.exist(x.doc._rev);
+      });
+    });
 
-    //it('db.info should give correct name', function (done) {
-    //  var db = new PouchDB(dbs.name);
-    //  db.info().then(function (info) {
-    //    info.db_name.should.equal('testdb');
-    //    done();
-    //  });
-    //});
+    it('db.info should give correct name', () => {
+      var db = new PouchDB(dbs.name);
+      return db.info().then((info) => {
+        info.db_name.should.equal('testdb');
+      });
+    });
 
-    //it('db.info should give auto_compaction = false (#2744)', function () {
-    //  var db = new PouchDB(dbs.name, { auto_compaction: false });
-    //  return db.info().then(function (info) {
-    //    info.auto_compaction.should.equal(false);
-    //  });
-    //});
+    it('db.info should give auto_compaction = false (#2744)', () => {
+      var db = new PouchDB(dbs.name, { auto_compaction: false });
+      return db.info().then((info) => {
+        (<pouchdb.api.methods.info.ResponseDebug>info).auto_compaction.should.equal(false);
+      });
+    });
 
-    //it('db.info should give auto_compaction = true (#2744)', function () {
-    //  var db = new PouchDB(dbs.name, { auto_compaction: true });
-    //  return db.info().then(function (info) {
-    //    // http doesn't support auto compaction
-    //    info.auto_compaction.should.equal(db.type() !== 'http');
-    //  });
-    //});
+    it('db.info should give auto_compaction = true (#2744)', () => {
+      var db = new PouchDB(dbs.name, { auto_compaction: true });
+      return db.info().then((info) => {
+        // http doesn't support auto compaction
+        (<pouchdb.api.methods.info.ResponseDebug>info).auto_compaction.should.equal(db.type() !== 'http');
+      });
+    });
 
     //it('db.info should give correct doc_count', function (done) {
     //  new PouchDB(dbs.name).then(function (db) {
