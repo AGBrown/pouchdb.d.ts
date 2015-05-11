@@ -297,89 +297,89 @@ adapters.forEach(function (adapter) {
       });
     });
 
-    //it('Test get with revs_info on tree', (done) => {
-    //  var db = new PouchDB(dbs.name);
-    //  var simpleTree = [
-    //    [{ _id: 'foo', _rev: '1-a', value: 'foo a' },
-    //      { _id: 'foo', _rev: '2-b', value: 'foo b' },
-    //      { _id: 'foo', _rev: '3-c', value: 'foo c' }],
-    //    [{ _id: 'foo', _rev: '1-a', value: 'foo a' },
-    //      { _id: 'foo', _rev: '2-d', value: 'foo d' },
-    //      { _id: 'foo', _rev: '3-e', _deleted: true }]
-    //  ];
-    //  testUtils.putTree(db, simpleTree, () => {
-    //    db.get('foo', { revs_info: true }, (err, doc) => {
-    //      var revs = doc._revs_info;
-    //      revs.length.should.equal(3, 'correct number of revs');
-    //      revs[0].rev.should.equal('3-c', 'rev ok');
-    //      revs[1].rev.should.equal('2-b', 'rev ok');
-    //      revs[2].rev.should.equal('1-a', 'rev ok');
-    //      done();
-    //    });
-    //  });
-    //});
+    it('Test get with revs_info on tree', (done) => {
+      var db = new PouchDB(dbs.name, noop);
+      var simpleTree = [
+        [{ _id: 'foo', _rev: '1-a', value: 'foo a' },
+          { _id: 'foo', _rev: '2-b', value: 'foo b' },
+          { _id: 'foo', _rev: '3-c', value: 'foo c' }],
+        [{ _id: 'foo', _rev: '1-a', value: 'foo a' },
+          { _id: 'foo', _rev: '2-d', value: 'foo d' },
+          { _id: 'foo', _rev: '3-e', _deleted: true }]
+      ];
+      testUtils.putTree(db, simpleTree, () => {
+        db.get('foo', { revs_info: true }, (err, doc) => {
+          var revs = doc._revs_info;
+          revs.length.should.equal(3, 'correct number of revs');
+          revs[0].rev.should.equal('3-c', 'rev ok');
+          revs[1].rev.should.equal('2-b', 'rev ok');
+          revs[2].rev.should.equal('1-a', 'rev ok');
+          done();
+        });
+      });
+    });
 
-    //it('Test get with revs_info on compacted tree', (done) => {
-    //  // _compact endpoint is not exposed in CouchDB 2.0
-    //  // (it's exposed via a private port). Skip
-    //  // this test for now
-    //  if (testUtils.isCouchMaster()) {
-    //    return done();
-    //  }
+    it('Test get with revs_info on compacted tree', (done) => {
+      // _compact endpoint is not exposed in CouchDB 2.0
+      // (it's exposed via a private port). Skip
+      // this test for now
+      if (testUtils.isCouchMaster()) {
+        return done();
+      }
 
-    //  var db = new PouchDB(dbs.name);
-    //  var simpleTree = [
-    //    [
-    //      {
-    //        _id: 'foo',
-    //        _rev: '1-a',
-    //        value: 'foo a'
-    //      },
-    //      {
-    //        _id: 'foo',
-    //        _rev: '2-b',
-    //        value: 'foo d'
-    //      },
-    //      {
-    //        _id: 'foo',
-    //        _rev: '3-c',
-    //        value: 'foo c'
-    //      }
-    //    ],
-    //    [
-    //      {
-    //        _id: 'foo',
-    //        _rev: '1-a',
-    //        value: 'foo a'
-    //      },
-    //      {
-    //        _id: 'foo',
-    //        _rev: '2-d',
-    //        value: 'foo d'
-    //      },
-    //      {
-    //        _id: 'foo',
-    //        _rev: '3-e',
-    //        _deleted: true
-    //      }
-    //    ]
-    //  ];
-    //  testUtils.putTree(db, simpleTree, () => {
-    //    db.compact(function (err, ok) {
-    //      db.get('foo', { revs_info: true }, (err, doc) => {
-    //        var revs = doc._revs_info;
-    //        revs.length.should.equal(3, 'correct number of revs');
-    //        revs[0].rev.should.equal('3-c', 'rev ok');
-    //        revs[0].status.should.equal('available', 'not compacted');
-    //        revs[1].rev.should.equal('2-b', 'rev ok');
-    //        revs[1].status.should.equal('missing', 'compacted');
-    //        revs[2].rev.should.equal('1-a', 'rev ok');
-    //        revs[2].status.should.equal('missing', 'compacted');
-    //        done();
-    //      });
-    //    });
-    //  });
-    //});
+      var db = new PouchDB(dbs.name, noop);
+      var simpleTree = [
+        [
+          {
+            _id: 'foo',
+            _rev: '1-a',
+            value: 'foo a'
+          },
+          {
+            _id: 'foo',
+            _rev: '2-b',
+            value: 'foo d'
+          },
+          {
+            _id: 'foo',
+            _rev: '3-c',
+            value: 'foo c'
+          }
+        ],
+        [
+          {
+            _id: 'foo',
+            _rev: '1-a',
+            value: 'foo a'
+          },
+          {
+            _id: 'foo',
+            _rev: '2-d',
+            value: 'foo d'
+          },
+          {
+            _id: 'foo',
+            _rev: '3-e',
+            _deleted: true
+          }
+        ]
+      ];
+      testUtils.putTree(db, simpleTree, () => {
+        db.compact((err, ok) => {
+          db.get('foo', { revs_info: true }, (err, doc) => {
+            var revs = doc._revs_info;
+            revs.length.should.equal(3, 'correct number of revs');
+            revs[0].rev.should.equal('3-c', 'rev ok');
+            revs[0].status.should.equal('available', 'not compacted');
+            revs[1].rev.should.equal('2-b', 'rev ok');
+            revs[1].status.should.equal('missing', 'compacted');
+            revs[2].rev.should.equal('1-a', 'rev ok');
+            revs[2].status.should.equal('missing', 'compacted');
+            done();
+          });
+        });
+      });
+    });
 
     //it('#2951 Parallelized gets with 409s/404s', () => {
     //  var db = new PouchDB(dbs.name);
