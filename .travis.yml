@@ -1,9 +1,11 @@
+sudo: false
 language: node_js
 node_js:
   - "0.12"
-  - "0.11"
-  - "0.10"
-script:
-  - "tsc ./pouchdb-tests.ts"
 notifications:
-  email: false
+  email:
+    on_success: always
+    on_failure: always
+cache:
+  directories:
+    - node_modules
