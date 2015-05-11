@@ -39,6 +39,8 @@ declare module pouchdb {
         adapterUrl(adapter: string, name: string): string;
 
         isCouchDB<R>(callback: (isCouchDB: boolean) => R): R;
+
+        writeDocs(db, docs, callback: Function, res?): any;
       }
     }
   }

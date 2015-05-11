@@ -19,7 +19,7 @@ interface NewAbDoc extends pouchdb.api.methods.NewDoc {
   b: number;
 }
 
-var adapters: string[] = ['local', 'http'];
+var adapters = ['http', 'local'];
 
 adapters.forEach(function (adapter) {
   describe('test.get.js-' + adapter, function () {
@@ -108,112 +108,115 @@ adapters.forEach(function (adapter) {
       });
     });
 
-    //it('Get revisions of removed doc', (done) => {
-    //  var db = new PouchDB(dbs.name, { auto_compaction: false });
-    //  db.post({ test: 'somestuff' }, (err, info) => {
-    //    var rev = info.rev;
-    //    db.remove({
-    //      test: 'somestuff',
-    //      _id: info.id,
-    //      _rev: info.rev
-    //    }, function (doc) {
-    //        db.get(info.id, { rev: rev }, (err, doc) => {
-    //          should.not.exist(err);
-    //          done();
-    //        });
-    //      });
-    //  });
-    //});
+    it('Get revisions of removed doc', (done) => {
+      var db = new PouchDB(dbs.name, <pouchdb.options.ctor.LocalDb>{ auto_compaction: false }, noop);
+      db.post({ test: 'somestuff' }, (err, info) => {
+        var rev = info.rev;
+        db.remove({
+          test: 'somestuff',
+          _id: info.id,
+          _rev: info.rev
+        }, (doc) => {
+            db.get(info.id, { rev: rev }, (err, doc) => {
+              should.not.exist(err);
+              done();
+            });
+          });
+      });
+    });
 
-    //it('Testing get with rev', (done) => {
-    //  new PouchDB(dbs.name, function (err, db) {
-    //    testUtils.writeDocs(db, JSON.parse(JSON.stringify(origDocs)),
-    //      function () {
-    //        db.get('3', function (err, parent) {
-    //          // add conflicts
-    //          var pRevId = parent._rev.split('-')[1];
-    //          var conflicts = [
-    //            {
-    //              _id: '3',
-    //              _rev: '2-aaa',
-    //              value: 'x',
-    //              _revisions: {
-    //                start: 2,
-    //                ids: [
-    //                  'aaa',
-    //                  pRevId
-    //                ]
-    //              }
-    //            },
-    //            {
-    //              _id: '3',
-    //              _rev: '3-bbb',
-    //              value: 'y',
-    //              _deleted: true,
-    //              _revisions: {
-    //                start: 3,
-    //                ids: [
-    //                  'bbb',
-    //                  'some',
-    //                  pRevId
-    //                ]
-    //              }
-    //            },
-    //            {
-    //              _id: '3',
-    //              _rev: '4-ccc',
-    //              value: 'z',
-    //              _revisions: {
-    //                start: 4,
-    //                ids: [
-    //                  'ccc',
-    //                  'even',
-    //                  'more',
-    //                  pRevId
-    //                ]
-    //              }
-    //            }
-    //          ];
-    //          db.put(conflicts[0], { new_edits: false }, (err, doc) => {
-    //            db.put(conflicts[1], { new_edits: false }, (err, doc) => {
-    //              db.put(conflicts[2], { new_edits: false }, (err, doc) => {
-    //                db.get('3', { rev: '2-aaa' }, (err, doc) => {
-    //                  doc._rev.should.equal('2-aaa');
-    //                  doc.value.should.equal('x');
-    //                  db.get('3', { rev: '3-bbb' }, (err, doc) => {
-    //                    doc._rev.should.equal('3-bbb');
-    //                    doc.value.should.equal('y');
-    //                    db.get('3', { rev: '4-ccc' }, (err, doc) => {
-    //                      doc._rev.should.equal('4-ccc');
-    //                      doc.value.should.equal('z');
-    //                      done();
-    //                    });
-    //                  });
-    //                });
-    //              });
-    //            });
-    //          });
-    //        });
-    //      });
-    //  });
-    //});
+    it('Testing get with rev', (done) => {
+      new PouchDB(dbs.name, (err, db) => {
+        testUtils.writeDocs(db, JSON.parse(JSON.stringify(origDocs)),
+          () => {
+            db.get('3', (err, parent) => {
+              // add conflicts
+              var pRevId = parent._rev.split('-')[1];
+              //  todo: d.ts better document shapes to handle _revisions shape
+              var conflicts = [
+                {
+                  _id: '3',
+                  _rev: '2-aaa',
+                  value: 'x',
+                  _revisions: {
+                    start: 2,
+                    ids: [
+                      'aaa',
+                      pRevId
+                    ]
+                  }
+                },
+                {
+                  _id: '3',
+                  _rev: '3-bbb',
+                  value: 'y',
+                  _deleted: true,
+                  _revisions: {
+                    start: 3,
+                    ids: [
+                      'bbb',
+                      'some',
+                      pRevId
+                    ]
+                  }
+                },
+                {
+                  _id: '3',
+                  _rev: '4-ccc',
+                  value: 'z',
+                  _revisions: {
+                    start: 4,
+                    ids: [
+                      'ccc',
+                      'even',
+                      'more',
+                      pRevId
+                    ]
+                  }
+                }
+              ];
+              //  todo: d.ts new_edits on put options (and anywhere else)
+              db.put(conflicts[0], { new_edits: false }, (err, doc) => {
+                db.put(conflicts[1], { new_edits: false }, (err, doc) => {
+                  db.put(conflicts[2], { new_edits: false }, (err, doc) => {
+                    db.get<ValueDoc>('3', { rev: '2-aaa' }, (err, doc) => {
+                      doc._rev.should.equal('2-aaa');
+                      doc.value.should.equal('x');
+                      db.get<ValueDoc>('3', { rev: '3-bbb' }, (err, doc) => {
+                        doc._rev.should.equal('3-bbb');
+                        doc.value.should.equal('y');
+                        db.get<ValueDoc>('3', { rev: '4-ccc' }, (err, doc) => {
+                          doc._rev.should.equal('4-ccc');
+                          doc.value.should.equal('z');
+                          done();
+                        });
+                      });
+                    });
+                  });
+                });
+              });
+            });
+          });
+      });
+    });
 
+    //  todo: d.ts need to handle _revisions on output type from get
     //it('Testing rev format', (done) => {
     //  var revs = [];
-    //  var db = new PouchDB(dbs.name);
+    //  var db = new PouchDB(dbs.name, noop);
     //  db.post({ test: 'somestuff' }, (err, info) => {
     //    revs.unshift(info.rev.split('-')[1]);
     //    db.put({
     //      _id: info.id,
     //      _rev: info.rev,
     //      another: 'test1'
-    //    }, function (err, info2) {
+    //    }, (err, info2) => {
     //        revs.unshift(info2.rev.split('-')[1]);
     //        db.put({
     //          _id: info.id,
     //          _rev: info2.rev,
     //          last: 'test2'
-    //        }, function (err, info3) {
+    //        }, (err, info3) => {
     //            revs.unshift(info3.rev.split('-')[1]);
     //            db.get(info.id, { revs: true }, (err, doc) => {
     //              doc._revisions.start.should.equal(3);
@@ -285,7 +288,7 @@ adapters.forEach(function (adapter) {
     //          _id: info.id,
     //          _rev: info.rev,
     //          a: 'change'
-    //        }, function (err, info2) {
+    //        }, (err, info2) => {
     //            db.get(info.id, { revs_info: true }, (err, doc) => {
     //              doc._revs_info.length.should.equal(3, 'updated a doc with put');
     //              done();
@@ -513,7 +516,7 @@ adapters.forEach(function (adapter) {
     //      _id: info.id,
     //      _rev: info.rev,
     //      version: 'second'
-    //    }, function (err, info2) {
+    //    }, (err, info2) => {
     //        should.not.exist(err);
     //        db.get(info.id, { rev: info.rev }, function (err, oldRev) {
     //          oldRev.version.should.equal('first', 'Fetched old revision');
