@@ -62,51 +62,51 @@ adapters.forEach(function (adapter) {
       });
     });
 
-    //it('Get design doc', (done) => {
-    //  var db = new PouchDB(dbs.name);
-    //  db.put({
-    //    _id: '_design/someid',
-    //    test: 'somestuff'
-    //  }, (err, info) => {
-    //      db.get(info.id, (err, doc) => {
-    //        db.get(info.id + 'asdf', (err) => {
-    //          err.status.should.equal(PouchDB.Errors.MISSING_DOC.status,
-    //            'correct error status returned');
-    //          err.name.should.equal(PouchDB.Errors.MISSING_DOC.name,
-    //            'correct error name returned');
-    //          err.message.should.equal(PouchDB.Errors.MISSING_DOC.message,
-    //            'correct error message returned');
-    //          // todo: does not work in pouchdb-server.
-    //          // err.reason.should.equal(PouchDB.Errors.MISSING_DOC.reason,
-    //          //                           'correct error reason returned');
-    //          done();
-    //        });
-    //      });
-    //    });
-    //});
+    it('Get design doc', (done) => {
+      var db = new PouchDB(dbs.name, noop);
+      db.put({
+        _id: '_design/someid',
+        test: 'somestuff'
+      }, (err, info) => {
+          db.get(info.id, (err, doc) => {
+            db.get(info.id + 'asdf', (err) => {
+              err.status.should.equal(PouchDB.Errors.MISSING_DOC.status,
+                'correct error status returned');
+              err.name.should.equal(PouchDB.Errors.MISSING_DOC.name,
+                'correct error name returned');
+              err.message.should.equal(PouchDB.Errors.MISSING_DOC.message,
+                'correct error message returned');
+              // todo: does not work in pouchdb-server.
+              // err.reason.should.equal(PouchDB.Errors.MISSING_DOC.reason,
+              //                           'correct error reason returned');
+              done();
+            });
+          });
+        });
+    });
 
-    //it('Check error of deleted document', (done) => {
-    //  var db = new PouchDB(dbs.name);
-    //  db.post({ test: 'somestuff' }, (err, info) => {
-    //    db.remove({
-    //      _id: info.id,
-    //      _rev: info.rev
-    //    }, function (err, res) {
-    //        db.get(info.id, function (err, res) {
-    //          err.status.should.equal(PouchDB.Errors.MISSING_DOC.status,
-    //            'correct error status returned');
-    //          err.name.should.equal(PouchDB.Errors.MISSING_DOC.name,
-    //            'correct error name returned');
-    //          err.message.should.equal(PouchDB.Errors.MISSING_DOC.message,
-    //            'correct error message returned');
-    //          // todo: does not work in pouchdb-server.
-    //          // err.reason.should.equal(PouchDB.Errors.MISSING_DOC.reason,
-    //          //                          'correct error reason returned');
-    //          done();
-    //        });
-    //      });
-    //  });
-    //});
+    it('Check error of deleted document', (done) => {
+      var db = new PouchDB(dbs.name, noop);
+      db.post({ test: 'somestuff' }, (err, info) => {
+        db.remove({
+          _id: info.id,
+          _rev: info.rev
+        }, (err, res) => {
+            db.get(info.id, (err, res) => {
+              err.status.should.equal(PouchDB.Errors.MISSING_DOC.status,
+                'correct error status returned');
+              err.name.should.equal(PouchDB.Errors.MISSING_DOC.name,
+                'correct error name returned');
+              err.message.should.equal(PouchDB.Errors.MISSING_DOC.message,
+                'correct error message returned');
+              // todo: does not work in pouchdb-server.
+              // err.reason.should.equal(PouchDB.Errors.MISSING_DOC.reason,
+              //                          'correct error reason returned');
+              done();
+            });
+          });
+      });
+    });
 
     //it('Get revisions of removed doc', (done) => {
     //  var db = new PouchDB(dbs.name, { auto_compaction: false });
@@ -578,7 +578,7 @@ adapters.forEach(function (adapter) {
     //        db.put(conflicts[0], { new_edits: false }, (err, doc) => {
     //          db.put(conflicts[1], { new_edits: false }, (err, doc) => {
     //            db.put(conflicts[2], { new_edits: false }, (err, doc) => {
-    //              db.get('3', { open_revs: 'all' }, function (err, res) {
+    //              db.get('3', { open_revs: 'all' }, (err, res) => {
     //                var i;
     //                res = res.map(function (row) {
     //                  return row.ok;
@@ -657,7 +657,7 @@ adapters.forEach(function (adapter) {
     //                  '5-nonexistent',
     //                  '3-bbb'
     //                ]
-    //              }, function (err, res) {
+    //              }, (err, res) => {
     //                  res.sort(function (a, b) {
     //                    if (a.ok) {
     //                      if (b.ok) {
@@ -695,7 +695,7 @@ adapters.forEach(function (adapter) {
     //    db.get('foo', {
     //      open_revs: ['2-b'],
     //      revs: true
-    //    }, function (err, res) {
+    //    }, (err, res) => {
     //        var doc = res[0].ok;
     //        doc._revisions.ids.length.should.equal(2, 'got two revs');
     //        doc._revisions.ids[0].should.equal('b', 'got correct rev');
@@ -706,10 +706,10 @@ adapters.forEach(function (adapter) {
 
     //it('Testing get with open_revs on nonexistent doc', (done) => {
     //  var db = new PouchDB(dbs.name);
-    //  db.get('nonexistent', { open_revs: ['2-whatever'] }, function (err, res) {
+    //  db.get('nonexistent', { open_revs: ['2-whatever'] }, (err, res) => {
     //    res.length.should.equal(1, 'just one result');
     //    res[0].missing.should.equal('2-whatever', 'just one result');
-    //    db.get('nonexistent', { open_revs: 'all' }, function (err, res) {
+    //    db.get('nonexistent', { open_revs: 'all' }, (err, res) => {
     //      // CouchDB 1.X doesn't handle this situation correctly
     //      // CouchDB 2.0 fixes it (see COUCHDB-2517)
     //      testUtils.isCouchDB(function (isCouchDB) {
@@ -726,13 +726,13 @@ adapters.forEach(function (adapter) {
 
     //it('Testing get with open_revs with wrong params', (done) => {
     //  var db = new PouchDB(dbs.name);
-    //  db.put({ _id: 'foo' }, function (err, res) {
+    //  db.put({ _id: 'foo' }, (err, res) => {
     //    db.get('foo', {
     //      open_revs: {
     //        'whatever': 'which is',
     //        'not an array': 'or all string'
     //      }
-    //    }, function (err, res) {
+    //    }, (err, res) => {
     //        var acceptable_errors = ['unknown_error', 'function_clause'];
     //        acceptable_errors.indexOf(err.name)
     //          .should.not.equal(-1, 'correct error');
@@ -743,7 +743,7 @@ adapters.forEach(function (adapter) {
     //            '2-correct',
     //            'keys'
     //          ]
-    //        }, function (err, res) {
+    //        }, (err, res) => {
     //            err.name.should.equal('bad_request', 'correct error');
     //            done();
     //          });
