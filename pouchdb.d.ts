@@ -1113,8 +1113,8 @@ declare module pouchdb {
                 , methods.allDocs.Callback
                 , methods.bulkDocs.Callback
                 , methods.changes.Overloads
-                , methods.compact.Callback
                 , methods.close.Callback
+                , methods.compact.Callback
                 , methods.destroy.Callback
                 , methods.get.Callback
                 , methods.id.Callback
@@ -1129,8 +1129,8 @@ declare module pouchdb {
                 , methods.allDocs.Promise
                 , methods.bulkDocs.Promise
                 , methods.changes.Overloads
-                , methods.compact.Promise
                 , methods.close.Promise
+                , methods.compact.Promise
                 , methods.destroy.Promise
                 , methods.get.Promise
                 , methods.id.Promise
