@@ -766,6 +766,8 @@ declare module pouchdb {
                     _conflicts?: any; // some kind of []
                     /** @todo what shape are the array elements? */
                     _revs_info?: any; // some kind of []
+                    /** @todo what shape are the array elements? */
+                    _revisions?: any; // some kind of []
                 }
                 /**
                  * Callback pattern for remove

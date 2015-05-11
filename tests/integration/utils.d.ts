@@ -29,14 +29,18 @@ declare module pouchdb {
       interface TestUtils {
         isCouchMaster(): boolean;
         /**
-         * Delete specified databases
-         */
-        cleanup(dbs: string[], done: () => void): void;
-        /**
          * Prefix http adapter database names with their host and
          * node adapter ones with a db location
          */
         adapterUrl(adapter: string, name: string): string;
+        /**
+         * Delete specified databases
+         */
+        cleanup(dbs: string[], done: () => void): void;
+
+        putBranch(db, docs, callback: Function);
+
+        putTree(db, docs, callback: Function);
 
         isCouchDB<R>(callback: (isCouchDB: boolean) => R): R;
 
