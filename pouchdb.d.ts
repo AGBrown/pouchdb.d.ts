@@ -368,16 +368,8 @@ declare module pouchdb {
                 /** Error details for a document in a `bulkDocs()` operation
                  * @todo - does this really extend OperationResponse, or is `id` just sometimes present?
                  */
-                interface BulkDocsError extends OperationResponse {
-                    /** The error status (e.g. `409`) */
-                    status: number;
-                    /** The error name (e.g. `'conflict'`) */
-                    name: string;
-                    /** The error message */
-                    message: string;
-                    /** `true` if this is an error */
-                    error: boolean;
-                }
+                interface BulkDocsError extends OperationResponse, PouchError { }
+
                 /** Type union for the possible info/error type alternates returned by `bulkDocs()` */
                 type BulkDocsResponse = OperationResponse | BulkDocsError;
                 /**

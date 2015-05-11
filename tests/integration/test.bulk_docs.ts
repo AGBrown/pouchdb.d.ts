@@ -158,9 +158,9 @@ adapters.forEach(function (adapter) {
         foo: 'bar'
       }];
       db.bulkDocs({ docs: docs },(err, info) => {
-        (<BulkDocsError>err).status.should.equal(PouchDB.Errors.RESERVED_ID.status,
+        err.status.should.equal(PouchDB.Errors.RESERVED_ID.status,
           'correct error status returned');
-        (<BulkDocsError>err).message.should.equal(PouchDB.Errors.RESERVED_ID.message,
+        err.message.should.equal(PouchDB.Errors.RESERVED_ID.message,
           'correct error message returned');
         should.not.exist(info, 'info is empty');
         done();
@@ -175,9 +175,9 @@ adapters.forEach(function (adapter) {
 
       var db = new PouchDB(dbs.name, noop);
       db.bulkDocs({ docs: docs },(err, info) => {
-        (<BulkDocsError>err).status.should.equal(PouchDB.Errors.RESERVED_ID.status,
+        err.status.should.equal(PouchDB.Errors.RESERVED_ID.status,
           'correct error returned');
-        (<BulkDocsError>err).message.should.equal(PouchDB.Errors.RESERVED_ID.message,
+        err.message.should.equal(PouchDB.Errors.RESERVED_ID.message,
           'correct error message returned');
         should.not.exist(info, 'info is empty');
         done();
@@ -188,9 +188,9 @@ adapters.forEach(function (adapter) {
       var db = new PouchDB(dbs.name, noop);
       db.bulkDocs(<pouchdb.api.methods.bulkDocs.DocumentPouch<pouchdb.api.methods.NewDoc>>
         <{}>{ 'doc': [{ 'foo': 'bar' }] }, (err, result) => {
-          (<BulkDocsError>err).status.should.equal(PouchDB.Errors.MISSING_BULK_DOCS.status,
+          err.status.should.equal(PouchDB.Errors.MISSING_BULK_DOCS.status,
             'correct error returned');
-          (<BulkDocsError>err).message.should.equal(PouchDB.Errors.MISSING_BULK_DOCS.message,
+          err.message.should.equal(PouchDB.Errors.MISSING_BULK_DOCS.message,
             'correct error message returned');
         done();
       });
@@ -683,9 +683,9 @@ adapters.forEach(function (adapter) {
             should.exist(err, 'deleted');
             //  todo: d.ts `get` error is a `BulkDocsError`
             //  todo: d.ts `BulkDocsError` error has similar shape to `ErrorDefinition`
-            (<BulkDocsError>err).status.should.equal(PouchDB.Errors.MISSING_DOC.status,
+            err.status.should.equal(PouchDB.Errors.MISSING_DOC.status,
               'correct error status returned');
-            (<BulkDocsError>err).message.should.equal(PouchDB.Errors.MISSING_DOC.message,
+            err.message.should.equal(PouchDB.Errors.MISSING_DOC.message,
               'correct error message returned');
             // todo: does not work in pouchdb-server.
             // err.reason.should.equal('deleted',
@@ -786,9 +786,9 @@ adapters.forEach(function (adapter) {
       var db = new PouchDB(dbs.name,noop);
       db.bulkDocs(<pouchdb.api.methods.bulkDocs.DocumentPouch<pouchdb.api.methods.NewDoc>><{}>{ docs: 'foo' },(err, res) => {
         should.exist(err, 'error reported');
-        (<BulkDocsError>err).status.should.equal(PouchDB.Errors.MISSING_BULK_DOCS.status,
+        err.status.should.equal(PouchDB.Errors.MISSING_BULK_DOCS.status,
           'correct error status returned');
-        (<BulkDocsError>err).message.should.equal(PouchDB.Errors.MISSING_BULK_DOCS.message,
+        err.message.should.equal(PouchDB.Errors.MISSING_BULK_DOCS.message,
           'correct error message returned');
         done();
       });
@@ -798,16 +798,16 @@ adapters.forEach(function (adapter) {
       var db = new PouchDB(dbs.name,noop);
       db.bulkDocs(<pouchdb.api.methods.bulkDocs.DocumentPouch<pouchdb.api.methods.NewDoc>><{}>{ docs: ['foo'] },(err, res) => {
         should.exist(err, 'error reported');
-        (<BulkDocsError>err).status.should.equal(PouchDB.Errors.NOT_AN_OBJECT.status,
+        err.status.should.equal(PouchDB.Errors.NOT_AN_OBJECT.status,
           'correct error status returned');
-        (<BulkDocsError>err).message.should.equal(PouchDB.Errors.NOT_AN_OBJECT.message,
+        err.message.should.equal(PouchDB.Errors.NOT_AN_OBJECT.message,
           'correct error message returned');
       });
       db.bulkDocs(<pouchdb.api.methods.bulkDocs.DocumentPouch<pouchdb.api.methods.NewDoc>><{}>{ docs: [[]] },(err, res) => {
         should.exist(err, 'error reported');
-        (<BulkDocsError>err).status.should.equal(PouchDB.Errors.NOT_AN_OBJECT.status,
+        err.status.should.equal(PouchDB.Errors.NOT_AN_OBJECT.status,
           'correct error status returned');
-        (<BulkDocsError>err).message.should.equal(PouchDB.Errors.NOT_AN_OBJECT.message,
+        err.message.should.equal(PouchDB.Errors.NOT_AN_OBJECT.message,
           'correct error message returned');
         done();
       });
