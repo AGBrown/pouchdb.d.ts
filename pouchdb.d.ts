@@ -127,22 +127,12 @@ declare module pouchdb {
      * @todo what is the error shape? looks like they contain status/reason/message and id(s)?
      */
     module async {
-        /** 
-         * shape for the error returns 
-         * @todo what (and what type) is `.error`. Is `.message` always there, or should this
-         * be a union type with StandardError
-         */
-        interface Error {
-            error?: any;
-            message?: string;
-            status?: number;
-        }
         /** An interface to represent a promise object */
         interface Thenable<T> {
             /** A Promises/A+ `then` implementation */
-            then<R>(onFulfilled?: (value: T) => Thenable<R>|R, onRejected?: (error: Error) => Thenable<R>|R): Thenable<R>;
+            then<R>(onFulfilled?: (value: T) => Thenable<R>|R, onRejected?: (error: api.PouchError) => Thenable<R>|R): Thenable<R>;
             /** `catch` implementation as per the pouchdb example docs */
-            catch<R>(onRejected: (error: Error) => Thenable<R>|R): Thenable<R>;
+            catch<R>(onRejected: (error: api.PouchError) => Thenable<R>|R): Thenable<R>;
         }
         /** Callback alternatives to promised */
         interface Callback<T> {
@@ -150,7 +140,7 @@ declare module pouchdb {
              * @param error the error object
              * @param value the result value from the operation
              */
-            (error: Error, value: T): void;
+          (error: api.PouchError, value: T): void;
         }
     }
 
@@ -634,7 +624,7 @@ declare module pouchdb {
                      * The `complete` event listener.  This event fires when all changes have been 
                      * read. In live changes, only cancelling the changes should trigger this event.
                      */
-                    complete?: (err: async.Error, info: CompleteInfo) => void;
+                    complete?: (err: api.PouchError, info: CompleteInfo) => void;
                     /** 
                      * The `error` event listener. This event is fired when the replication is stopped 
                      * due to an unrecoverable failure.

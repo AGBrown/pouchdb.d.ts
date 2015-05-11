@@ -41,26 +41,26 @@ adapters.forEach(function (adapter) {
       { _id: '2', a: 3, b: 9 }
     ];
 
-    //it('Get doc', (done) => {
-    //  var db = new PouchDB(dbs.name);
-    //  db.post({ test: 'somestuff' }, (err, info) => {
-    //    db.get(info.id, (err, doc) => {
-    //      doc.should.have.property('test');
-    //      db.get(info.id + 'asdf', (err) => {
-    //        err.status.should.equal(PouchDB.Errors.MISSING_DOC.status,
-    //          'correct error status returned');
-    //        err.name.should.equal(PouchDB.Errors.MISSING_DOC.name,
-    //          'correct error name returned');
-    //        err.message.should.equal(PouchDB.Errors.MISSING_DOC.message,
-    //          'correct error message returned');
-    //        // todo: does not work in pouchdb-server.
-    //        // err.reason.should.equal(PouchDB.Errors.MISSING_DOC.reason,
-    //        //                           'correct error reason returned');
-    //        done();
-    //      });
-    //    });
-    //  });
-    //});
+    it('Get doc', (done) => {
+      var db = new PouchDB(dbs.name, noop);
+      db.post({ test: 'somestuff' }, (err, info) => {
+        db.get(info.id, (err, doc) => {
+          doc.should.have.property('test');
+          db.get(info.id + 'asdf', (err) => {
+            err.status.should.equal(PouchDB.Errors.MISSING_DOC.status,
+              'correct error status returned');
+            err.name.should.equal(PouchDB.Errors.MISSING_DOC.name,
+              'correct error name returned');
+            err.message.should.equal(PouchDB.Errors.MISSING_DOC.message,
+              'correct error message returned');
+            // todo: does not work in pouchdb-server.
+            // err.reason.should.equal(PouchDB.Errors.MISSING_DOC.reason,
+            //                           'correct error reason returned');
+            done();
+          });
+        });
+      });
+    });
 
     //it('Get design doc', (done) => {
     //  var db = new PouchDB(dbs.name);
