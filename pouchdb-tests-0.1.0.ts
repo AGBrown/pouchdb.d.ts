@@ -1,4 +1,4 @@
-﻿/// <reference path="pouch.d.ts" />
+﻿/// <reference path="pouchdb.d.ts" />
 
 window.alert = function (thing?: string) {
     var div = document.createElement('div');
@@ -6,7 +6,12 @@ window.alert = function (thing?: string) {
     document.getElementsByTagName('body')[0].appendChild(div);
 }
 
-var pouch: PouchDB;
+var pouch: pouchdb.callback.PouchDB;
+type PouchDB = pouchdb.callback.PouchDB;
+type PouchError = pouchdb.api.CustomPouchError;
+type PouchGetResponse = pouchdb.api.methods.OperationResponse;
+type PouchUpdateResponse = pouchdb.api.methods.OperationResponse;
+type PouchAllDocsResponse = pouchdb.api.methods.allDocs.Response;
 
 function pouchTests() {
     new PouchDB('testdb', function (err: PouchError, res: PouchDB) {
@@ -130,13 +135,13 @@ function deleteDb() {
   alert('deleteDb');
   if (pouch) {
     pouch = null;
-    PouchDB.destroy('testdb', function (err: PouchError) {
-      if (err) {
-        alert('Error ' + err.status + ' occurred ' + err.error + ' - ' + err.reason);
-      }
-      else {
-        alert("database destroyed");
-      }
-    });
+    //PouchDB.destroy('testdb', function (err: PouchError) {
+    //  if (err) {
+    //    alert('Error ' + err.status + ' occurred ' + err.error + ' - ' + err.reason);
+    //  }
+    //  else {
+    //    alert("database destroyed");
+    //  }
+    //});
   }
 }
