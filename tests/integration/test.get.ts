@@ -41,12 +41,12 @@ adapters.forEach(function (adapter) {
       { _id: '2', a: 3, b: 9 }
     ];
 
-    //it('Get doc', function (done) {
+    //it('Get doc', (done) => {
     //  var db = new PouchDB(dbs.name);
-    //  db.post({ test: 'somestuff' }, function (err, info) {
-    //    db.get(info.id, function (err, doc) {
+    //  db.post({ test: 'somestuff' }, (err, info) => {
+    //    db.get(info.id, (err, doc) => {
     //      doc.should.have.property('test');
-    //      db.get(info.id + 'asdf', function (err) {
+    //      db.get(info.id + 'asdf', (err) => {
     //        err.status.should.equal(PouchDB.Errors.MISSING_DOC.status,
     //          'correct error status returned');
     //        err.name.should.equal(PouchDB.Errors.MISSING_DOC.name,
@@ -62,14 +62,14 @@ adapters.forEach(function (adapter) {
     //  });
     //});
 
-    //it('Get design doc', function (done) {
+    //it('Get design doc', (done) => {
     //  var db = new PouchDB(dbs.name);
     //  db.put({
     //    _id: '_design/someid',
     //    test: 'somestuff'
-    //  }, function (err, info) {
-    //      db.get(info.id, function (err, doc) {
-    //        db.get(info.id + 'asdf', function (err) {
+    //  }, (err, info) => {
+    //      db.get(info.id, (err, doc) => {
+    //        db.get(info.id + 'asdf', (err) => {
     //          err.status.should.equal(PouchDB.Errors.MISSING_DOC.status,
     //            'correct error status returned');
     //          err.name.should.equal(PouchDB.Errors.MISSING_DOC.name,
@@ -85,9 +85,9 @@ adapters.forEach(function (adapter) {
     //    });
     //});
 
-    //it('Check error of deleted document', function (done) {
+    //it('Check error of deleted document', (done) => {
     //  var db = new PouchDB(dbs.name);
-    //  db.post({ test: 'somestuff' }, function (err, info) {
+    //  db.post({ test: 'somestuff' }, (err, info) => {
     //    db.remove({
     //      _id: info.id,
     //      _rev: info.rev
@@ -108,16 +108,16 @@ adapters.forEach(function (adapter) {
     //  });
     //});
 
-    //it('Get revisions of removed doc', function (done) {
+    //it('Get revisions of removed doc', (done) => {
     //  var db = new PouchDB(dbs.name, { auto_compaction: false });
-    //  db.post({ test: 'somestuff' }, function (err, info) {
+    //  db.post({ test: 'somestuff' }, (err, info) => {
     //    var rev = info.rev;
     //    db.remove({
     //      test: 'somestuff',
     //      _id: info.id,
     //      _rev: info.rev
     //    }, function (doc) {
-    //        db.get(info.id, { rev: rev }, function (err, doc) {
+    //        db.get(info.id, { rev: rev }, (err, doc) => {
     //          should.not.exist(err);
     //          done();
     //        });
@@ -125,7 +125,7 @@ adapters.forEach(function (adapter) {
     //  });
     //});
 
-    //it('Testing get with rev', function (done) {
+    //it('Testing get with rev', (done) => {
     //  new PouchDB(dbs.name, function (err, db) {
     //    testUtils.writeDocs(db, JSON.parse(JSON.stringify(origDocs)),
     //      function () {
@@ -174,16 +174,16 @@ adapters.forEach(function (adapter) {
     //              }
     //            }
     //          ];
-    //          db.put(conflicts[0], { new_edits: false }, function (err, doc) {
-    //            db.put(conflicts[1], { new_edits: false }, function (err, doc) {
-    //              db.put(conflicts[2], { new_edits: false }, function (err, doc) {
-    //                db.get('3', { rev: '2-aaa' }, function (err, doc) {
+    //          db.put(conflicts[0], { new_edits: false }, (err, doc) => {
+    //            db.put(conflicts[1], { new_edits: false }, (err, doc) => {
+    //              db.put(conflicts[2], { new_edits: false }, (err, doc) => {
+    //                db.get('3', { rev: '2-aaa' }, (err, doc) => {
     //                  doc._rev.should.equal('2-aaa');
     //                  doc.value.should.equal('x');
-    //                  db.get('3', { rev: '3-bbb' }, function (err, doc) {
+    //                  db.get('3', { rev: '3-bbb' }, (err, doc) => {
     //                    doc._rev.should.equal('3-bbb');
     //                    doc.value.should.equal('y');
-    //                    db.get('3', { rev: '4-ccc' }, function (err, doc) {
+    //                    db.get('3', { rev: '4-ccc' }, (err, doc) => {
     //                      doc._rev.should.equal('4-ccc');
     //                      doc.value.should.equal('z');
     //                      done();
@@ -198,10 +198,10 @@ adapters.forEach(function (adapter) {
     //  });
     //});
 
-    //it('Testing rev format', function (done) {
+    //it('Testing rev format', (done) => {
     //  var revs = [];
     //  var db = new PouchDB(dbs.name);
-    //  db.post({ test: 'somestuff' }, function (err, info) {
+    //  db.post({ test: 'somestuff' }, (err, info) => {
     //    revs.unshift(info.rev.split('-')[1]);
     //    db.put({
     //      _id: info.id,
@@ -215,7 +215,7 @@ adapters.forEach(function (adapter) {
     //          last: 'test2'
     //        }, function (err, info3) {
     //            revs.unshift(info3.rev.split('-')[1]);
-    //            db.get(info.id, { revs: true }, function (err, doc) {
+    //            db.get(info.id, { revs: true }, (err, doc) => {
     //              doc._revisions.start.should.equal(3);
     //              revs.should.deep.equal(doc._revisions.ids);
     //              done();
@@ -225,7 +225,7 @@ adapters.forEach(function (adapter) {
     //  });
     //});
 
-    //it('Test opts.revs=true with rev other than winning', function (done) {
+    //it('Test opts.revs=true with rev other than winning', (done) => {
     //  var db = new PouchDB(dbs.name, { auto_compaction: false });
     //  var docs = [
     //    { _id: 'foo', _rev: '1-a', value: 'foo a' },
@@ -237,7 +237,7 @@ adapters.forEach(function (adapter) {
     //    db.get('foo', {
     //      rev: '3-c',
     //      revs: true
-    //    }, function (err, doc) {
+    //    }, (err, doc) => {
     //        doc._revisions.ids.length.should.equal(3, 'correct revisions length');
     //        doc._revisions.start.should.equal(3, 'correct revisions start');
     //        doc._revisions.ids[0].should.equal('c', 'correct rev');
@@ -248,7 +248,7 @@ adapters.forEach(function (adapter) {
     //  });
     //});
 
-    //it('Test opts.revs=true return only winning branch', function (done) {
+    //it('Test opts.revs=true return only winning branch', (done) => {
     //  var db = new PouchDB(dbs.name);
     //  var simpleTree = [
     //    [{ _id: 'foo', _rev: '1-a', value: 'foo a' },
@@ -261,7 +261,7 @@ adapters.forEach(function (adapter) {
     //    ]
     //  ];
     //  testUtils.putTree(db, simpleTree, function () {
-    //    db.get('foo', { revs: true }, function (err, doc) {
+    //    db.get('foo', { revs: true }, (err, doc) => {
     //      doc._revisions.ids.length.should.equal(4, 'correct revisions length');
     //      doc._revisions.start.should.equal(4, 'correct revisions start');
     //      doc._revisions.ids[0].should.equal('f', 'correct rev');
@@ -273,20 +273,20 @@ adapters.forEach(function (adapter) {
     //  });
     //});
 
-    //it('Test get with simple revs_info', function (done) {
+    //it('Test get with simple revs_info', (done) => {
     //  var db = new PouchDB(dbs.name);
-    //  db.post({ test: 'somestuff' }, function (err, info) {
+    //  db.post({ test: 'somestuff' }, (err, info) => {
     //    db.put({
     //      _id: info.id,
     //      _rev: info.rev,
     //      another: 'test'
-    //    }, function (err, info) {
+    //    }, (err, info) => {
     //        db.put({
     //          _id: info.id,
     //          _rev: info.rev,
     //          a: 'change'
     //        }, function (err, info2) {
-    //            db.get(info.id, { revs_info: true }, function (err, doc) {
+    //            db.get(info.id, { revs_info: true }, (err, doc) => {
     //              doc._revs_info.length.should.equal(3, 'updated a doc with put');
     //              done();
     //            });
@@ -295,7 +295,7 @@ adapters.forEach(function (adapter) {
     //  });
     //});
 
-    //it('Test get with revs_info on tree', function (done) {
+    //it('Test get with revs_info on tree', (done) => {
     //  var db = new PouchDB(dbs.name);
     //  var simpleTree = [
     //    [{ _id: 'foo', _rev: '1-a', value: 'foo a' },
@@ -306,7 +306,7 @@ adapters.forEach(function (adapter) {
     //      { _id: 'foo', _rev: '3-e', _deleted: true }]
     //  ];
     //  testUtils.putTree(db, simpleTree, function () {
-    //    db.get('foo', { revs_info: true }, function (err, doc) {
+    //    db.get('foo', { revs_info: true }, (err, doc) => {
     //      var revs = doc._revs_info;
     //      revs.length.should.equal(3, 'correct number of revs');
     //      revs[0].rev.should.equal('3-c', 'rev ok');
@@ -317,7 +317,7 @@ adapters.forEach(function (adapter) {
     //  });
     //});
 
-    //it('Test get with revs_info on compacted tree', function (done) {
+    //it('Test get with revs_info on compacted tree', (done) => {
     //  // _compact endpoint is not exposed in CouchDB 2.0
     //  // (it's exposed via a private port). Skip
     //  // this test for now
@@ -364,7 +364,7 @@ adapters.forEach(function (adapter) {
     //  ];
     //  testUtils.putTree(db, simpleTree, function () {
     //    db.compact(function (err, ok) {
-    //      db.get('foo', { revs_info: true }, function (err, doc) {
+    //      db.get('foo', { revs_info: true }, (err, doc) => {
     //        var revs = doc._revs_info;
     //        revs.length.should.equal(3, 'correct number of revs');
     //        revs[0].rev.should.equal('3-c', 'rev ok');
@@ -395,13 +395,13 @@ adapters.forEach(function (adapter) {
     //  }
 
     //  function getDocWithDefault(db, id, defaultDoc) {
-    //    return db.get(id).catch(function (err) {
+    //    return db.get(id).catch((err) => {
     //      /* istanbul ignore if */
     //      if (err.status !== 404) {
     //        throw err;
     //      }
     //      defaultDoc._id = id;
-    //      return db.put(defaultDoc).catch(function (err) {
+    //      return db.put(defaultDoc).catch((err) => {
     //        /* istanbul ignore if */
     //        if (err.status !== 409) { // conflict
     //          throw err;
@@ -433,13 +433,13 @@ adapters.forEach(function (adapter) {
     //  }
 
     //  function getDocWithDefault(db, id, defaultDoc) {
-    //    return db.get(id).catch(function (err) {
+    //    return db.get(id).catch((err) => {
     //      /* istanbul ignore if */
     //      if (err.status !== 404) {
     //        throw err;
     //      }
     //      defaultDoc._id = id;
-    //      return db.put(defaultDoc).catch(function (err) {
+    //      return db.put(defaultDoc).catch((err) => {
     //        /* istanbul ignore if */
     //        if (err.status !== 409) { // conflict
     //          throw err;
@@ -455,7 +455,7 @@ adapters.forEach(function (adapter) {
     //  }));
     //});
 
-    //it('Test get with conflicts', function (done) {
+    //it('Test get with conflicts', (done) => {
     //  var db = new PouchDB(dbs.name);
     //  var simpleTree = [
     //    [
@@ -497,7 +497,7 @@ adapters.forEach(function (adapter) {
     //    ]
     //  ];
     //  testUtils.putTree(db, simpleTree, function () {
-    //    db.get('foo', { conflicts: true }, function (err, doc) {
+    //    db.get('foo', { conflicts: true }, (err, doc) => {
     //      doc._rev.should.equal('2-c', 'correct rev');
     //      doc._conflicts.length.should.equal(1, 'just one conflict');
     //      doc._conflicts[0].should.equal('2-b', 'just one conflict');
@@ -506,9 +506,9 @@ adapters.forEach(function (adapter) {
     //  });
     //});
 
-    //it('Retrieve old revision', function (done) {
+    //it('Retrieve old revision', (done) => {
     //  var db = new PouchDB(dbs.name, { auto_compaction: false });
-    //  db.post({ version: 'first' }, function (err, info) {
+    //  db.post({ version: 'first' }, (err, info) => {
     //    db.put({
     //      _id: info.id,
     //      _rev: info.rev,
@@ -517,7 +517,7 @@ adapters.forEach(function (adapter) {
     //        should.not.exist(err);
     //        db.get(info.id, { rev: info.rev }, function (err, oldRev) {
     //          oldRev.version.should.equal('first', 'Fetched old revision');
-    //          db.get(info.id, { rev: '1-nonexistentRev' }, function (err, doc) {
+    //          db.get(info.id, { rev: '1-nonexistentRev' }, (err, doc) => {
     //            should.exist(err, 'Non existent row error correctly reported');
     //            done();
     //          });
@@ -526,7 +526,7 @@ adapters.forEach(function (adapter) {
     //  });
     //});
 
-    //it('Testing get open_revs="all"', function (done) {
+    //it('Testing get open_revs="all"', (done) => {
     //  var db = new PouchDB(dbs.name);
     //  testUtils.writeDocs(db, JSON.parse(JSON.stringify(origDocs)),
     //    function () {
@@ -575,9 +575,9 @@ adapters.forEach(function (adapter) {
     //            }
     //          }
     //        ];
-    //        db.put(conflicts[0], { new_edits: false }, function (err, doc) {
-    //          db.put(conflicts[1], { new_edits: false }, function (err, doc) {
-    //            db.put(conflicts[2], { new_edits: false }, function (err, doc) {
+    //        db.put(conflicts[0], { new_edits: false }, (err, doc) => {
+    //          db.put(conflicts[1], { new_edits: false }, (err, doc) => {
+    //            db.put(conflicts[2], { new_edits: false }, (err, doc) => {
     //              db.get('3', { open_revs: 'all' }, function (err, res) {
     //                var i;
     //                res = res.map(function (row) {
@@ -599,7 +599,7 @@ adapters.forEach(function (adapter) {
     //    });
     //});
 
-    //it('Testing get with some open_revs', function (done) {
+    //it('Testing get with some open_revs', (done) => {
     //  var db = new PouchDB(dbs.name);
     //  testUtils.writeDocs(db, JSON.parse(JSON.stringify(origDocs)),
     //    function () {
@@ -648,9 +648,9 @@ adapters.forEach(function (adapter) {
     //            }
     //          }
     //        ];
-    //        db.put(conflicts[0], { new_edits: false }, function (err, doc) {
-    //          db.put(conflicts[1], { new_edits: false }, function (err, doc) {
-    //            db.put(conflicts[2], { new_edits: false }, function (err, doc) {
+    //        db.put(conflicts[0], { new_edits: false }, (err, doc) => {
+    //          db.put(conflicts[1], { new_edits: false }, (err, doc) => {
+    //            db.put(conflicts[2], { new_edits: false }, (err, doc) => {
     //              db.get('3', {
     //                open_revs: [
     //                  '2-aaa',
@@ -682,7 +682,7 @@ adapters.forEach(function (adapter) {
     //    });
     //});
 
-    //it('Testing get with open_revs and revs', function (done) {
+    //it('Testing get with open_revs and revs', (done) => {
     //  var db = new PouchDB(dbs.name);
     //  var docs = [
     //    [{ _id: 'foo', _rev: '1-a', value: 'foo a' },
@@ -704,7 +704,7 @@ adapters.forEach(function (adapter) {
     //  });
     //});
 
-    //it('Testing get with open_revs on nonexistent doc', function (done) {
+    //it('Testing get with open_revs on nonexistent doc', (done) => {
     //  var db = new PouchDB(dbs.name);
     //  db.get('nonexistent', { open_revs: ['2-whatever'] }, function (err, res) {
     //    res.length.should.equal(1, 'just one result');
@@ -724,7 +724,7 @@ adapters.forEach(function (adapter) {
     //  });
     //});
 
-    //it('Testing get with open_revs with wrong params', function (done) {
+    //it('Testing get with open_revs with wrong params', (done) => {
     //  var db = new PouchDB(dbs.name);
     //  db.put({ _id: 'foo' }, function (err, res) {
     //    db.get('foo', {
