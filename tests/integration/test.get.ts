@@ -396,7 +396,7 @@ adapters.forEach(function (adapter) {
     //    }
     //  }
 
-    //  function getDocWithDefault(db, id, defaultDoc) {
+    //  function getDocWithDefault(db: pouchdb.promise.PouchDB, id: string, defaultDoc) {
     //    return db.get(id).catch((err) => {
     //      /* istanbul ignore if */
     //      if (err.status !== 404) {
@@ -413,7 +413,7 @@ adapters.forEach(function (adapter) {
     //      });
     //    });
     //  }
-
+    //  //  todo: d.ts utils interface that is extensible, and then extend with bluebird.d.ts
     //  return PouchDB.utils.Promise.all(tasks.map(function (task) {
     //    return getDocWithDefault(db, task, { foo: 'bar' });
     //  }));
@@ -457,76 +457,76 @@ adapters.forEach(function (adapter) {
     //  }));
     //});
 
-    //it('Test get with conflicts', (done) => {
-    //  var db = new PouchDB(dbs.name);
-    //  var simpleTree = [
-    //    [
-    //      {
-    //        _id: 'foo',
-    //        _rev: '1-a',
-    //        value: 'foo a'
-    //      },
-    //      {
-    //        _id: 'foo',
-    //        _rev: '2-b',
-    //        value: 'foo b'
-    //      }
-    //    ],
-    //    [
-    //      {
-    //        _id: 'foo',
-    //        _rev: '1-a',
-    //        value: 'foo a'
-    //      },
-    //      {
-    //        _id: 'foo',
-    //        _rev: '2-c',
-    //        value: 'foo c'
-    //      }
-    //    ],
-    //    [
-    //      {
-    //        _id: 'foo',
-    //        _rev: '1-a',
-    //        value: 'foo a'
-    //      },
-    //      {
-    //        _id: 'foo',
-    //        _rev: '2-d',
-    //        value: 'foo d',
-    //        _deleted: true
-    //      }
-    //    ]
-    //  ];
-    //  testUtils.putTree(db, simpleTree, () => {
-    //    db.get('foo', { conflicts: true }, (err, doc) => {
-    //      doc._rev.should.equal('2-c', 'correct rev');
-    //      doc._conflicts.length.should.equal(1, 'just one conflict');
-    //      doc._conflicts[0].should.equal('2-b', 'just one conflict');
-    //      done();
-    //    });
-    //  });
-    //});
+    it('Test get with conflicts', (done) => {
+      var db = new PouchDB(dbs.name, noop);
+      var simpleTree = [
+        [
+          {
+            _id: 'foo',
+            _rev: '1-a',
+            value: 'foo a'
+          },
+          {
+            _id: 'foo',
+            _rev: '2-b',
+            value: 'foo b'
+          }
+        ],
+        [
+          {
+            _id: 'foo',
+            _rev: '1-a',
+            value: 'foo a'
+          },
+          {
+            _id: 'foo',
+            _rev: '2-c',
+            value: 'foo c'
+          }
+        ],
+        [
+          {
+            _id: 'foo',
+            _rev: '1-a',
+            value: 'foo a'
+          },
+          {
+            _id: 'foo',
+            _rev: '2-d',
+            value: 'foo d',
+            _deleted: true
+          }
+        ]
+      ];
+      testUtils.putTree(db, simpleTree, () => {
+        db.get('foo', { conflicts: true }, (err, doc) => {
+          doc._rev.should.equal('2-c', 'correct rev');
+          doc._conflicts.length.should.equal(1, 'just one conflict');
+          doc._conflicts[0].should.equal('2-b', 'just one conflict');
+          done();
+        });
+      });
+    });
 
-    //it('Retrieve old revision', (done) => {
-    //  var db = new PouchDB(dbs.name, { auto_compaction: false });
-    //  db.post({ version: 'first' }, (err, info) => {
-    //    db.put({
-    //      _id: info.id,
-    //      _rev: info.rev,
-    //      version: 'second'
-    //    }, (err, info2) => {
-    //        should.not.exist(err);
-    //        db.get(info.id, { rev: info.rev }, function (err, oldRev) {
-    //          oldRev.version.should.equal('first', 'Fetched old revision');
-    //          db.get(info.id, { rev: '1-nonexistentRev' }, (err, doc) => {
-    //            should.exist(err, 'Non existent row error correctly reported');
-    //            done();
-    //          });
-    //        });
-    //      });
-    //  });
-    //});
+    it('Retrieve old revision', (done) => {
+      var db = new PouchDB(dbs.name, { auto_compaction: false }, noop);
+      db.post({ version: 'first' }, (err, info) => {
+        db.put({
+          _id: info.id,
+          _rev: info.rev,
+          version: 'second'
+        }, (err, info2) => {
+            should.not.exist(err);
+            db.get<pouchdb.test.integration.VersionDoc>(info.id, { rev: info.rev }, function (err, oldRev) {
+              oldRev.version.should.equal('first', 'Fetched old revision');
+              db.get(info.id, { rev: '1-nonexistentRev' }, (err, doc) => {
+                should.exist(err, 'Non existent row error correctly reported');
+                done();
+              });
+            });
+          });
+      });
+    });
 
     //it('Testing get open_revs="all"', (done) => {
     //  var db = new PouchDB(dbs.name);

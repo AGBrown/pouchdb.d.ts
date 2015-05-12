@@ -779,7 +779,7 @@ declare module pouchdb {
                 /** Response interface for `get()` */
                 interface Response extends ExistingDoc {
                     /** @todo what shape are the array elements? */
-                    _conflicts?: any; // some kind of []
+                    _conflicts?: {}[]; // some kind of []
                     /** @todo what shape are the array elements? */
                     _revs_info?: any; // some kind of []
                     /** @todo what shape are the array elements? */
