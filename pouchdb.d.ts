@@ -255,7 +255,7 @@ declare module pouchdb {
                     _attachments?: {};
                 }
                 /** A container for a document as returned by `allDocs()` */
-                interface DocContainer<D> extends ExistingDoc {
+                interface DocContainer<D extends ExistingDoc> {
                     /** The document */
                     doc: D;
                     /** The document id */
