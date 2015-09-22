@@ -2,9 +2,7 @@
 	"compilerOptions": {
 		"target": "es6"
 	},
-	"exclude": [
-		"node_modules",
-		"typings",
-		"tests"
+	"files": [
+		"pouchdb.d.ts"
 	]
 }
