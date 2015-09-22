@@ -4,5 +4,3 @@
 /tests/**/*.js.map
 /node_modules
 /ts-files.txt
-/.idea
-/*.iml
