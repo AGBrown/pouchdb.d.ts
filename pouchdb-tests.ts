@@ -14,16 +14,18 @@ module promise {
         foo: string;
     }
 
-    class fakePromise<T> implements pouchdb.async.Thenable<T> {
+    class fakePromise<T> implements Promise<T> {
         new() { }
 
-        then<R>(onFulfilled?: (value: T) => pouchdb.async.Thenable<R> | R, onRejected?: (error: any) => pouchdb.async.Thenable<R> | R) {
+        then<R>(onFulfilled?: (value: T) => Promise<R> | R, onRejected?: (error: any) => Promise<R> | R) {
             return new fakePromise<R>();
         }
 
-        catch<R>(onRejected: (error: any) => pouchdb.async.Thenable<R> | R) {
+        catch<R>(onRejected: (error: any) => Promise<R> | R) {
             return undefined;
         }
+
+        [Symbol.toStringTag]: string;
     }
 
     function chainedThen() {

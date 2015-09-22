@@ -126,7 +126,7 @@ declare module pouchdb {
         }
     }
     /**
-     * Contains the standard pouchdb promises
+     * Contains the standard pouchdb promise utilities
      * @todo what is the error shape? looks like they contain status/reason/message and id(s)?
      */
     module async {
@@ -139,13 +139,6 @@ declare module pouchdb {
             error?: any;
             message?: string;
             status?: number;
-        }
-        /** An interface to represent a promise object */
-        interface Thenable<T> {
-            /** A Promises/A+ `then` implementation */
-            then<R>(onFulfilled?: (value: T) => Thenable<R>|R, onRejected?: (error: Error) => Thenable<R>|R): Thenable<R>;
-            /** `catch` implementation as per the pouchdb example docs */
-            catch<R>(onRejected: (error: Error) => Thenable<R>|R): Thenable<R>;
         }
         /** Callback alternatives to promised */
         interface Callback<T> {
@@ -338,13 +331,13 @@ declare module pouchdb {
                 /** Promise pattern for allDocs() */
                 interface Promise {
                     /** Fetch multiple documents, indexed and sorted by the `_id`. */
-                    allDocs(): async.Thenable<Response>;
+                    allDocs(): GlobalPromise<Response>;
                     /** Fetch multiple documents, indexed and sorted by the `_id`. */
-                    allDocs(options: RangeOptions): async.Thenable<Response>;
+                    allDocs(options: RangeOptions): GlobalPromise<Response>;
                     /** Fetch multiple documents, indexed and sorted by the `_id`. */
-                    allDocs(options: PaginationOptions): async.Thenable<Response>;
+                    allDocs(options: PaginationOptions): GlobalPromise<Response>;
                     /** Fetch multiple documents, indexed and sorted by the `_id`. */
-                    allDocs(options: FilterOptions): async.Thenable<Response>;
+                    allDocs(options: FilterOptions): GlobalPromise<Response>;
                 }
             }
 
@@ -480,40 +473,40 @@ declare module pouchdb {
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    bulkDocs(folder: DocumentPouch<ExistingDoc>, options?: BulkDocsOptions): async.Thenable<BulkDocsResponse[]>;
+                    bulkDocs(folder: DocumentPouch<ExistingDoc>, options?: BulkDocsOptions): GlobalPromise<BulkDocsResponse[]>;
                     /**
                      * Update/Delete each doc in an array of documents.
                      * @param doc the doc
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    bulkDocs(docs: ExistingDoc[], options?: BulkDocsOptions): async.Thenable<BulkDocsResponse[]>;
+                    bulkDocs(docs: ExistingDoc[], options?: BulkDocsOptions): GlobalPromise<BulkDocsResponse[]>;
                     /**
                      * Create multiple documents.
                      * @param doc the doc
                      * @param options
                      */
-                    bulkDocs(folder: DocumentPouch<NewDoc>): async.Thenable<BulkDocsResponse[]>;
+                    bulkDocs(folder: DocumentPouch<NewDoc>): GlobalPromise<BulkDocsResponse[]>;
                     /**
                      * Create multiple documents.
                      * @param doc the doc
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    bulkDocs(docs: NewDoc[], options?: BulkDocsOptions): async.Thenable<BulkDocsResponse[]>;
+                    bulkDocs(docs: NewDoc[], options?: BulkDocsOptions): GlobalPromise<BulkDocsResponse[]>;
                     /**
                      * Perform mixed Create/Update/Delete operations on multiple documents.
                      * @param docs the documents to act on
                      * @param options
                      */
-                    bulkDocs(folder: DocumentPouch<MixedDoc>): async.Thenable<BulkDocsResponse[]>;
+                    bulkDocs(folder: DocumentPouch<MixedDoc>): GlobalPromise<BulkDocsResponse[]>;
                     /**
                      * Perform mixed Create/Update/Delete operations on multiple documents.
                      * @param docs the documents to act on
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    bulkDocs(docs: MixedDoc[], options?: BulkDocsOptions): async.Thenable<BulkDocsResponse[]>;
+                    bulkDocs(docs: MixedDoc[], options?: BulkDocsOptions): GlobalPromise<BulkDocsResponse[]>;
                 }
             }
 
@@ -690,7 +683,7 @@ declare module pouchdb {
                 /** Promise pattern for close() */
                 interface Promise {
                     /** Closes the pouchdb */
-                    close(): async.Thenable<string>;
+                    close(): GlobalPromise<string>;
                 }
             }
 
@@ -724,7 +717,7 @@ declare module pouchdb {
                      * Deletes a database
                      * @param options ajax options
                      */
-                    destroy(options?: options.OptionsWithAjax): async.Thenable<Info>;
+                    destroy(options?: options.OptionsWithAjax): GlobalPromise<Info>;
                 }
             }
 
@@ -803,7 +796,7 @@ declare module pouchdb {
                      * @param docId the doc id
                      * @param options
                      */
-                    get<R extends ExistingDoc>(docId: string, options?: Options): async.Thenable<R>;
+                    get<R extends ExistingDoc>(docId: string, options?: Options): GlobalPromise<R>;
                 }
             }
 
@@ -817,7 +810,7 @@ declare module pouchdb {
                 /** Promise pattern for `id()` */
                 interface Promise {
                     /** Returns the instance id for the pouchdb */
-                    id(): async.Thenable<string>;
+                    id(): GlobalPromise<string>;
                 }
             }
 
@@ -852,7 +845,7 @@ declare module pouchdb {
                 /** Promise pattern for `info()` */
                 interface Promise {
                     /** Returns the instance info for the pouchdb */
-                    info(): async.Thenable<Response | ResponseDebug>;
+                    info(): GlobalPromise<Response | ResponseDebug>;
                 }
             }
 
@@ -890,7 +883,7 @@ declare module pouchdb {
                      * @param options ajax options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    post(doc: BaseDoc, options?: options.EmptyOptions): async.Thenable<OperationResponse>;
+                    post(doc: BaseDoc, options?: options.EmptyOptions): GlobalPromise<OperationResponse>;
                 }
             }
 
@@ -971,14 +964,14 @@ declare module pouchdb {
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    put(doc: ExistingDoc, options?: options.EmptyOptions): async.Thenable<OperationResponse>;
+                    put(doc: ExistingDoc, options?: options.EmptyOptions): GlobalPromise<OperationResponse>;
                     /**
                      * Create a new document.
                      * @param doc the doc
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    put(doc: NewDoc, options?: options.EmptyOptions): async.Thenable<OperationResponse>;
+                    put(doc: NewDoc, options?: options.EmptyOptions): GlobalPromise<OperationResponse>;
                     /**
                      * Update an existing document.
                      * @param doc the doc
@@ -987,7 +980,7 @@ declare module pouchdb {
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    put(doc: BaseDoc, docId: string, docRev: string, options?: options.EmptyOptions): async.Thenable<OperationResponse>;
+                    put(doc: BaseDoc, docId: string, docRev: string, options?: options.EmptyOptions): GlobalPromise<OperationResponse>;
                     /**
                      * Create a new document. If the document already exists,
                      * you must use the update overload otherwise a conflict will occur.
@@ -996,7 +989,7 @@ declare module pouchdb {
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    put(doc: BaseDoc, docId: string, options?: options.EmptyOptions): async.Thenable<OperationResponse>;
+                    put(doc: BaseDoc, docId: string, options?: options.EmptyOptions): GlobalPromise<OperationResponse>;
                 }
             }
 
@@ -1070,7 +1063,7 @@ declare module pouchdb {
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    remove(docId: string, docRev: string, options?: options.EmptyOptions): async.Thenable<OperationResponse>;
+                    remove(docId: string, docRev: string, options?: options.EmptyOptions): GlobalPromise<OperationResponse>;
                     /**
                      * Deletes the document.
                      * `doc` is required to be a document with at least an `_id` and a `_rev` property.
@@ -1079,14 +1072,14 @@ declare module pouchdb {
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    remove(doc: ExistingDoc, options?: options.EmptyOptions): async.Thenable<OperationResponse>;
+                    remove(doc: ExistingDoc, options?: options.EmptyOptions): GlobalPromise<OperationResponse>;
                     /**
                      * Deletes the document.
                      * `doc` is required to be a document with at least an `_id` property, `rev` is specified in the `options`.
                      * @param doc the doc (with only an `id` property)
                      * @param options options that specify
                      */
-                    remove(doc: NewDoc, options: RevOptions): async.Thenable<OperationResponse>;
+                    remove(doc: NewDoc, options: RevOptions): GlobalPromise<OperationResponse>;
                 }
             }
         }
@@ -1241,7 +1234,7 @@ declare module pouchdb {
          * Usually only a `pouchdb.promise.PouchDB` reference would be kept, assigned by
          * the `then` of the constructor.
          */
-        interface PouchDB extends promise.PouchDB, async.Thenable<promise.PouchDB> { }
+        interface PouchDB extends promise.PouchDB, GlobalPromise<promise.PouchDB> { }
     }
 
     /** Static-side interface for PouchDB */
@@ -1379,4 +1372,14 @@ declare module pouchdb {
          */
         new (options: options.ctor.DbName): thenable.PouchDB;
     }
+}
+
+/** Merges declaration with another supplied interface to represent a promise object with custom error typings */
+interface GlobalPromise<T> extends Promise<T> {
+    /** A Promises/A+ `then` implementation */
+    then<R>(onFulfilled?: (value: T) => Promise<R> | R, onRejected?: (error: pouchdb.async.Error) => Promise<R> | R): Promise<R>;
+    then<R>(onFulfilled?: (value: T) => Promise<R> | R, onRejected?: (error: pouchdb.async.Error) => void): Promise<R>;
+    /** `catch` implementation as per the pouchdb example docs */
+    catch<R>(onRejected?: (error: pouchdb.async.Error) => Promise<R> | R): Promise<R>;
+    catch<R>(onRejected?: (error: pouchdb.async.Error) => void): Promise<R>;
 }
