@@ -187,7 +187,9 @@ declare module pouchdb {
              * @todo see https://github.com/Microsoft/TypeScript/issues/1809:
              * cannot yet specify docs are objects, and not primitives, so use this type as a placeholder.
               */
-            interface BaseDoc { }
+            interface BaseDoc {
+                [x: string]: any;
+            }
 
             /** Interface for a doc (with `_id`) passed to the put() method */
             interface NewDoc extends BaseDoc {
