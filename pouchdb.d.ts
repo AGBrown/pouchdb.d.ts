@@ -523,7 +523,7 @@ declare module pouchdb {
                 /** Options for `changes()` output */
                 interface BaseOptions extends BasePaginationOptions {
                     /**
-                     * Does "live" changes, using CouchDB’s `_longpoll_` feed if remote.
+                     * Does "live" changes, using CouchDB's `_longpoll_` feed if remote.
                      * @default `false`
                      */
                     live?: boolean;
@@ -561,7 +561,7 @@ declare module pouchdb {
                     query_params?: {};
                     /**
                      * Specify a view function (e.g. `'design_doc_name/view_name'`) to act as a filter. 
-                     * Documents counted as “passed” for a view filter if a map function emits at least 
+                     * Documents counted as "passed" for a view filter if a map function emits at least
                      * one record for them (set {@linkcode #filter} to `'view'` to use this).
                      */
                     view?: string;
@@ -570,7 +570,7 @@ declare module pouchdb {
                 interface AdvancedOptions {
                     /**
                      * Available for non-http databases. Passing `false` prevents the changes feed 
-                     * from keeping all the documents in memory – in other words `complete` always has 
+                     * from keeping all the documents in memory - in other words `complete` always has
                      * an empty results array, and the `change` event is the only way to get the event.
                      * @default true
                      */
@@ -583,7 +583,7 @@ declare module pouchdb {
                     batch_size?: number;
                     /**
                      * Specifies how many revisions are returned in the changes array: 
-                     * `'main_only'`, will only return the current “winning” revision; 
+                     * `'main_only'`, will only return the current "winning" revision;
                      * `'all_docs'` will return all leaf revisions
                      * (including conflicts and deleted former conflicts).
                      * @default 'main_only'
