@@ -32,8 +32,15 @@ declare module pouchdb {
          * @todo leveldb options
          */
         module ctor {
+            /** PouchDB constructor options that can be used on custom plugins and adapters */
+            interface CustomDb {
+                /**
+                 * Enables custom options to be passed to plugins or adapters
+                 */
+                [x: string]: any;
+            }
             /** PouchDB constructor options that can be used to create a local db */
-            interface LocalDb {
+            interface LocalDb extends CustomDb {
                 /**
                  * Specifies the adapter type: permitted values are ['idb', 'leveldb', 'websql', or 'http'].
                  * @default automatically inferred by browser (idb > websql if both supported)
@@ -47,7 +54,7 @@ declare module pouchdb {
             }
 
             /** PouchDB constructor options for SQLite Plugin */
-            interface SQLite {
+            interface SQLite extends CustomDb {
                 //  From websql.js, line 991: var db = openDB
                 //  the relevant options are name, size, location, createFromLocation
 
@@ -66,7 +73,7 @@ declare module pouchdb {
             }
 
             /**  PouchDB constructor options for WebSQL */
-            interface WebSQL {
+            interface WebSQL extends CustomDb {
                 /**
                  * Size in MB.
                  * @default 5
@@ -75,31 +82,31 @@ declare module pouchdb {
             }
 
             /** PouchDB constructor options when the db name is supplied via options instead of a parameter */
-            interface DbName {
+            interface DbName extends CustomDb {
                 /** The db name (if not supplied as a constructor argument) */
                 name: string;
             }
 
             /** PouchDB constructor options that can be used to create a local db */
-            interface LocalDbWithName extends LocalDb, DbName { }
+            interface LocalDbWithName extends LocalDb, DbName, CustomDb { }
 
             /**
              * PouchDB constructor options that can be used to create a local SQLite db
              * @todo is the auto_compaction option relevant to SQLite?
              */
-            interface LocalSQLiteDb extends LocalDb, WebSQL, SQLite { }
+            interface LocalSQLiteDb extends LocalDb, WebSQL, SQLite, CustomDb { }
 
             /**
              * PouchDB constructor options that can be used to create a local SQLite db
              * @todo is the auto_compaction option relevant to SQLite?
              */
-            interface LocalSQLiteDbWithName extends LocalDb, WebSQL, SQLite, DbName { }
+            interface LocalSQLiteDbWithName extends LocalDb, WebSQL, SQLite, DbName, CustomDb { }
 
             /** PouchDB constructor options that can be used to create a local WebSQL db */
-            interface LocalWebSQLDb extends LocalDb, WebSQL { }
+            interface LocalWebSQLDb extends LocalDb, WebSQL, CustomDb { }
 
             /** PouchDB constructor options that can be used to create a local WebSQL db */
-            interface LocalWebSQLDbWithName extends LocalDb, WebSQL, DbName { }
+            interface LocalWebSQLDbWithName extends LocalDb, WebSQL, DbName, CustomDb { }
         }
 
         /** empty options for use in various methods */
