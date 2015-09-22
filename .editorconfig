@@ -10,3 +10,8 @@ insert_final_newline = true
 [tests/**.{ts,js}]
 indent_style = space
 indent_size = 2
+
+# Indentation override for the main .ts file
+[pouchdb.d.ts,pouchdb-tests.ts]
+indent_style = space
+indent_size = 4
