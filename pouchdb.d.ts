@@ -149,7 +149,7 @@ declare module pouchdb {
             catch<R>(onRejected?: (error: pouchdb.async.Error) => Promise<R> | R): Promise<R>;
             catch<R>(onRejected?: (error: pouchdb.async.Error) => void): Promise<R>;
         }
-        /** Callback alternatives to promised */
+        /** Callback alternatives to promises */
         interface Callback<T> {
             /**
              * @param error the error object
@@ -337,8 +337,8 @@ declare module pouchdb {
                     /** Fetch multiple documents, indexed and sorted by the `_id`. */
                     allDocs(options: FilterOptions, callback?: async.Callback<Response>): void;
                 }
-                /** Promise pattern for allDocs() */
-                interface Promise {
+                /** Promisable pattern for allDocs() */
+                interface Promisable {
                     /** Fetch multiple documents, indexed and sorted by the `_id`. */
                     allDocs(): async.PouchPromise<Response>;
                     /** Fetch multiple documents, indexed and sorted by the `_id`. */
@@ -474,8 +474,8 @@ declare module pouchdb {
                      */
                     bulkDocs(docs: MixedDoc[], options: BulkDocsOptions, callback?: async.Callback<BulkDocsResponse[]>): void;
                 }
-                /** Promise pattern for bulkDocs() */
-                interface Promise {
+                /** Promisable pattern for bulkDocs() */
+                interface Promisable {
                     /**
                      * Update/Delete each doc in an array of documents.
                      * @param folder the documents storage object
@@ -678,8 +678,8 @@ declare module pouchdb {
                 }
                 /** Callback pattern for changes() */
                 interface Callback { }
-                /** Promise pattern for changes() */
-                interface Promise { }
+                /** Promisable pattern for changes() */
+                interface Promisable { }
             }
 
             /** Contains the method and call/return types for close() */
@@ -689,8 +689,8 @@ declare module pouchdb {
                     /** Closes the pouchdb */
                     close(callback?: async.Callback<string>): void;
                 }
-                /** Promise pattern for close() */
-                interface Promise {
+                /** Promisable pattern for close() */
+                interface Promisable {
                     /** Closes the pouchdb */
                     close(): async.PouchPromise<string>;
                 }
@@ -719,9 +719,9 @@ declare module pouchdb {
                     destroy(callback?: async.Callback<Info>): void;
                 }
                 /**
-                 * Promise pattern for destroy
+                 * Promisable pattern for destroy
                  */
-                interface Promise {
+                interface Promisable {
                     /**
                      * Deletes a database
                      * @param options ajax options
@@ -798,8 +798,8 @@ declare module pouchdb {
                      */
                     get<R extends Response>(docId: string, options: Options, callback?: async.Callback<R>): void;
                 }
-                /** Promise pattern for remove */
-                interface Promise {
+                /** Promisable pattern for remove */
+                interface Promisable {
                     /**
                      * Retrieves a document, specified by `docId`.
                      * @param docId the doc id
@@ -816,8 +816,8 @@ declare module pouchdb {
                     /** Returns the instance id for the pouchdb */
                     id(callback?: async.Callback<string>): void;
                 }
-                /** Promise pattern for `id()` */
-                interface Promise {
+                /** Promisable pattern for `id()` */
+                interface Promisable {
                     /** Returns the instance id for the pouchdb */
                     id(): async.PouchPromise<string>;
                 }
@@ -851,8 +851,8 @@ declare module pouchdb {
                     /** Returns the instance info for the pouchdb */
                     info(callback?: async.Callback<Response | ResponseDebug>): void;
                 }
-                /** Promise pattern for `info()` */
-                interface Promise {
+                /** Promisable pattern for `info()` */
+                interface Promisable {
                     /** Returns the instance info for the pouchdb */
                     info(): async.PouchPromise<Response | ResponseDebug>;
                 }
@@ -883,8 +883,8 @@ declare module pouchdb {
                      */
                     post(doc: BaseDoc, options: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
                 }
-                /** Promise pattern for post */
-                interface Promise {
+                /** Promisable pattern for post */
+                interface Promisable {
                     /**
                      * Create a new document and let PouchDB auto-generate an _id for it.
                      * (tip: use `put()` instead for better indexing)
@@ -965,8 +965,8 @@ declare module pouchdb {
                      */
                     put(doc: BaseDoc, docId: string, options: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
                 }
-                /** Promise pattern for put */
-                interface Promise {
+                /** Promisable pattern for put */
+                interface Promisable {
                     /**
                      * Update an existing document.
                      * @param doc the doc
@@ -1061,8 +1061,8 @@ declare module pouchdb {
                      */
                     remove(doc: NewDoc, options: RevOptions, callback?: async.Callback<OperationResponse>): void;
                 }
-                /** Promise pattern for remove */
-                interface Promise {
+                /** Promisable pattern for remove */
+                interface Promisable {
                     /**
                      * Deletes the document.
                      * `doc` is required to be a document with at least an `_id` and a `_rev` property.
@@ -1109,19 +1109,19 @@ declare module pouchdb {
                 , methods.put.Callback
                 , methods.remove.Callback { }
             /** pouchDB api: promise based */
-            interface Promise extends
+            interface Promisable extends
                 PouchInstance
-                , methods.allDocs.Promise
-                , methods.bulkDocs.Promise
+                , methods.allDocs.Promisable
+                , methods.bulkDocs.Promisable
                 , methods.changes.Overloads
-                , methods.close.Promise
-                , methods.destroy.Promise
-                , methods.get.Promise
-                , methods.id.Promise
-                , methods.info.Promise
-                , methods.post.Promise
-                , methods.put.Promise
-                , methods.remove.Promise { }
+                , methods.close.Promisable
+                , methods.destroy.Promisable
+                , methods.get.Promisable
+                , methods.id.Promisable
+                , methods.info.Promisable
+                , methods.post.Promisable
+                , methods.put.Promisable
+                , methods.remove.Promisable { }
         }
 
         /** The main pouchDB interface */
@@ -1231,15 +1231,15 @@ declare module pouchdb {
         /** The main pouchDB interface (callback pattern) */
         interface PouchDB extends api.db.Callback { }
     }
-    /** The api module for the pouchdb promise pattern */
+    /** The api module for the pouchdb Promisable pattern */
     module promise {
-        /** The main pouchDB interface (promise pattern) */
-        interface PouchDB extends api.db.Promise { }
+        /** The main pouchDB interface (Promisable pattern) */
+        interface PouchDB extends api.db.Promisable { }
     }
     /** The api module for the pouchdb promise pattern (constructor only) */
     module thenable {
         /**
-         * Special case class returned by the constructors of the promise api pouchDB.
+         * Special case class returned by the constructors of the Promisable api pouchDB.
          * Usually only a `pouchdb.promise.PouchDB` reference would be kept, assigned by
          * the `then` of the constructor.
          */
@@ -1253,7 +1253,7 @@ declare module pouchdb {
     }
     /**
      * The main pouchDB entry point. The constructors here will return either a
-     * Callback or Promise pattern api.
+     * Callback or Promisable pattern api.
      */
     export interface PouchDB {
         //////////////////////////////  local db  /////////////////////////////
