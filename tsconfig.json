@@ -3,6 +3,7 @@
 		"target": "es6"
 	},
 	"files": [
-		"pouchdb.d.ts"
+		"pouchdb.d.ts",
+		"pouchdb-tests.ts"
 	]
 }
