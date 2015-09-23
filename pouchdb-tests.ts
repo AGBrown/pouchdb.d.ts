@@ -14,18 +14,16 @@ module promise {
         foo: string;
     }
 
-    class fakePromise<T> implements Promise<T> {
+    class fakePromise<T> implements GlobalPromise<T> {
         new() { }
 
-        then<R>(onFulfilled?: (value: T) => Promise<R> | R, onRejected?: (error: any) => Promise<R> | R) {
+        then<R>(onFulfilled?: (value: T) => GlobalPromise<R> | R, onRejected?: (error: any) => GlobalPromise<R> | R) {
             return new fakePromise<R>();
         }
 
-        catch<R>(onRejected: (error: any) => Promise<R> | R) {
+        catch<R>(onRejected: (error: any) => GlobalPromise<R> | R) {
             return undefined;
         }
-
-        [Symbol.toStringTag]: string;
     }
 
     function chainedThen() {
