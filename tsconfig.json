@@ -3,8 +3,9 @@
 		"target": "es6",
 		"outDir": "out"
 	},
-	"files": [
-		"pouchdb.d.ts",
-		"pouchdb-tests.ts"
+	"exclude": [
+		"node_modules",
+		"typings",
+		"out"
 	]
 }
