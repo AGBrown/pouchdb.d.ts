@@ -36,6 +36,9 @@ declare module pouchdb {
      * contains integration test code
      */
     module integration {
+      interface NewTestStringDoc extends pouchdb.api.methods.NewDoc {
+        test: string;
+      }
       interface TestDoc extends pouchdb.api.methods.ExistingDoc {
         test: string;
       }
