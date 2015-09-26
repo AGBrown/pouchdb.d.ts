@@ -6,6 +6,8 @@
 //  This file provides "compilation" tests for pouchdb.d.ts as per the DefinitelyTyped best practices
 
 /// <reference path="pouchdb.d.ts" />
+/// <reference path="pouchdb-loose.d.ts" />
+/// <reference path="pouchdb-plugins.d.ts" />
 
 module promise {
     class Foo {
