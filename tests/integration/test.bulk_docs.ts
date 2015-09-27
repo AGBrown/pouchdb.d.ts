@@ -226,7 +226,10 @@ adapters.forEach(function (adapter) {
     });
 
     it('#2935 new_edits=false correct number', () => {
-      var docs = [
+      interface LooseDoc extends pouchdb.api.methods.bulkDocs.MixedDoc {
+        [x: string]: any;
+      }
+      var docs: LooseDoc[] = [
         {
           "_id": "EE35E",
           "_rev": "4-70b26",
@@ -244,7 +247,7 @@ adapters.forEach(function (adapter) {
 
       var db = new PouchDB(dbs.name);
 
-      return db.bulkDocs({ docs: docs, new_edits: false }).then((res) => {
+      return db.bulkDocs(<pouchdb.api.methods.bulkDocs.DocumentPouchAndOptions<LooseDoc>>{ docs: docs, new_edits: false }).then((res) => {
         res.should.deep.equal([]);
         return db.allDocs();
       }).then((res) => {
@@ -256,6 +259,9 @@ adapters.forEach(function (adapter) {
     });
 
     it('#2935 new_edits=false correct number 2', () => {
+      interface LooseDoc extends pouchdb.api.methods.bulkDocs.MixedDoc {
+        [x: string]: any;
+      }
       var docs = [
         {
           "_id": "EE35E",
@@ -274,7 +280,7 @@ adapters.forEach(function (adapter) {
 
       var db = new PouchDB(dbs.name);
 
-      return db.bulkDocs({ docs: docs, new_edits: false }).then((res) => {
+      return db.bulkDocs(<pouchdb.api.methods.bulkDocs.DocumentPouchAndOptions<LooseDoc>>{ docs: docs, new_edits: false }).then((res) => {
         res.should.deep.equal([]);
         return db.allDocs();
       }).then((res) => {
