@@ -1,5 +1,3 @@
-/pouchdb-tests.js
-/pouchdb-tests.js.map
-/tests/**/*.js
-/tests/**/*.js.map
 /node_modules
+/ts-files.txt
+/out

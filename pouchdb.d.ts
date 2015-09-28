@@ -7,7 +7,7 @@
 //            in v3.4.0 test.basic.js on line 210
 
 // Support AMD require
-// Use like this:
+// Use like this: 
 //      import pdb = require('pouchdb');
 declare module "pouchdb" {
     export = pouchdb;
@@ -32,8 +32,11 @@ declare module pouchdb {
          * @todo leveldb options
          */
         module ctor {
+            /** PouchDB constructor options that can be used on custom plugins and adapters */
+            interface CustomDb {
+            }
             /** PouchDB constructor options that can be used to create a local db */
-            interface LocalDb {
+            interface LocalDb extends CustomDb {
                 /**
                  * Specifies the adapter type: permitted values are ['idb', 'leveldb', 'websql', or 'http'].
                  * @default automatically inferred by browser (idb > websql if both supported)
@@ -47,7 +50,7 @@ declare module pouchdb {
             }
 
             /** PouchDB constructor options for SQLite Plugin */
-            interface SQLite {
+            interface SQLite extends CustomDb {
                 //  From websql.js, line 991: var db = openDB
                 //  the relevant options are name, size, location, createFromLocation
 
@@ -66,40 +69,40 @@ declare module pouchdb {
             }
 
             /**  PouchDB constructor options for WebSQL */
-            interface WebSQL {
+            interface WebSQL extends CustomDb {
                 /**
-                 * Size in MB.
+                 * Size in MB. 
                  * @default 5
                  */
                 size?: number;
             }
 
             /** PouchDB constructor options when the db name is supplied via options instead of a parameter */
-            interface DbName {
+            interface DbName extends CustomDb {
                 /** The db name (if not supplied as a constructor argument) */
                 name: string;
             }
 
             /** PouchDB constructor options that can be used to create a local db */
-            interface LocalDbWithName extends LocalDb, DbName { }
+            interface LocalDbWithName extends LocalDb, DbName, CustomDb { }
 
             /**
              * PouchDB constructor options that can be used to create a local SQLite db
              * @todo is the auto_compaction option relevant to SQLite?
              */
-            interface LocalSQLiteDb extends LocalDb, WebSQL, SQLite { }
+            interface LocalSQLiteDb extends LocalDb, WebSQL, SQLite, CustomDb { }
 
             /**
              * PouchDB constructor options that can be used to create a local SQLite db
              * @todo is the auto_compaction option relevant to SQLite?
              */
-            interface LocalSQLiteDbWithName extends LocalDb, WebSQL, SQLite, DbName { }
+            interface LocalSQLiteDbWithName extends LocalDb, WebSQL, SQLite, DbName, CustomDb { }
 
             /** PouchDB constructor options that can be used to create a local WebSQL db */
-            interface LocalWebSQLDb extends LocalDb, WebSQL { }
+            interface LocalWebSQLDb extends LocalDb, WebSQL, CustomDb { }
 
             /** PouchDB constructor options that can be used to create a local WebSQL db */
-            interface LocalWebSQLDbWithName extends LocalDb, WebSQL, DbName { }
+            interface LocalWebSQLDbWithName extends LocalDb, WebSQL, DbName, CustomDb { }
         }
 
         /** empty options for use in various methods */
@@ -122,13 +125,13 @@ declare module pouchdb {
             cache?: boolean;
         }
     }
-    /**
-     * Contains the standard pouchdb promises
+    /** 
+     * Contains the standard pouchdb promises 
      * @todo what is the error shape? looks like they contain status/reason/message and id(s)?
      */
     module async {
-        /**
-         * shape for the error returns
+        /** 
+         * shape for the error returns 
          * @todo what (and what type) is `.error`. Is `.message` always there, or should this
          * be a union type with StandardError
          */
@@ -165,7 +168,7 @@ declare module pouchdb {
                 ok: boolean;
             }
 
-            /** Promise/callback result for various methods. Note that documents use `_id`
+            /** Promise/callback result for various methods. Note that documents use `_id` 
              * and responses provide `id`.
               */
             interface OperationResponse extends BaseResponse {
@@ -174,13 +177,14 @@ declare module pouchdb {
                 /** The revision of the doc after the operation */
                 rev: string;
             }
-
+            
             //////////////////////////// Doc Shapes ////////////////////////////
             /** Interface for an empty doc.
-             * @todo see https://github.com/Microsoft/TypeScript/issues/1809:
+             * @todo see https://github.com/Microsoft/TypeScript/issues/1809: 
              * cannot yet specify docs are objects, and not primitives, so use this type as a placeholder.
               */
-            interface BaseDoc { }
+            interface BaseDoc {
+            }
 
             /** Interface for a doc (with `_id`) passed to the put() method */
             interface NewDoc extends BaseDoc {
@@ -188,7 +192,7 @@ declare module pouchdb {
                 _id: string;
             }
 
-            /** Interface for a doc (with `_id`, `_rev`, `_deleted`) passed to
+            /** Interface for a doc (with `_id`, `_rev`, `_deleted`) passed to 
              *    the `put()` and `bulkDocs()` method */
             interface ExistingDoc extends NewDoc {
                 /** The revision of the doc to be operated on */
@@ -346,7 +350,7 @@ declare module pouchdb {
 
             /** Contains the method and call/return types for bulkDocs() */
             module bulkDocs {
-                /** Interface for a bulk update array member (with `_id?`, `_rev?`, `_deleted?`)
+                /** Interface for a bulk update array member (with `_id?`, `_rev?`, `_deleted?`) 
                  *    passed to the bulkDocs() method */
                 interface MixedDoc {
                     /** The id of the doc to be operated on */
@@ -375,7 +379,7 @@ declare module pouchdb {
                     /** Advanced option: when set to `false` allows you to post and overwrite existing documents. */
                     new_edits?: boolean;
                 }
-                /** Error details for a document in a `bulkDocs()` operation
+                /** Error details for a document in a `bulkDocs()` operation 
                  * @todo - does this really extend OperationResponse, or is `id` just sometimes present?
                  */
                 interface BulkDocsError extends OperationResponse {
@@ -390,8 +394,8 @@ declare module pouchdb {
                 }
                 /** Type union for the possible info/error type alternates returned by `bulkDocs()` */
                 type BulkDocsResponse = OperationResponse | BulkDocsError;
-                /**
-                 * Callback pattern for bulkDocs()
+                /** 
+                 * Callback pattern for bulkDocs() 
                  * @todo a mixed doc array for mixed CUD updates
                  * @todo new_edits
                  */
@@ -418,8 +422,8 @@ declare module pouchdb {
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    bulkDocs(docs: ExistingDoc[], options: BulkDocsOptions, callback?: async.Callback<BulkDocsResponse[]>): void;
-
+                    bulkDocs(docs: ExistingDoc[], options: BulkDocsOptions, callback?: async.Callback<BulkDocsResponse[]>): void;                    
+                    
                     /**
                      * Create multiple documents.
                      * @param doc the doc
@@ -442,8 +446,8 @@ declare module pouchdb {
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    bulkDocs(docs: NewDoc[], options: BulkDocsOptions, callback?: async.Callback<BulkDocsResponse[]>): void;
-
+                    bulkDocs(docs: NewDoc[], options: BulkDocsOptions, callback?: async.Callback<BulkDocsResponse[]>): void;                    
+                    
                     /**
                      * Perform mixed Create/Update/Delete operations on multiple documents.
                      * @param options the doc
@@ -466,7 +470,7 @@ declare module pouchdb {
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    bulkDocs(docs: MixedDoc[], options: BulkDocsOptions, callback?: async.Callback<BulkDocsResponse[]>): void;
+                    bulkDocs(docs: MixedDoc[], options: BulkDocsOptions, callback?: async.Callback<BulkDocsResponse[]>): void;                    
                 }
                 /** Promise pattern for bulkDocs() */
                 interface Promise {
@@ -524,7 +528,7 @@ declare module pouchdb {
                      */
                     live?: boolean;
                     /**
-                     * Start the results from the change immediately after the given sequence number.
+                     * Start the results from the change immediately after the given sequence number. 
                      * You can also pass `'now'` if you want only new changes (when `live` is `true`).
                      * @default undefined
                      */
@@ -538,8 +542,8 @@ declare module pouchdb {
                 /** Options for filtering `changes()` output */
                 interface FilterOptions {
                     /**
-                     * Reference a filter function from a design document to selectively get updates.
-                     * To use a view function, pass `'_view'` here and provide a reference to the view
+                     * Reference a filter function from a design document to selectively get updates. 
+                     * To use a view function, pass `'_view'` here and provide a reference to the view 
                      * function in {@link #view}
                      * @see params
                      * @see view
@@ -548,15 +552,15 @@ declare module pouchdb {
                     /** Only show changes for docs with these ids. */
                     doc_ids?: string[];
                     /**
-                     *  Object containing properties that are passed to the filter function,
-                     * e.g. `{"foo:"bar"}`, where `"bar"` will be available in the filter function
-                     * as `params.query.foo`. To access the `params`, define your filter function like
+                     *  Object containing properties that are passed to the filter function, 
+                     * e.g. `{"foo:"bar"}`, where `"bar"` will be available in the filter function 
+                     * as `params.query.foo`. To access the `params`, define your filter function like 
                      * `function (doc, params) { ... }`.
                      * @see filter
                      */
                     query_params?: {};
                     /**
-                     * Specify a view function (e.g. `'design_doc_name/view_name'`) to act as a filter.
+                     * Specify a view function (e.g. `'design_doc_name/view_name'`) to act as a filter. 
                      * Documents counted as “passed” for a view filter if a map function emits at least 
                      * one record for them (set {@linkcode #filter} to `'view'` to use this).
                      */
@@ -565,20 +569,20 @@ declare module pouchdb {
                 /** Advanced options for `changes()` */
                 interface AdvancedOptions {
                     /**
-                     * Available for non-http databases. Passing `false` prevents the changes feed
+                     * Available for non-http databases. Passing `false` prevents the changes feed 
                      * from keeping all the documents in memory – in other words `complete` always has 
                      * an empty results array, and the `change` event is the only way to get the event.
                      * @default true
                      */
                     returnDocs?: boolean;
                     /**
-                     * Available for http databases. This configures how many changes to fetch at a
-                     * time. Increasing this can reduce the number of requests made.
+                     * Available for http databases. This configures how many changes to fetch at a 
+                     * time. Increasing this can reduce the number of requests made. 
                      * @default 25
                      */
                     batch_size?: number;
                     /**
-                     * Specifies how many revisions are returned in the changes array:
+                     * Specifies how many revisions are returned in the changes array: 
                      * `'main_only'`, will only return the current “winning” revision; 
                      * `'all_docs'` will return all leaf revisions
                      * (including conflicts and deleted former conflicts).
@@ -604,7 +608,7 @@ declare module pouchdb {
                      */
                     doc?: ExistingDoc;
                 }
-                /**
+                /** 
                  * Complete event object
                  * @todo confirm shape
                  */
@@ -616,7 +620,7 @@ declare module pouchdb {
 
                 /** The event listeners for `changes()` */
                 interface EventsOptions {
-                    /**
+                    /** 
                      * The `change` event listener. This event fires when a change has been found.
                      */
                     onChange?: (change: ChangeInfo) => void;
@@ -629,14 +633,14 @@ declare module pouchdb {
                     //delete?: (???) => void;
                     ///** The `paused` event listener */
                     //paused?: (???) => void;
-
-                    /**
-                     * The `complete` event listener.  This event fires when all changes have been
+                    
+                    /** 
+                     * The `complete` event listener.  This event fires when all changes have been 
                      * read. In live changes, only cancelling the changes should trigger this event.
                      */
                     complete?: (err: async.Error, info: CompleteInfo) => void;
-                    /**
-                     * The `error` event listener. This event is fired when the replication is stopped
+                    /** 
+                     * The `error` event listener. This event is fired when the replication is stopped 
                      * due to an unrecoverable failure.
                      * @todo: confirm error shape
                      */
@@ -651,7 +655,7 @@ declare module pouchdb {
                 /** Result object for changes() */
                 interface ChangesResult {
                     /**
-                     * Cancels all further event emissions for the call to
+                     * Cancels all further event emissions for the call to 
                      * `changes()` that returned this object
                      */
                     cancel(): void;
@@ -659,13 +663,13 @@ declare module pouchdb {
                 /** The overloads for changes() */
                 interface Overloads {
                     /**
-                     * A list of changes made to documents in the database, in the order they were made.
+                     * A list of changes made to documents in the database, in the order they were made. 
                      * @returns an object with the method `cancel()` to stop listening for new changes
                      */
                     changes(options: methods.changes.ChangesOptions): methods.changes.ChangesResult;
                     /**
                      * A list of changes made to documents in the database, in the order they were made
-                     * (using advanced options).
+                     * (using advanced options). 
                      * @returns an object with the method `cancel()` to stop listening for new changes
                      */
                     changes(options: methods.changes.ChangesOptionsAdv): methods.changes.ChangesResult;
@@ -735,19 +739,19 @@ declare module pouchdb {
                      * @default undefined (returns winning revision)
                      */
                     rev?: string;
-                    /**
-                     * Include revision history of the document
+                    /** 
+                     * Include revision history of the document 
                      * @default false
                      */
                     revs?: boolean;
-                    /**
-                     * Include a list of revisions of the document, and their availability
+                    /** 
+                     * Include a list of revisions of the document, and their availability 
                      * @default false
                      */
                     revs_info?: boolean;
-                    /**
-                     * Fetch all leaf revisions if `open_revs="all"` or fetch all leaf revisions
-                     * specified in `open_revs` array.
+                    /** 
+                     * Fetch all leaf revisions if `open_revs="all"` or fetch all leaf revisions 
+                     * specified in `open_revs` array. 
                      * @default undefined
                      */
                     open_revs?: any; // string | string[]
@@ -828,7 +832,7 @@ declare module pouchdb {
                     db_name: string;
                     /** the total number of non-deleted documents in the database */
                     doc_count: number;
-                    /** the sequence number of the database. It starts at 0 and gets incremented
+                    /** the sequence number of the database. It starts at 0 and gets incremented 
                      * every time a document is added or modified. */
                     update_seq: number
                 }
@@ -854,7 +858,7 @@ declare module pouchdb {
                     info(): async.Thenable<Response|ResponseDebug>;
                 }
             }
-
+            
             /** Contains the method and call/return types for post() */
             module post {
                 /**
@@ -865,14 +869,14 @@ declare module pouchdb {
                 interface Callback {
                     // overload order is important
                     /**
-                     * Create a new document and let PouchDB auto-generate an _id for it
+                     * Create a new document and let PouchDB auto-generate an _id for it 
                      * (tip: use `put()` instead for better indexing)
                      * @param doc the doc (with no id)
                      * @todo define options shape - docs don't make it clear what this is
                      */
                     post(doc: BaseDoc, callback?: async.Callback<OperationResponse>): void;
                     /**
-                     * Create a new document and let PouchDB auto-generate an _id for it
+                     * Create a new document and let PouchDB auto-generate an _id for it 
                      * (tip: use `put()` instead for better indexing)
                      * @param doc the doc (with no id)
                      * @param options ajax options
@@ -892,7 +896,7 @@ declare module pouchdb {
                     post(doc: BaseDoc, options?: options.EmptyOptions): async.Thenable<OperationResponse>;
                 }
             }
-
+            
             /** Contains the method and call/return types for put() */
             module put {
                 /**
@@ -928,7 +932,7 @@ declare module pouchdb {
                      */
                     put(doc: NewDoc, options: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
                     /**
-                     * Update an existing document.
+                     * Update an existing document. 
                      * @param doc the doc
                      * @param docId the doc id
                      * @param docRev the doc rev
@@ -988,7 +992,7 @@ declare module pouchdb {
                      */
                     put(doc: BaseDoc, docId: string, docRev: string, options?: options.EmptyOptions): async.Thenable<OperationResponse>;
                     /**
-                     * Create a new document. If the document already exists,
+                     * Create a new document. If the document already exists, 
                      * you must use the update overload otherwise a conflict will occur.
                      * @param doc the doc
                      * @param docId the doc id
@@ -998,7 +1002,7 @@ declare module pouchdb {
                     put(doc: BaseDoc, docId: string, options?: options.EmptyOptions): async.Thenable<OperationResponse>;
                 }
             }
-
+            
             /** Contains the method and call/return types for remove() */
             module remove {
                 /** Options used in overlaods for `remove()` */
@@ -1014,8 +1018,8 @@ declare module pouchdb {
                  */
                 interface Callback {
                     /**
-                      * Deletes the document.
-                      * `doc` is required to be a document with at least an `_id` and a `_rev` property.
+                      * Deletes the document. 
+                      * `doc` is required to be a document with at least an `_id` and a `_rev` property. 
                       * Sending the full document will work as well.
                       * @param docId the doc id
                       * @param docRev the doc revision
@@ -1023,8 +1027,8 @@ declare module pouchdb {
                       */
                     remove(docId: string, docRev: string, callback?: async.Callback<OperationResponse>): void;
                     /**
-                      * Deletes the document.
-                      * `doc` is required to be a document with at least an `_id` and a `_rev` property.
+                      * Deletes the document. 
+                      * `doc` is required to be a document with at least an `_id` and a `_rev` property. 
                       * Sending the full document will work as well.
                       * @param docId the doc id
                       * @param docRev the doc revision
@@ -1033,8 +1037,8 @@ declare module pouchdb {
                       */
                     remove(docId: string, docRev: string, options: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
                     /**
-                     * Deletes the document.
-                     * `doc` is required to be a document with at least an `_id` and a `_rev` property.
+                     * Deletes the document. 
+                     * `doc` is required to be a document with at least an `_id` and a `_rev` property. 
                      * Sending the full document will work as well.
                      * @param doc the doc
                      * @param options
@@ -1042,8 +1046,8 @@ declare module pouchdb {
                      */
                     remove(doc: ExistingDoc, callback?: async.Callback<OperationResponse>): void;
                     /**
-                     * Deletes the document.
-                     * `doc` is required to be a document with at least an `_id` and a `_rev` property.
+                     * Deletes the document. 
+                     * `doc` is required to be a document with at least an `_id` and a `_rev` property. 
                      * Sending the full document will work as well.
                      * @param doc the doc
                      * @param options
@@ -1051,18 +1055,18 @@ declare module pouchdb {
                      */
                     remove(doc: ExistingDoc, options: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
                     /**
-                     * Deletes the document.
+                     * Deletes the document. 
                      * `doc` is required to be a document with at least an `_id` property, `rev` is specified in the `options`.
                      * @param doc the doc (with only an `id` property)
-                     * @param options options that specify
+                     * @param options options that specify 
                      */
                     remove(doc: NewDoc, options: RevOptions, callback?: async.Callback<OperationResponse>): void;
                  }
                 /** Promise pattern for remove */
                 interface Promise {
                     /**
-                     * Deletes the document.
-                     * `doc` is required to be a document with at least an `_id` and a `_rev` property.
+                     * Deletes the document. 
+                     * `doc` is required to be a document with at least an `_id` and a `_rev` property. 
                      * Sending the full document will work as well.
                      * @param docId the doc id
                      * @param docRev the doc revision
@@ -1071,8 +1075,8 @@ declare module pouchdb {
                      */
                     remove(docId: string, docRev: string, options?: options.EmptyOptions): async.Thenable<OperationResponse>;
                     /**
-                     * Deletes the document.
-                     * `doc` is required to be a document with at least an `_id` and a `_rev` property.
+                     * Deletes the document. 
+                     * `doc` is required to be a document with at least an `_id` and a `_rev` property. 
                      * Sending the full document will work as well.
                      * @param doc the doc
                      * @param options
@@ -1080,10 +1084,10 @@ declare module pouchdb {
                      */
                     remove(doc: ExistingDoc, options?: options.EmptyOptions): async.Thenable<OperationResponse>;
                     /**
-                     * Deletes the document.
+                     * Deletes the document. 
                      * `doc` is required to be a document with at least an `_id` property, `rev` is specified in the `options`.
                      * @param doc the doc (with only an `id` property)
-                     * @param options options that specify
+                     * @param options options that specify 
                      */
                     remove(doc: NewDoc, options: RevOptions): async.Thenable<OperationResponse>;
                 }
@@ -1132,7 +1136,7 @@ declare module pouchdb {
             /** undocumented */
             _blobSupport: boolean;
         }
-
+        
         //  Errors (see pouchdb/lib/deps/errors.js /////////////////////////////
 
         /** A PouchDB error definition */
@@ -1163,8 +1167,8 @@ declare module pouchdb {
             missing?: any;
         }
 
-        /**
-         * The collection of error definitions defined for PouchDB
+        /** 
+         * The collection of error definitions defined for PouchDB 
          * @todo are these adapter dependent?
          * */
         interface StandardErrors {
@@ -1199,10 +1203,10 @@ declare module pouchdb {
             INVALID_REQUEST: PouchError
             /** (400): Some query parameter is invalid */
             QUERY_PARSE_ERROR: PouchError
-            /** (500): Bad special document member
+            /** (500): Bad special document member 
              * Bad special document member (`message` will include the bad member name(s)) */
             DOC_VALIDATION: PouchError
-            /** (400): Something wrong with the request.
+            /** (400): Something wrong with the request. 
              *      Check `reason` on the returned error for the underlying cause */
             BAD_REQUEST: PouchError
             /** (400): Document must be a JSON object */
@@ -1244,34 +1248,34 @@ declare module pouchdb {
          */
         interface PouchDB extends promise.PouchDB, async.Thenable<promise.PouchDB> { }
     }
-
+    
     /** Static-side interface for PouchDB */
     export interface PouchDB {
         /** Error helpers */
         Errors: api.StandardErrors;
     }
     /**
-     * The main pouchDB entry point. The constructors here will return either a
+     * The main pouchDB entry point. The constructors here will return either a 
      * Callback or Promise pattern api.
      */
     export interface PouchDB {
         //////////////////////////////  local db  /////////////////////////////
         /**
-         * Creates a new local pouchDb with the name specified and
+         * Creates a new local pouchDb with the name specified and 
          * all the default options
          * @param name the database name
          * @returns a Thenable<PouchDB>
          */
         new (name: string): thenable.PouchDB;
         /**
-         * Creates a new local pouchDb with the name specified and
+         * Creates a new local pouchDb with the name specified and 
          * all the default options
          * @param name the database name
          * @param callback a callback to handle success/error
          * @returns a new PouchDB
          */
         new (name: string, callback?: async.Callback<callback.PouchDB>): callback.PouchDB;
-
+        
         // note: overload ordering is for ts overload selection
         ///////////////////////////  local sqlite db  /////////////////////////
         /**
@@ -1303,7 +1307,7 @@ declare module pouchdb {
          * @returns a new PouchDB
          */
         new (options: options.ctor.LocalSQLiteDbWithName, callback: async.Callback<callback.PouchDB>): callback.PouchDB;
-
+        
         /////////////////////////// local websql db ///////////////////////////
         /**
          * Creates a new local WebSQL pouchDb with the name and options provided
@@ -1334,7 +1338,7 @@ declare module pouchdb {
          * @returns a new PouchDB
          */
         new (options: options.ctor.LocalWebSQLDbWithName, callback: async.Callback<callback.PouchDB>): callback.PouchDB;
-
+        
         //////////////////////////////  local db  /////////////////////////////
         /**
          * Creates a new local pouchDb with the name and options provided
@@ -1365,7 +1369,7 @@ declare module pouchdb {
          * @returns a new PouchDB
          */
         new (options: options.ctor.LocalDbWithName, callback: async.Callback<callback.PouchDB>): callback.PouchDB;
-
+        
         //  And finally do an "any" overload so we don't restrict any options not done yet
         /**
          * A fallback constructor if none of the typed constructors cover a use case
