@@ -399,7 +399,7 @@ adapters.forEach((adapter: string) => {
 
     it('Bulk docs', (done) => {
       var db = new PouchDB(dbs.name, noop);
-      db.bulkDocs({
+      db.bulkDocs(<pouchdb.api.methods.bulkDocs.DocumentPouch<pouchdb.test.integration.NewTestStringDoc>>{
         docs: [
           { test: 'somestuff' },
           { test: 'another' }
@@ -414,7 +414,7 @@ adapters.forEach((adapter: string) => {
 
     it('Bulk docs with a promise', () => {
       var db = new PouchDB(dbs.name);
-      return db.bulkDocs({
+      return db.bulkDocs(<pouchdb.api.methods.bulkDocs.DocumentPouch<pouchdb.test.integration.NewTestStringDoc>>{
         docs: [
           { test: 'somestuff' },
           { test: 'another' }

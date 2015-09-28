@@ -38,6 +38,7 @@ Discussion, Issues and [PRs][this-prs] encouraged.
 ### Discussions and Issues
 
  - irc://freenode.net/#pouchdb
+ - https://gitter.im/AGBrown/pouchdb.d.ts.
  - Issues [here][this-issues] (regarding health warning 2 above: if there are issues then these will be retained in any repo rebuild)
 
 ### Guide
