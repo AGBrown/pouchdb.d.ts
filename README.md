@@ -1,5 +1,7 @@
 ﻿# Typescript Definitions for [pouchdb][pouchdb] (v3.4.0+)
 
+[![Join the chat at https://gitter.im/AGBrown/pouchdb.d.ts](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/AGBrown/pouchdb.d.ts?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 | branch | build status |
 | ------ | ------------ |
 | master | [![Build Status][travis-img-master]][travis-lnk] |
