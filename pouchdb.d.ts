@@ -337,7 +337,7 @@ declare module pouchdb {
                     /** Fetch multiple documents, indexed and sorted by the `_id`. */
                     allDocs(options: FilterOptions, callback?: async.Callback<Response>): void;
                 }
-                /** Promisable pattern for allDocs() */
+                /** Promise pattern for allDocs() */
                 interface Promisable {
                     /** Fetch multiple documents, indexed and sorted by the `_id`. */
                     allDocs(): async.PouchPromise<Response>;
@@ -474,7 +474,7 @@ declare module pouchdb {
                      */
                     bulkDocs(docs: MixedDoc[], options: BulkDocsOptions, callback?: async.Callback<BulkDocsResponse[]>): void;
                 }
-                /** Promisable pattern for bulkDocs() */
+                /** Promise pattern for bulkDocs() */
                 interface Promisable {
                     /**
                      * Update/Delete each doc in an array of documents.
@@ -678,7 +678,7 @@ declare module pouchdb {
                 }
                 /** Callback pattern for changes() */
                 interface Callback { }
-                /** Promisable pattern for changes() */
+                /** Promise pattern for changes() */
                 interface Promisable { }
             }
 
@@ -689,7 +689,7 @@ declare module pouchdb {
                     /** Closes the pouchdb */
                     close(callback?: async.Callback<string>): void;
                 }
-                /** Promisable pattern for close() */
+                /** Promise pattern for close() */
                 interface Promisable {
                     /** Closes the pouchdb */
                     close(): async.PouchPromise<string>;
@@ -719,7 +719,7 @@ declare module pouchdb {
                     destroy(callback?: async.Callback<Info>): void;
                 }
                 /**
-                 * Promisable pattern for destroy
+                 * Promise pattern for destroy
                  */
                 interface Promisable {
                     /**
@@ -798,7 +798,7 @@ declare module pouchdb {
                      */
                     get<R extends Response>(docId: string, options: Options, callback?: async.Callback<R>): void;
                 }
-                /** Promisable pattern for remove */
+                /** Promise pattern for remove */
                 interface Promisable {
                     /**
                      * Retrieves a document, specified by `docId`.
@@ -816,7 +816,7 @@ declare module pouchdb {
                     /** Returns the instance id for the pouchdb */
                     id(callback?: async.Callback<string>): void;
                 }
-                /** Promisable pattern for `id()` */
+                /** Promise pattern for `id()` */
                 interface Promisable {
                     /** Returns the instance id for the pouchdb */
                     id(): async.PouchPromise<string>;
@@ -851,7 +851,7 @@ declare module pouchdb {
                     /** Returns the instance info for the pouchdb */
                     info(callback?: async.Callback<Response | ResponseDebug>): void;
                 }
-                /** Promisable pattern for `info()` */
+                /** Promise pattern for `info()` */
                 interface Promisable {
                     /** Returns the instance info for the pouchdb */
                     info(): async.PouchPromise<Response | ResponseDebug>;
@@ -883,7 +883,7 @@ declare module pouchdb {
                      */
                     post(doc: BaseDoc, options: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
                 }
-                /** Promisable pattern for post */
+                /** Promise pattern for post */
                 interface Promisable {
                     /**
                      * Create a new document and let PouchDB auto-generate an _id for it.
@@ -965,7 +965,7 @@ declare module pouchdb {
                      */
                     put(doc: BaseDoc, docId: string, options: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
                 }
-                /** Promisable pattern for put */
+                /** Promise pattern for put */
                 interface Promisable {
                     /**
                      * Update an existing document.
@@ -1061,7 +1061,7 @@ declare module pouchdb {
                      */
                     remove(doc: NewDoc, options: RevOptions, callback?: async.Callback<OperationResponse>): void;
                 }
-                /** Promisable pattern for remove */
+                /** Promise pattern for remove */
                 interface Promisable {
                     /**
                      * Deletes the document.
@@ -1231,15 +1231,15 @@ declare module pouchdb {
         /** The main pouchDB interface (callback pattern) */
         interface PouchDB extends api.db.Callback { }
     }
-    /** The api module for the pouchdb Promisable pattern */
+    /** The api module for the pouchdb promise pattern */
     module promise {
-        /** The main pouchDB interface (Promisable pattern) */
+        /** The main pouchDB interface (promise pattern) */
         interface PouchDB extends api.db.Promisable { }
     }
     /** The api module for the pouchdb promise pattern (constructor only) */
     module thenable {
         /**
-         * Special case class returned by the constructors of the Promisable api pouchDB.
+         * Special case class returned by the constructors of the promise api pouchDB.
          * Usually only a `pouchdb.promise.PouchDB` reference would be kept, assigned by
          * the `then` of the constructor.
          */
@@ -1253,7 +1253,7 @@ declare module pouchdb {
     }
     /**
      * The main pouchDB entry point. The constructors here will return either a
-     * Callback or Promisable pattern api.
+     * Callback or Promise pattern api.
      */
     export interface PouchDB {
         //////////////////////////////  local db  /////////////////////////////
