@@ -9,32 +9,34 @@
 /// <reference path="pouchdb-loose.d.ts" />
 /// <reference path="pouchdb-plugins.d.ts" />
 
-module promise {
-    class Foo {
-        foo: string;
-    }
-
-    class fakePromise<T> implements pouchdb.async.Thenable<T> {
-        new() { }
-
-        then<R>(onFulfilled?: (value: T) => pouchdb.async.Thenable<R> | R, onRejected?: (error: any) => pouchdb.async.Thenable<R> | R) {
-            return new fakePromise<R>();
-        }
-
-        catch<R>(onRejected: (error: any) => pouchdb.async.Thenable<R> | R) {
-            return undefined;
-        }
-    }
-
-    function chainedThen() {
-        var fooOut: string;
-        new PouchDB("dbname")
-            .then((db) => new fakePromise<Foo>())
-            .then((value: Foo) => { fooOut = value.foo; });
-    }
-}
-
 module PouchDBTest {
+    module promise {
+        class Foo {
+            foo: string;
+        }
+
+        class fakePromise<T> implements Promise<T> {
+            new() { }
+
+            then<R>(onFulfilled?: (value: T) => Promise<R> | R, onRejected?: (error: any) => Promise<R> | R) {
+                return new fakePromise<R>();
+            }
+
+            catch<R>(onRejected: (error: any) => Promise<R> | R) {
+                return undefined;
+            }
+
+            [Symbol.toStringTag]: string;
+        }
+
+        function chainedThen() {
+            var fooOut: string;
+            new PouchDB("dbname")
+                .then((db) => new fakePromise<Foo>())
+                .then((value: Foo) => { fooOut = value.foo; });
+        }
+    }
+
     module localDb {
         // common variables
         var dbt: pouchdb.thenable.PouchDB;
