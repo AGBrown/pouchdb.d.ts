@@ -1261,7 +1261,7 @@ declare module pouchdb {
          * Creates a new local pouchDb with the name specified and
          * all the default options
          * @param name the database name
-         * @returns a Thenable<PouchDB>
+         * @returns a thenable.PouchDB
          */
         new (name: string): thenable.PouchDB;
         /**
@@ -1279,7 +1279,7 @@ declare module pouchdb {
          * Creates a new local SQLite pouchDb with the name and options provided
          * @param name the database name
          * @param options the SQlite database options
-         * @returns a Thenable<PouchDB>
+         * @returns a thenable.PouchDB
          */
         new (name: string, options: options.ctor.LocalSQLiteDb): thenable.PouchDB;
         /**
@@ -1294,7 +1294,7 @@ declare module pouchdb {
         /**
          * Creates a new local SQLite pouchDb with the options provided
          * @param options the SQlite database options, including the name
-         * @returns a Thenable<PouchDB>
+         * @returns a thenable.PouchDB
          */
         new (options: options.ctor.LocalSQLiteDbWithName): thenable.PouchDB;
         /**
@@ -1310,7 +1310,7 @@ declare module pouchdb {
          * Creates a new local WebSQL pouchDb with the name and options provided
          * @param name A string value that specifies the database name
          * @param options An object that specifies the local database options
-         * @returns a Thenable<PouchDB>
+         * @returns a thenable.PouchDB
          */
         new (name: string, options: options.ctor.LocalWebSQLDb): thenable.PouchDB;
         /**
@@ -1325,7 +1325,7 @@ declare module pouchdb {
         /**
          * Creates a new local WebSQL pouchDb with the options provided
          * @param options An object that specifies the local database options
-         * @returns a Thenable<PouchDB>
+         * @returns a thenable.PouchDB
          */
         new (options: options.ctor.LocalWebSQLDbWithName): thenable.PouchDB;
         /**
@@ -1341,7 +1341,7 @@ declare module pouchdb {
          * Creates a new local pouchDb with the name and options provided
          * @param name the database name
          * @param options the local database options
-         * @returns a Thenable<PouchDB>
+         * @returns a thenable.PouchDB
          */
         new (name: string, options: options.ctor.LocalDb): thenable.PouchDB;
         /**
@@ -1356,7 +1356,7 @@ declare module pouchdb {
         /**
          * Creates a new local pouchDb with the options provided
          * @param options the local database options, including the name
-         * @returns a Thenable<PouchDB>
+         * @returns a thenable.PouchDB
          */
         new (options: options.ctor.LocalDbWithName): thenable.PouchDB;
         /**
@@ -1372,12 +1372,14 @@ declare module pouchdb {
          * A fallback constructor if none of the typed constructors cover a use case
          * @todo if you find yourself using this, consider contributing a patch
          * to add/improve the necessary typed overload instead of `options: any`
+         * @returns a thenable.PouchDB
          */
         new (name: string, options: any): thenable.PouchDB;
         /**
          * A fallback constructor if none of the typed constructors cover a use case
          * @todo if you find yourself using this, consider contributing a patch
          * to add/improve the necessary typed overload instead of `options: pouchdb.options.DbName`
+         * @returns a thenable.PouchDB
          */
         new (options: options.ctor.DbName): thenable.PouchDB;
     }
