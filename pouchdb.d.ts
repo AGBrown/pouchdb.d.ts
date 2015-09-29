@@ -126,7 +126,7 @@ declare module pouchdb {
         }
     }
     /**
-     * Contains the standard pouchdb promises
+     * Contains the standard pouchdb promise utilities
      * @todo what is the error shape? looks like they contain status/reason/message and id(s)?
      */
     module async {
@@ -140,14 +140,16 @@ declare module pouchdb {
             message?: string;
             status?: number;
         }
-        /** An interface to represent a promise object */
-        interface Thenable<T> {
+        /** Overrides a supplied interface to represent a promise object with custom error typings for the first pass */
+        export interface PouchPromise<T> extends Promise<T> {
             /** A Promises/A+ `then` implementation */
-            then<R>(onFulfilled?: (value: T) => Thenable<R>|R, onRejected?: (error: Error) => Thenable<R>|R): Thenable<R>;
+            then<R>(onFulfilled?: (value: T) => Promise<R> | R, onRejected?: (error: pouchdb.async.Error) => Promise<R> | R): Promise<R>;
+            then<R>(onFulfilled?: (value: T) => Promise<R> | R, onRejected?: (error: pouchdb.async.Error) => void): Promise<R>;
             /** `catch` implementation as per the pouchdb example docs */
-            catch<R>(onRejected: (error: Error) => Thenable<R>|R): Thenable<R>;
+            catch<R>(onRejected?: (error: pouchdb.async.Error) => Promise<R> | R): Promise<R>;
+            catch<R>(onRejected?: (error: pouchdb.async.Error) => void): Promise<R>;
         }
-        /** Callback alternatives to promised */
+        /** Callback alternatives to promises */
         interface Callback<T> {
             /**
              * @param error the error object
@@ -336,15 +338,15 @@ declare module pouchdb {
                     allDocs(options: FilterOptions, callback?: async.Callback<Response>): void;
                 }
                 /** Promise pattern for allDocs() */
-                interface Promise {
+                interface Promisable {
                     /** Fetch multiple documents, indexed and sorted by the `_id`. */
-                    allDocs(): async.Thenable<Response>;
+                    allDocs(): async.PouchPromise<Response>;
                     /** Fetch multiple documents, indexed and sorted by the `_id`. */
-                    allDocs(options: RangeOptions): async.Thenable<Response>;
+                    allDocs(options: RangeOptions): async.PouchPromise<Response>;
                     /** Fetch multiple documents, indexed and sorted by the `_id`. */
-                    allDocs(options: PaginationOptions): async.Thenable<Response>;
+                    allDocs(options: PaginationOptions): async.PouchPromise<Response>;
                     /** Fetch multiple documents, indexed and sorted by the `_id`. */
-                    allDocs(options: FilterOptions): async.Thenable<Response>;
+                    allDocs(options: FilterOptions): async.PouchPromise<Response>;
                 }
             }
 
@@ -473,47 +475,47 @@ declare module pouchdb {
                     bulkDocs(docs: MixedDoc[], options: BulkDocsOptions, callback?: async.Callback<BulkDocsResponse[]>): void;
                 }
                 /** Promise pattern for bulkDocs() */
-                interface Promise {
+                interface Promisable {
                     /**
                      * Update/Delete each doc in an array of documents.
                      * @param folder the documents storage object
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    bulkDocs(folder: DocumentPouch<ExistingDoc>, options?: BulkDocsOptions): async.Thenable<BulkDocsResponse[]>;
+                    bulkDocs(folder: DocumentPouch<ExistingDoc>, options?: BulkDocsOptions): async.PouchPromise<BulkDocsResponse[]>;
                     /**
                      * Update/Delete each doc in an array of documents.
                      * @param doc the doc
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    bulkDocs(docs: ExistingDoc[], options?: BulkDocsOptions): async.Thenable<BulkDocsResponse[]>;
+                    bulkDocs(docs: ExistingDoc[], options?: BulkDocsOptions): async.PouchPromise<BulkDocsResponse[]>;
                     /**
                      * Create multiple documents.
                      * @param doc the doc
                      * @param options
                      */
-                    bulkDocs(folder: DocumentPouch<NewDoc>): async.Thenable<BulkDocsResponse[]>;
+                    bulkDocs(folder: DocumentPouch<NewDoc>): async.PouchPromise<BulkDocsResponse[]>;
                     /**
                      * Create multiple documents.
                      * @param doc the doc
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    bulkDocs(docs: NewDoc[], options?: BulkDocsOptions): async.Thenable<BulkDocsResponse[]>;
+                    bulkDocs(docs: NewDoc[], options?: BulkDocsOptions): async.PouchPromise<BulkDocsResponse[]>;
                     /**
                      * Perform mixed Create/Update/Delete operations on multiple documents.
                      * @param docs the documents to act on
                      * @param options
                      */
-                    bulkDocs(folder: DocumentPouch<MixedDoc>): async.Thenable<BulkDocsResponse[]>;
+                    bulkDocs(folder: DocumentPouch<MixedDoc>): async.PouchPromise<BulkDocsResponse[]>;
                     /**
                      * Perform mixed Create/Update/Delete operations on multiple documents.
                      * @param docs the documents to act on
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    bulkDocs(docs: MixedDoc[], options?: BulkDocsOptions): async.Thenable<BulkDocsResponse[]>;
+                    bulkDocs(docs: MixedDoc[], options?: BulkDocsOptions): async.PouchPromise<BulkDocsResponse[]>;
                 }
             }
 
@@ -677,7 +679,7 @@ declare module pouchdb {
                 /** Callback pattern for changes() */
                 interface Callback { }
                 /** Promise pattern for changes() */
-                interface Promise { }
+                interface Promisable { }
             }
 
             /** Contains the method and call/return types for close() */
@@ -688,9 +690,9 @@ declare module pouchdb {
                     close(callback?: async.Callback<string>): void;
                 }
                 /** Promise pattern for close() */
-                interface Promise {
+                interface Promisable {
                     /** Closes the pouchdb */
-                    close(): async.Thenable<string>;
+                    close(): async.PouchPromise<string>;
                 }
             }
 
@@ -719,12 +721,12 @@ declare module pouchdb {
                 /**
                  * Promise pattern for destroy
                  */
-                interface Promise {
+                interface Promisable {
                     /**
                      * Deletes a database
                      * @param options ajax options
                      */
-                    destroy(options?: options.OptionsWithAjax): async.Thenable<Info>;
+                    destroy(options?: options.OptionsWithAjax): async.PouchPromise<Info>;
                 }
             }
 
@@ -797,13 +799,13 @@ declare module pouchdb {
                     get<R extends Response>(docId: string, options: Options, callback?: async.Callback<R>): void;
                 }
                 /** Promise pattern for remove */
-                interface Promise {
+                interface Promisable {
                     /**
                      * Retrieves a document, specified by `docId`.
                      * @param docId the doc id
                      * @param options
                      */
-                    get<R extends ExistingDoc>(docId: string, options?: Options): async.Thenable<R>;
+                    get<R extends ExistingDoc>(docId: string, options?: Options): async.PouchPromise<R>;
                 }
             }
 
@@ -815,9 +817,9 @@ declare module pouchdb {
                     id(callback?: async.Callback<string>): void;
                 }
                 /** Promise pattern for `id()` */
-                interface Promise {
+                interface Promisable {
                     /** Returns the instance id for the pouchdb */
-                    id(): async.Thenable<string>;
+                    id(): async.PouchPromise<string>;
                 }
             }
 
@@ -850,9 +852,9 @@ declare module pouchdb {
                     info(callback?: async.Callback<Response | ResponseDebug>): void;
                 }
                 /** Promise pattern for `info()` */
-                interface Promise {
+                interface Promisable {
                     /** Returns the instance info for the pouchdb */
-                    info(): async.Thenable<Response | ResponseDebug>;
+                    info(): async.PouchPromise<Response | ResponseDebug>;
                 }
             }
 
@@ -882,7 +884,7 @@ declare module pouchdb {
                     post(doc: BaseDoc, options: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
                 }
                 /** Promise pattern for post */
-                interface Promise {
+                interface Promisable {
                     /**
                      * Create a new document and let PouchDB auto-generate an _id for it.
                      * (tip: use `put()` instead for better indexing)
@@ -890,7 +892,7 @@ declare module pouchdb {
                      * @param options ajax options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    post(doc: BaseDoc, options?: options.EmptyOptions): async.Thenable<OperationResponse>;
+                    post(doc: BaseDoc, options?: options.EmptyOptions): async.PouchPromise<OperationResponse>;
                 }
             }
 
@@ -964,21 +966,21 @@ declare module pouchdb {
                     put(doc: BaseDoc, docId: string, options: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
                 }
                 /** Promise pattern for put */
-                interface Promise {
+                interface Promisable {
                     /**
                      * Update an existing document.
                      * @param doc the doc
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    put(doc: ExistingDoc, options?: options.EmptyOptions): async.Thenable<OperationResponse>;
+                    put(doc: ExistingDoc, options?: options.EmptyOptions): async.PouchPromise<OperationResponse>;
                     /**
                      * Create a new document.
                      * @param doc the doc
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    put(doc: NewDoc, options?: options.EmptyOptions): async.Thenable<OperationResponse>;
+                    put(doc: NewDoc, options?: options.EmptyOptions): async.PouchPromise<OperationResponse>;
                     /**
                      * Update an existing document.
                      * @param doc the doc
@@ -987,7 +989,7 @@ declare module pouchdb {
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    put(doc: BaseDoc, docId: string, docRev: string, options?: options.EmptyOptions): async.Thenable<OperationResponse>;
+                    put(doc: BaseDoc, docId: string, docRev: string, options?: options.EmptyOptions): async.PouchPromise<OperationResponse>;
                     /**
                      * Create a new document. If the document already exists,
                      * you must use the update overload otherwise a conflict will occur.
@@ -996,7 +998,7 @@ declare module pouchdb {
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    put(doc: BaseDoc, docId: string, options?: options.EmptyOptions): async.Thenable<OperationResponse>;
+                    put(doc: BaseDoc, docId: string, options?: options.EmptyOptions): async.PouchPromise<OperationResponse>;
                 }
             }
 
@@ -1060,7 +1062,7 @@ declare module pouchdb {
                     remove(doc: NewDoc, options: RevOptions, callback?: async.Callback<OperationResponse>): void;
                 }
                 /** Promise pattern for remove */
-                interface Promise {
+                interface Promisable {
                     /**
                      * Deletes the document.
                      * `doc` is required to be a document with at least an `_id` and a `_rev` property.
@@ -1070,7 +1072,7 @@ declare module pouchdb {
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    remove(docId: string, docRev: string, options?: options.EmptyOptions): async.Thenable<OperationResponse>;
+                    remove(docId: string, docRev: string, options?: options.EmptyOptions): async.PouchPromise<OperationResponse>;
                     /**
                      * Deletes the document.
                      * `doc` is required to be a document with at least an `_id` and a `_rev` property.
@@ -1079,14 +1081,14 @@ declare module pouchdb {
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    remove(doc: ExistingDoc, options?: options.EmptyOptions): async.Thenable<OperationResponse>;
+                    remove(doc: ExistingDoc, options?: options.EmptyOptions): async.PouchPromise<OperationResponse>;
                     /**
                      * Deletes the document.
                      * `doc` is required to be a document with at least an `_id` property, `rev` is specified in the `options`.
                      * @param doc the doc (with only an `id` property)
                      * @param options options that specify
                      */
-                    remove(doc: NewDoc, options: RevOptions): async.Thenable<OperationResponse>;
+                    remove(doc: NewDoc, options: RevOptions): async.PouchPromise<OperationResponse>;
                 }
             }
         }
@@ -1107,19 +1109,19 @@ declare module pouchdb {
                 , methods.put.Callback
                 , methods.remove.Callback { }
             /** pouchDB api: promise based */
-            interface Promise extends
+            interface Promisable extends
                 PouchInstance
-                , methods.allDocs.Promise
-                , methods.bulkDocs.Promise
+                , methods.allDocs.Promisable
+                , methods.bulkDocs.Promisable
                 , methods.changes.Overloads
-                , methods.close.Promise
-                , methods.destroy.Promise
-                , methods.get.Promise
-                , methods.id.Promise
-                , methods.info.Promise
-                , methods.post.Promise
-                , methods.put.Promise
-                , methods.remove.Promise { }
+                , methods.close.Promisable
+                , methods.destroy.Promisable
+                , methods.get.Promisable
+                , methods.id.Promisable
+                , methods.info.Promisable
+                , methods.post.Promisable
+                , methods.put.Promisable
+                , methods.remove.Promisable { }
         }
 
         /** The main pouchDB interface */
@@ -1232,7 +1234,7 @@ declare module pouchdb {
     /** The api module for the pouchdb promise pattern */
     module promise {
         /** The main pouchDB interface (promise pattern) */
-        interface PouchDB extends api.db.Promise { }
+        interface PouchDB extends api.db.Promisable { }
     }
     /** The api module for the pouchdb promise pattern (constructor only) */
     module thenable {
@@ -1241,7 +1243,7 @@ declare module pouchdb {
          * Usually only a `pouchdb.promise.PouchDB` reference would be kept, assigned by
          * the `then` of the constructor.
          */
-        interface PouchDB extends promise.PouchDB, async.Thenable<promise.PouchDB> { }
+        interface PouchDB extends promise.PouchDB, async.PouchPromise<promise.PouchDB> { }
     }
 
     /** Static-side interface for PouchDB */
@@ -1259,7 +1261,7 @@ declare module pouchdb {
          * Creates a new local pouchDb with the name specified and
          * all the default options
          * @param name the database name
-         * @returns a Thenable<PouchDB>
+         * @returns a thenable.PouchDB
          */
         new (name: string): thenable.PouchDB;
         /**
@@ -1277,7 +1279,7 @@ declare module pouchdb {
          * Creates a new local SQLite pouchDb with the name and options provided
          * @param name the database name
          * @param options the SQlite database options
-         * @returns a Thenable<PouchDB>
+         * @returns a thenable.PouchDB
          */
         new (name: string, options: options.ctor.LocalSQLiteDb): thenable.PouchDB;
         /**
@@ -1292,7 +1294,7 @@ declare module pouchdb {
         /**
          * Creates a new local SQLite pouchDb with the options provided
          * @param options the SQlite database options, including the name
-         * @returns a Thenable<PouchDB>
+         * @returns a thenable.PouchDB
          */
         new (options: options.ctor.LocalSQLiteDbWithName): thenable.PouchDB;
         /**
@@ -1308,7 +1310,7 @@ declare module pouchdb {
          * Creates a new local WebSQL pouchDb with the name and options provided
          * @param name A string value that specifies the database name
          * @param options An object that specifies the local database options
-         * @returns a Thenable<PouchDB>
+         * @returns a thenable.PouchDB
          */
         new (name: string, options: options.ctor.LocalWebSQLDb): thenable.PouchDB;
         /**
@@ -1323,7 +1325,7 @@ declare module pouchdb {
         /**
          * Creates a new local WebSQL pouchDb with the options provided
          * @param options An object that specifies the local database options
-         * @returns a Thenable<PouchDB>
+         * @returns a thenable.PouchDB
          */
         new (options: options.ctor.LocalWebSQLDbWithName): thenable.PouchDB;
         /**
@@ -1339,7 +1341,7 @@ declare module pouchdb {
          * Creates a new local pouchDb with the name and options provided
          * @param name the database name
          * @param options the local database options
-         * @returns a Thenable<PouchDB>
+         * @returns a thenable.PouchDB
          */
         new (name: string, options: options.ctor.LocalDb): thenable.PouchDB;
         /**
@@ -1354,7 +1356,7 @@ declare module pouchdb {
         /**
          * Creates a new local pouchDb with the options provided
          * @param options the local database options, including the name
-         * @returns a Thenable<PouchDB>
+         * @returns a thenable.PouchDB
          */
         new (options: options.ctor.LocalDbWithName): thenable.PouchDB;
         /**
@@ -1370,12 +1372,14 @@ declare module pouchdb {
          * A fallback constructor if none of the typed constructors cover a use case
          * @todo if you find yourself using this, consider contributing a patch
          * to add/improve the necessary typed overload instead of `options: any`
+         * @returns a thenable.PouchDB
          */
         new (name: string, options: any): thenable.PouchDB;
         /**
          * A fallback constructor if none of the typed constructors cover a use case
          * @todo if you find yourself using this, consider contributing a patch
          * to add/improve the necessary typed overload instead of `options: pouchdb.options.DbName`
+         * @returns a thenable.PouchDB
          */
         new (options: options.ctor.DbName): thenable.PouchDB;
     }
