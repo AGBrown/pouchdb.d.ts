@@ -39,7 +39,7 @@ module PouchDBTest {
 
     module localDb {
         // common variables
-        var dbt: pouchdb.thenable.PouchDB;
+        var dbt: pouchdb.promise.PouchDBCtor;
         var dbp: pouchdb.promise.PouchDB;
         var dbc: pouchdb.callback.PouchDB;
         // common then, err and callback methods
@@ -234,7 +234,7 @@ module PouchDBTest {
             }
 
             function promise() {
-                var db1: pouchdb.thenable.PouchDB = new PouchDB("dbname");
+                var db1: pouchdb.promise.PouchDBCtor = new PouchDB("dbname");
                 var db2: pouchdb.promise.PouchDB = new PouchDB("dbname");
                 db1.close();
                 db1.close().then(msg => { }, err => { });
@@ -259,7 +259,7 @@ module PouchDBTest {
             function promise() {
                 var myThen = (db: pouchdb.api.methods.destroy.Info) => { };
                 var myErr = (err: any) => { };
-                var db1: pouchdb.thenable.PouchDB = new PouchDB("dbname");
+                var db1: pouchdb.promise.PouchDBCtor = new PouchDB("dbname");
                 var db2: pouchdb.promise.PouchDB = new PouchDB("dbname");
 
                 db1.destroy(destroyOpts).then(myThen, myErr);
@@ -284,7 +284,7 @@ module PouchDBTest {
             }
 
             function promise() {
-                var db1: pouchdb.thenable.PouchDB = new PouchDB("dbname");
+                var db1: pouchdb.promise.PouchDBCtor = new PouchDB("dbname");
                 var db2: pouchdb.promise.PouchDB = new PouchDB("dbname");
                 db1.get<TestDoc>(id);
                 db1.get<TestDoc>(id).then(doc => { test = doc.test; }, err => { });
@@ -344,7 +344,7 @@ module PouchDBTest {
             }
 
             function promise() {
-                var db1: pouchdb.thenable.PouchDB = new PouchDB("dbname");
+                var db1: pouchdb.promise.PouchDBCtor = new PouchDB("dbname");
                 var db2: pouchdb.promise.PouchDB = new PouchDB("dbname");
 
                 db1.put(eDoc).then(resp => { }, err => { }).catch(err => { });
@@ -402,7 +402,7 @@ module PouchDBTest {
             }
 
             function promise() {
-                var db1: pouchdb.thenable.PouchDB = new PouchDB("dbname");
+                var db1: pouchdb.promise.PouchDBCtor = new PouchDB("dbname");
                 var db2: pouchdb.promise.PouchDB = new PouchDB("dbname");
 
                 db1.remove(id, rv);

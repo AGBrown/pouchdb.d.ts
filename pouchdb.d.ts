@@ -1092,37 +1092,6 @@ declare module pouchdb {
                 }
             }
         }
-        /** Contains the main callback/promise apis for pouchdb */
-        module db {
-            /** pouchDB api: callback based */
-            interface Callback extends
-                PouchInstance
-                , methods.allDocs.Callback
-                , methods.bulkDocs.Callback
-                , methods.changes.Overloads
-                , methods.close.Callback
-                , methods.destroy.Callback
-                , methods.get.Callback
-                , methods.id.Callback
-                , methods.info.Callback
-                , methods.post.Callback
-                , methods.put.Callback
-                , methods.remove.Callback { }
-            /** pouchDB api: promise based */
-            interface Promisable extends
-                PouchInstance
-                , methods.allDocs.Promisable
-                , methods.bulkDocs.Promisable
-                , methods.changes.Overloads
-                , methods.close.Promisable
-                , methods.destroy.Promisable
-                , methods.get.Promisable
-                , methods.id.Promisable
-                , methods.info.Promisable
-                , methods.post.Promisable
-                , methods.put.Promisable
-                , methods.remove.Promisable { }
-        }
 
         /** The main pouchDB interface */
         interface PouchInstance {
@@ -1229,21 +1198,42 @@ declare module pouchdb {
     /** The api module for the pouchdb callback pattern */
     module callback {
         /** The main pouchDB interface (callback pattern) */
-        interface PouchDB extends api.db.Callback { }
+        interface PouchDB extends
+            api.PouchInstance
+            , api.methods.allDocs.Callback
+            , api.methods.bulkDocs.Callback
+            , api.methods.changes.Overloads
+            , api.methods.close.Callback
+            , api.methods.destroy.Callback
+            , api.methods.get.Callback
+            , api.methods.id.Callback
+            , api.methods.info.Callback
+            , api.methods.post.Callback
+            , api.methods.put.Callback
+            , api.methods.remove.Callback { }
     }
     /** The api module for the pouchdb promise pattern */
     module promise {
         /** The main pouchDB interface (promise pattern) */
-        interface PouchDB extends api.db.Promisable { }
-    }
-    /** The api module for the pouchdb promise pattern (constructor only) */
-    module thenable {
+        interface PouchDB extends
+            api.PouchInstance
+            , api.methods.allDocs.Promisable
+            , api.methods.bulkDocs.Promisable
+            , api.methods.changes.Overloads
+            , api.methods.close.Promisable
+            , api.methods.destroy.Promisable
+            , api.methods.get.Promisable
+            , api.methods.id.Promisable
+            , api.methods.info.Promisable
+            , api.methods.post.Promisable
+            , api.methods.put.Promisable
+            , api.methods.remove.Promisable { }
         /**
          * Special case class returned by the constructors of the promise api pouchDB.
          * Usually only a `pouchdb.promise.PouchDB` reference would be kept, assigned by
          * the `then` of the constructor.
          */
-        interface PouchDB extends promise.PouchDB, async.PouchPromise<promise.PouchDB> { }
+        interface PouchDBCtor extends promise.PouchDB, async.PouchPromise<promise.PouchDB> { }
     }
 
     /** Static-side interface for PouchDB */
@@ -1261,9 +1251,9 @@ declare module pouchdb {
          * Creates a new local pouchDb with the name specified and
          * all the default options
          * @param name the database name
-         * @returns a thenable.PouchDB
+         * @returns a promise.PouchDBCtor
          */
-        new (name: string): thenable.PouchDB;
+        new (name: string): promise.PouchDBCtor;
         /**
          * Creates a new local pouchDb with the name specified and
          * all the default options
@@ -1279,9 +1269,9 @@ declare module pouchdb {
          * Creates a new local SQLite pouchDb with the name and options provided
          * @param name the database name
          * @param options the SQlite database options
-         * @returns a thenable.PouchDB
+         * @returns a promise.PouchDBCtor
          */
-        new (name: string, options: options.ctor.LocalSQLiteDb): thenable.PouchDB;
+        new (name: string, options: options.ctor.LocalSQLiteDb): promise.PouchDBCtor;
         /**
          * Creates a new local SQLite pouchDb with the name and options provided
          * @param name the database name
@@ -1294,9 +1284,9 @@ declare module pouchdb {
         /**
          * Creates a new local SQLite pouchDb with the options provided
          * @param options the SQlite database options, including the name
-         * @returns a thenable.PouchDB
+         * @returns a promise.PouchDBCtor
          */
-        new (options: options.ctor.LocalSQLiteDbWithName): thenable.PouchDB;
+        new (options: options.ctor.LocalSQLiteDbWithName): promise.PouchDBCtor;
         /**
          * Creates a new local SQLite pouchDb with the options provided
          * @param options the SQlite database options, including the name
@@ -1310,9 +1300,9 @@ declare module pouchdb {
          * Creates a new local WebSQL pouchDb with the name and options provided
          * @param name A string value that specifies the database name
          * @param options An object that specifies the local database options
-         * @returns a thenable.PouchDB
+         * @returns a promise.PouchDBCtor
          */
-        new (name: string, options: options.ctor.LocalWebSQLDb): thenable.PouchDB;
+        new (name: string, options: options.ctor.LocalWebSQLDb): promise.PouchDBCtor;
         /**
          * Creates a new local WebSQL pouchDb with the name and options provided
          * @param name A string value that specifies the database name
@@ -1325,9 +1315,9 @@ declare module pouchdb {
         /**
          * Creates a new local WebSQL pouchDb with the options provided
          * @param options An object that specifies the local database options
-         * @returns a thenable.PouchDB
+         * @returns a promise.PouchDBCtor
          */
-        new (options: options.ctor.LocalWebSQLDbWithName): thenable.PouchDB;
+        new (options: options.ctor.LocalWebSQLDbWithName): promise.PouchDBCtor;
         /**
          * Creates a new local WebSQL pouchDb with the options provided
          * @param options An object that specifies the local database options
@@ -1341,9 +1331,9 @@ declare module pouchdb {
          * Creates a new local pouchDb with the name and options provided
          * @param name the database name
          * @param options the local database options
-         * @returns a thenable.PouchDB
+         * @returns a promise.PouchDBCtor
          */
-        new (name: string, options: options.ctor.LocalDb): thenable.PouchDB;
+        new (name: string, options: options.ctor.LocalDb): promise.PouchDBCtor;
         /**
          * Creates a new local pouchDb with the name and options provided
          * @param name the database name
@@ -1356,9 +1346,9 @@ declare module pouchdb {
         /**
          * Creates a new local pouchDb with the options provided
          * @param options the local database options, including the name
-         * @returns a thenable.PouchDB
+         * @returns a promise.PouchDBCtor
          */
-        new (options: options.ctor.LocalDbWithName): thenable.PouchDB;
+        new (options: options.ctor.LocalDbWithName): promise.PouchDBCtor;
         /**
          * Creates a new local pouchDb with the options provided
          * @param options the local database options, including the name
@@ -1372,15 +1362,15 @@ declare module pouchdb {
          * A fallback constructor if none of the typed constructors cover a use case
          * @todo if you find yourself using this, consider contributing a patch
          * to add/improve the necessary typed overload instead of `options: any`
-         * @returns a thenable.PouchDB
+         * @returns a promise.PouchDBCtor
          */
-        new (name: string, options: any): thenable.PouchDB;
+        new (name: string, options: any): promise.PouchDBCtor;
         /**
          * A fallback constructor if none of the typed constructors cover a use case
          * @todo if you find yourself using this, consider contributing a patch
          * to add/improve the necessary typed overload instead of `options: pouchdb.options.DbName`
-         * @returns a thenable.PouchDB
+         * @returns a promise.PouchDBCtor
          */
-        new (options: options.ctor.DbName): thenable.PouchDB;
+        new (options: options.ctor.DbName): promise.PouchDBCtor;
     }
 }
