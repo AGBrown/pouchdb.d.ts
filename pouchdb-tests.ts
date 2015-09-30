@@ -31,28 +31,26 @@ module PouchDBTest {
 
         function chainedThen() {
             var fooOut: string;
-            new PouchDB("dbname")
-                .then((db) => new fakePromise<Foo>())
-                .then((value: Foo) => { fooOut = value.foo; });
+            var db = new PouchDB("dbname");
+            db.put({ foo: "test", _id: "1" })
+                // TODO: still have to specify the type arg to get the correct return type  
+                .then<pouchdb.api.methods.OperationResponse>(r => db.put({ foo: "test2", _id: "1" }))
+                .then(r => r.id);
         }
     }
 
     module localDb {
         // common variables
-        var dbt: pouchdb.promise.PouchDBCtor;
         var dbp: pouchdb.promise.PouchDB;
         var dbc: pouchdb.callback.PouchDB;
         // common then, err and callback methods
-        var myThen = (db: pouchdb.promise.PouchDB) => { dbp = db };
-        var myErr = (err: any) => { };
         var myCb = (err: any, db: pouchdb.callback.PouchDB) => { };
 
         module localDbGeneral {
             function nameOnly() {
                 //  create local db just using name
-                dbt = new PouchDB("dbname");
+                dbp = new PouchDB("dbname");
                 dbc = new PouchDB("dbname", undefined);
-                new PouchDB("dbname").then(myThen, myErr);
                 dbc = new PouchDB("dbname", myCb);
             }
 
@@ -62,8 +60,7 @@ module PouchDBTest {
                     adapter: "idb",
                     auto_compaction: true
                 };
-                dbt = new PouchDB("dbname", opts1);
-                new PouchDB("dbname", opts1).then(myThen, myErr);
+                dbp = new PouchDB("dbname", opts1);
                 dbc = new PouchDB("dbname", opts1, myCb);
 
                 //  create local db using name and an extra option
@@ -72,8 +69,7 @@ module PouchDBTest {
                     auto_compaction: true,
                     foo: "bar"
                 };
-                dbt = new PouchDB("dbname", opts2);
-                new PouchDB("dbname", opts2).then(myThen, myErr);
+                dbp = new PouchDB("dbname", opts2);
                 dbc = new PouchDB("dbname", opts2, myCb);
             }
 
@@ -109,8 +105,7 @@ module PouchDBTest {
                     adapter: "idb",
                     auto_compaction: false
                 };
-                dbt = new PouchDB(opts1);
-                new PouchDB(opts1).then(myThen, myErr);
+                dbp = new PouchDB(opts1);
                 dbc = new PouchDB(opts1, myCb);
             }
 
@@ -134,8 +129,7 @@ module PouchDBTest {
                     location: 2,
                     size: 5
                 };
-                dbt = new PouchDB("dbname", sqliteOpts);
-                new PouchDB("dbname", sqliteOpts).then(myThen, myErr);
+                dbp = new PouchDB("dbname", sqliteOpts);
                 dbc = new PouchDB("dbname", sqliteOpts, myCb);
             }
 
@@ -160,8 +154,7 @@ module PouchDBTest {
                     location: 2,
                     size: 5
                 };
-                dbt = new PouchDB(sqliteOpts);
-                new PouchDB(sqliteOpts).then(myThen, myErr);
+                dbp = new PouchDB(sqliteOpts);
                 dbc = new PouchDB(sqliteOpts, myCb);
             }
 
@@ -186,8 +179,7 @@ module PouchDBTest {
                     auto_compaction: false,
                     size: 5
                 };
-                dbt = new PouchDB("dbname", sqliteOpts);
-                new PouchDB("dbname", sqliteOpts).then(myThen, myErr);
+                dbp = new PouchDB("dbname", sqliteOpts);
                 dbc = new PouchDB("dbname", sqliteOpts, myCb);
             }
 
@@ -208,8 +200,7 @@ module PouchDBTest {
                     auto_compaction: false,
                     size: 5
                 };
-                dbt = new PouchDB(sqliteOpts);
-                new PouchDB(sqliteOpts).then(myThen, myErr);
+                dbp = new PouchDB(sqliteOpts);
                 dbc = new PouchDB(sqliteOpts, myCb);
             }
 
@@ -234,10 +225,9 @@ module PouchDBTest {
             }
 
             function promise() {
-                var db1: pouchdb.promise.PouchDBCtor = new PouchDB("dbname");
-                var db2: pouchdb.promise.PouchDB = new PouchDB("dbname");
-                db1.close();
-                db1.close().then(msg => { }, err => { });
+                var db: pouchdb.promise.PouchDB = new PouchDB("dbname");
+                db.close();
+                db.close().then(msg => { }, err => { });
             }
         }
         module destroy {
@@ -259,14 +249,10 @@ module PouchDBTest {
             function promise() {
                 var myThen = (db: pouchdb.api.methods.destroy.Info) => { };
                 var myErr = (err: any) => { };
-                var db1: pouchdb.promise.PouchDBCtor = new PouchDB("dbname");
-                var db2: pouchdb.promise.PouchDB = new PouchDB("dbname");
+                var db: pouchdb.promise.PouchDB = new PouchDB("dbname");
 
-                db1.destroy(destroyOpts).then(myThen, myErr);
-                db1.destroy().then(myThen, myErr);
-
-                db2.destroy(destroyOpts).then(myThen, myErr);
-                db2.destroy().then(myThen, myErr);
+                db.destroy(destroyOpts).then(myThen, myErr);
+                db.destroy().then(myThen, myErr);
             }
         }
         module get {
@@ -284,13 +270,12 @@ module PouchDBTest {
             }
 
             function promise() {
-                var db1: pouchdb.promise.PouchDBCtor = new PouchDB("dbname");
-                var db2: pouchdb.promise.PouchDB = new PouchDB("dbname");
-                db1.get<TestDoc>(id);
-                db1.get<TestDoc>(id).then(doc => { test = doc.test; }, err => { });
+                var db: pouchdb.promise.PouchDB = new PouchDB("dbname");
+                db.get<TestDoc>(id);
+                db.get<TestDoc>(id).then(doc => { test = doc.test; }, err => { });
 
-                db2.get<TestDoc>(id);
-                db2.get<TestDoc>(id).then(doc => { test = doc.test; }, err => { });
+                db.get<TestDoc>(id, {});
+                db.get<TestDoc>(id, {}).then(doc => { test = doc.test; }, err => { });
             }
         }
         module put {
@@ -344,34 +329,16 @@ module PouchDBTest {
             }
 
             function promise() {
-                var db1: pouchdb.promise.PouchDBCtor = new PouchDB("dbname");
-                var db2: pouchdb.promise.PouchDB = new PouchDB("dbname");
-
-                db1.put(eDoc).then(resp => { }, err => { }).catch(err => { });
-                db2.put(eDoc).then(resp => { }, err => { }).catch(err => { });
-                db2.put(eDoc).then(resp => { }).catch(err => { });
-                db2.put(eDoc).catch(err => { });
-
-                db1.put(eDoc, {}).then(resp => { }, err => { }).catch(err => { });
-                db2.put(eDoc, {}).then(resp => { }, err => { }).catch(err => { });
-
-                db1.put(nDoc).then(resp => { }, err => { }).catch(err => { });
-                db2.put(nDoc).then(resp => { }, err => { }).catch(err => { });
-
-                db1.put(nDoc, {}).then(resp => { }, err => { }).catch(err => { });
-                db2.put(nDoc, {}).then(resp => { }, err => { }).catch(err => { });
-
-                db1.put(bDoc, id, rv).then(resp => { }, err => { }).catch(err => { });
-                db2.put(bDoc, id, rv).then(resp => { }, err => { }).catch(err => { });
-
-                db1.put(bDoc, id, rv, {}).then(resp => { }, err => { }).catch(err => { });
-                db2.put(bDoc, id, rv, {}).then(resp => { }, err => { }).catch(err => { });
-
-                db1.put(bDoc, id).then(resp => { }, err => { }).catch(err => { });
-                db2.put(bDoc, id).then(resp => { }, err => { }).catch(err => { });
-
-                db1.put(bDoc, id, {}).then(resp => { }, err => { }).catch(err => { });
-                db2.put(bDoc, id, {}).then(resp => { }, err => { }).catch(err => { });
+                var db: pouchdb.promise.PouchDB = new PouchDB("dbname");
+                db.put(eDoc).then(resp => { }).catch(err => { });
+                db.put(eDoc).catch(err => { });
+                db.put(eDoc, {}).then(resp => { }, err => { }).catch(err => { });
+                db.put(nDoc).then(resp => { }, err => { }).catch(err => { });
+                db.put(nDoc, {}).then(resp => { }, err => { }).catch(err => { });
+                db.put(bDoc, id, rv).then(resp => { }, err => { }).catch(err => { });
+                db.put(bDoc, id, rv, {}).then(resp => { }, err => { }).catch(err => { });
+                db.put(bDoc, id).then(resp => { }, err => { }).catch(err => { });
+                db.put(bDoc, id, {}).then(resp => { }, err => { }).catch(err => { });
             }
         }
         module remove {
@@ -402,25 +369,17 @@ module PouchDBTest {
             }
 
             function promise() {
-                var db1: pouchdb.promise.PouchDBCtor = new PouchDB("dbname");
-                var db2: pouchdb.promise.PouchDB = new PouchDB("dbname");
+                var db: pouchdb.promise.PouchDB = new PouchDB("dbname");
 
-                db1.remove(id, rv);
-                db2.remove(id, rv);
-                db1.remove(id, rv, {});
-                db2.remove(id, rv, {});
-                db1.remove(id, rv, of);
-                db2.remove(id, rv, of);
+                db.remove(id, rv);
+                db.remove(id, rv, {});
+                db.remove(id, rv, of);
 
-                db1.remove(eDoc);
-                db2.remove(eDoc);
-                db1.remove(eDoc, {});
-                db2.remove(eDoc, {});
-                db1.remove(eDoc, of);
-                db2.remove(eDoc, of);
+                db.remove(eDoc);
+                db.remove(eDoc, {});
+                db.remove(eDoc, of);
 
-                db1.remove(nDoc, or);
-                db2.remove(nDoc, or);
+                db.remove(nDoc, or);
             }
         }
     }

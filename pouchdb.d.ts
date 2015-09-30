@@ -1228,12 +1228,6 @@ declare module pouchdb {
             , api.methods.post.Promisable
             , api.methods.put.Promisable
             , api.methods.remove.Promisable { }
-        /**
-         * Special case class returned by the constructors of the promise api pouchDB.
-         * Usually only a `pouchdb.promise.PouchDB` reference would be kept, assigned by
-         * the `then` of the constructor.
-         */
-        interface PouchDBCtor extends promise.PouchDB, async.PouchPromise<promise.PouchDB> { }
     }
 
     /** Static-side interface for PouchDB */
@@ -1251,9 +1245,9 @@ declare module pouchdb {
          * Creates a new local pouchDb with the name specified and
          * all the default options
          * @param name the database name
-         * @returns a promise.PouchDBCtor
+         * @returns a promise.PouchDB
          */
-        new (name: string): promise.PouchDBCtor;
+        new (name: string): promise.PouchDB;
         /**
          * Creates a new local pouchDb with the name specified and
          * all the default options
@@ -1269,9 +1263,9 @@ declare module pouchdb {
          * Creates a new local SQLite pouchDb with the name and options provided
          * @param name the database name
          * @param options the SQlite database options
-         * @returns a promise.PouchDBCtor
+         * @returns a promise.PouchDB
          */
-        new (name: string, options: options.ctor.LocalSQLiteDb): promise.PouchDBCtor;
+        new (name: string, options: options.ctor.LocalSQLiteDb): promise.PouchDB;
         /**
          * Creates a new local SQLite pouchDb with the name and options provided
          * @param name the database name
@@ -1284,9 +1278,9 @@ declare module pouchdb {
         /**
          * Creates a new local SQLite pouchDb with the options provided
          * @param options the SQlite database options, including the name
-         * @returns a promise.PouchDBCtor
+         * @returns a promise.PouchDB
          */
-        new (options: options.ctor.LocalSQLiteDbWithName): promise.PouchDBCtor;
+        new (options: options.ctor.LocalSQLiteDbWithName): promise.PouchDB;
         /**
          * Creates a new local SQLite pouchDb with the options provided
          * @param options the SQlite database options, including the name
@@ -1300,9 +1294,9 @@ declare module pouchdb {
          * Creates a new local WebSQL pouchDb with the name and options provided
          * @param name A string value that specifies the database name
          * @param options An object that specifies the local database options
-         * @returns a promise.PouchDBCtor
+         * @returns a promise.PouchDB
          */
-        new (name: string, options: options.ctor.LocalWebSQLDb): promise.PouchDBCtor;
+        new (name: string, options: options.ctor.LocalWebSQLDb): promise.PouchDB;
         /**
          * Creates a new local WebSQL pouchDb with the name and options provided
          * @param name A string value that specifies the database name
@@ -1315,9 +1309,9 @@ declare module pouchdb {
         /**
          * Creates a new local WebSQL pouchDb with the options provided
          * @param options An object that specifies the local database options
-         * @returns a promise.PouchDBCtor
+         * @returns a promise.PouchDB
          */
-        new (options: options.ctor.LocalWebSQLDbWithName): promise.PouchDBCtor;
+        new (options: options.ctor.LocalWebSQLDbWithName): promise.PouchDB;
         /**
          * Creates a new local WebSQL pouchDb with the options provided
          * @param options An object that specifies the local database options
@@ -1331,9 +1325,9 @@ declare module pouchdb {
          * Creates a new local pouchDb with the name and options provided
          * @param name the database name
          * @param options the local database options
-         * @returns a promise.PouchDBCtor
+         * @returns a promise.PouchDB
          */
-        new (name: string, options: options.ctor.LocalDb): promise.PouchDBCtor;
+        new (name: string, options: options.ctor.LocalDb): promise.PouchDB;
         /**
          * Creates a new local pouchDb with the name and options provided
          * @param name the database name
@@ -1346,9 +1340,9 @@ declare module pouchdb {
         /**
          * Creates a new local pouchDb with the options provided
          * @param options the local database options, including the name
-         * @returns a promise.PouchDBCtor
+         * @returns a promise.PouchDB
          */
-        new (options: options.ctor.LocalDbWithName): promise.PouchDBCtor;
+        new (options: options.ctor.LocalDbWithName): promise.PouchDB;
         /**
          * Creates a new local pouchDb with the options provided
          * @param options the local database options, including the name
@@ -1362,15 +1356,15 @@ declare module pouchdb {
          * A fallback constructor if none of the typed constructors cover a use case
          * @todo if you find yourself using this, consider contributing a patch
          * to add/improve the necessary typed overload instead of `options: any`
-         * @returns a promise.PouchDBCtor
+         * @returns a promise.PouchDB
          */
-        new (name: string, options: any): promise.PouchDBCtor;
+        new (name: string, options: any): promise.PouchDB;
         /**
          * A fallback constructor if none of the typed constructors cover a use case
          * @todo if you find yourself using this, consider contributing a patch
          * to add/improve the necessary typed overload instead of `options: pouchdb.options.DbName`
-         * @returns a promise.PouchDBCtor
+         * @returns a promise.PouchDB
          */
-        new (options: options.ctor.DbName): promise.PouchDBCtor;
+        new (options: options.ctor.DbName): promise.PouchDB;
     }
 }

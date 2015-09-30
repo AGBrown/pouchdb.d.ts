@@ -38,19 +38,20 @@ adapters.forEach((adapter: string) => {
       });
     });
 
-    it('Create a pouch with a promise', () => {
-      return new PouchDB(dbs.name).then((db) => {
-        db.should.be.an.instanceof(PouchDB);
-      });
-    });
-
-    it('Catch an error when creating a pouch with a promise', (done) => {
-      //  typescript: requires the argument, therefore we have to pass undefined to force an error
-      new PouchDB(undefined).catch((err) => {
-        should.exist(err);
-        done();
-      });
-    });
+    // Use case not supported by d.ts ref #23
+    // it('Create a pouch with a promise', () => {
+    //   return new PouchDB(dbs.name).then((db) => {
+    //     db.should.be.an.instanceof(PouchDB);
+    //   });
+    // });
+    //
+    // it('Catch an error when creating a pouch with a promise', (done) => {
+    //   //  typescript: requires the argument, therefore we have to pass undefined to force an error
+    //   new PouchDB(undefined).catch((err) => {
+    //     should.exist(err);
+    //     done();
+    //   });
+    // });
 
     it('destroy a pouch', (done) => {
       new PouchDB(dbs.name, (err, db) => {
@@ -64,11 +65,12 @@ adapters.forEach((adapter: string) => {
       });
     });
 
+    // Modified due to #23
     it('destroy a pouch, with a promise', () => {
-      return new PouchDB(dbs.name).then((db) => {
-        should.exist(db);
-        return db.destroy();
-      }).then((info) => {
+      var db = new PouchDB(dbs.name);
+      should.exist(db);
+      return db.destroy()
+      .then((info) => {
         should.exist(info);
         info.ok.should.equal(true);
       });
@@ -165,10 +167,10 @@ adapters.forEach((adapter: string) => {
       });
     });
 
+    // Modified due to #23
     it('Close db with a promise', () => {
-      return new PouchDB(dbs.name).then((db) => {
-        return db.close();
-      });
+      var db = new PouchDB(dbs.name);
+      return db.close();
     });
 
     it('Read db id after closing Close', (done) => {
@@ -707,19 +709,20 @@ adapters.forEach((adapter: string) => {
       });
     });
 
+    // Modified due to #23
     it('Fail to fetch a doc after db was deleted', () => {
       var doc = { _id: 'foodoc' };
       var doc2 = { _id: 'foodoc2' };
-      return new PouchDB(dbs.name).then((db) => {
-        var db2 = new PouchDB(dbs.name);
-        return db.put(doc)
+      var db = new PouchDB(dbs.name);
+      var db2 = new PouchDB(dbs.name);
+      return db.put(doc)
           .then(() => { return db2.put(doc2); })
           .then(() => { return db.allDocs(); })
           .then((docs) => {
           docs.total_rows.should.equal(2);
           return db.destroy();
-        });
-      }).then(() => {
+        })
+      .then(() => {
         var db2 = new PouchDB(dbs.name);
         return db2.get(doc._id);
       }).then((doc) => {
@@ -794,41 +797,41 @@ adapters.forEach((adapter: string) => {
       });
     });
 
+    // Modified due to #23
     it('db.info should give correct doc_count', () => {
-      return new PouchDB(dbs.name).then((db) => {
-        return db.info().then((info) => {
-          info.doc_count.should.equal(0);
-          return db.bulkDocs({ docs: [{ _id: '1' }, { _id: '2' }, { _id: '3' }] });
-        }).then(() => { return db.info(); })
-        .then((info) => {
-          info.doc_count.should.equal(3);
-          return db.get('1');
-        }).then((doc) => { return db.remove(doc); })
-        .then(() => { return db.info(); })
-        .then((info) => {
-          info.doc_count.should.equal(2);
-        });
+      var db = new PouchDB(dbs.name);
+      return db.info().then((info) => {
+        info.doc_count.should.equal(0);
+        return db.bulkDocs({ docs: [{ _id: '1' }, { _id: '2' }, { _id: '3' }] });
+      }).then(() => { return db.info(); })
+      .then((info) => {
+        info.doc_count.should.equal(3);
+        return db.get('1');
+      }).then((doc) => { return db.remove(doc); })
+      .then(() => { return db.info(); })
+      .then((info) => {
+        info.doc_count.should.equal(2);
       });
     });
 
+    // Modified due to #23
     it('putting returns {ok: true}', () => {
       // in couch, it's {ok: true} and in cloudant it's {},
       // but the http adapter smooths this out
-      return new PouchDB(dbs.name).then((db) => {
-        return db.put({ _id: '_local/foo' }).then((info) => {
-          true.should.equal(info.ok, 'putting local returns ok=true');
-          return db.put({ _id: 'quux' });
-        }).then((info) => {
-          true.should.equal(info.ok, 'putting returns ok=true');
-          return db.bulkDocs([{ _id: '_local/bar' }, { _id: 'baz' }]);
-        }).then((info) => {
-          info.should.have.length(2, 'correct num bulk docs');
-          true.should.equal(info[0].ok, 'bulk docs says ok=true #1');
-          true.should.equal(info[1].ok, 'bulk docs says ok=true #2');
-          return db.post({});
-        }).then((info) => {
-          true.should.equal(info.ok, 'posting returns ok=true');
-        });
+      var db = new PouchDB(dbs.name);
+      return db.put({ _id: '_local/foo' }).then((info) => {
+        true.should.equal(info.ok, 'putting local returns ok=true');
+        return db.put({ _id: 'quux' });
+      }).then((info) => {
+        true.should.equal(info.ok, 'putting returns ok=true');
+        return db.bulkDocs([{ _id: '_local/bar' }, { _id: 'baz' }]);
+      }).then((info) => {
+        info.should.have.length(2, 'correct num bulk docs');
+        true.should.equal(info[0].ok, 'bulk docs says ok=true #1');
+        true.should.equal(info[1].ok, 'bulk docs says ok=true #2');
+        return db.post({});
+      }).then((info) => {
+        true.should.equal(info.ok, 'posting returns ok=true');
       });
     });
 
