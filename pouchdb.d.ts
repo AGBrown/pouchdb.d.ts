@@ -250,41 +250,44 @@ declare module pouchdb {
                 limit?: number;
             }
 
+            /** A stored document returned for `allDocs` and `query()` */
+            interface StoredDoc extends ExistingDoc {
+                /** The document attachments */
+                _attachments?: {};
+            }
+
+            /** A container for a document as returned by `allDocs()` and `query()` */
+            interface DocContainer<D extends ExistingDoc> {
+                /** The document */
+                doc: D;
+                /** The document id */
+                id: string;
+                /** The document key */
+                key: string;
+                /** @todo not sure what this is */
+                value: {
+                    _rev: string;
+                    deleted?: boolean;
+                }
+            }
+
+            /** Response object for `allDocs()` and `query()` */
+            interface Response {
+                /** The `skip` if provided, or in CouchDB the actual offset */
+                offset: number;
+                /** the total number of non-deleted documents in the database */
+                total_rows: number;
+                /** rows containing the documents, or just the `_id`/`_revs` if you didn't
+                 *  set `include_docs` to `true`
+                 */
+                rows: DocContainer<StoredDoc>[];
+            }
+
             //////////////////////////// Methods ///////////////////////////////
             // Please keep these modules in alphabetical order
 
             /** Contains the method and call/return types for allDocs() */
             module allDocs {
-                /** A stored document returned for `allDocs` */
-                interface StoredDoc extends ExistingDoc {
-                    /** The document attachments */
-                    _attachments?: {};
-                }
-                /** A container for a document as returned by `allDocs()` */
-                interface DocContainer<D extends ExistingDoc> {
-                    /** The document */
-                    doc: D;
-                    /** The document id */
-                    id: string;
-                    /** The document key */
-                    key: string;
-                    /** @todo not sure what this is */
-                    value: {
-                        rev: string;
-                        deleted?: boolean;
-                    }
-                }
-                /** Response object for `allDocs()` */
-                interface Response {
-                    /** The `skip` if provided, or in CouchDB the actual offset */
-                    offset: number;
-                    /** the total number of non-deleted documents in the database */
-                    total_rows: number;
-                    /** rows containing the documents, or just the `_id`/`_revs` if you didn't
-                     *  set `include_docs` to `true`
-                     */
-                    rows: DocContainer<StoredDoc>[];
-                }
 
                 /** Options for `allDocs()` output */
                 interface RangeOptions extends BasePaginationOptions {
@@ -1095,12 +1098,51 @@ declare module pouchdb {
             /** Contains the method and call/return types for query()*/
             module query {
 
+                /** Type union for the possible info/error type alternates returned by `query()` */
+                type QueryResponse = Response | OperationResponse;
+
+                interface QyeryOptions {
+                    reduce: boolean;
+                    include_docs?: boolean;
+                    startkey?: string;
+                    endkey?: string;
+                    key?: string;
+                }
+
+                interface mapFun {
+                    emit(key: string, value: string): void;
+                }
+
                 interface Callback {
-                    query(): void;
+                    /**
+                     * Query document.
+                     * @param queryFun
+                     * @options options options that specify
+                     */
+                    query(queryFun: any, callback: async.Callback<QueryResponse>): void;
+
+                    /**
+                     * Query document.
+                     * @param queryFun
+                     * @options options options that specify
+                     */
+                    query(queryFun: any, options: options.EmptyOptions, callback: async.Callback<QueryResponse>): void;
+                    /**
+                     * Query document.
+                     * @param queryFun
+                     * @options options options that specify
+                     */
+                    query(queryFun: any, options: QyeryOptions, callback: async.Callback<QueryResponse>): void;
+
 
                 }
                 interface Promisable {
-                    query(): async.PouchPromise<OperationResponse>;
+                    /**
+                     * Query document.
+                     * @param queryFun
+                     * @options options options that specify
+                     */
+                    query(queryFun: any, options?: QyeryOptions): async.PouchPromise<QueryResponse>;
 
                 }
             }
