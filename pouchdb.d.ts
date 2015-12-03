@@ -1091,6 +1091,19 @@ declare module pouchdb {
                     remove(doc: NewDoc, options: RevOptions): async.PouchPromise<OperationResponse>;
                 }
             }
+
+            /** Contains the method and call/return types for query()*/
+            module query {
+
+                interface Callback {
+                    query(): void;
+
+                }
+                interface Promisable {
+                    query(): async.PouchPromise<OperationResponse>;
+
+                }
+            }
         }
         /** Contains the main callback/promise apis for pouchdb */
         module db {
@@ -1107,7 +1120,8 @@ declare module pouchdb {
                 , methods.info.Callback
                 , methods.post.Callback
                 , methods.put.Callback
-                , methods.remove.Callback { }
+                , methods.remove.Callback
+                , methods.query.Callback { }
             /** pouchDB api: promise based */
             interface Promisable extends
                 PouchInstance
@@ -1121,7 +1135,8 @@ declare module pouchdb {
                 , methods.info.Promisable
                 , methods.post.Promisable
                 , methods.put.Promisable
-                , methods.remove.Promisable { }
+                , methods.remove.Promisable
+                , methods.query.Promisable { }
         }
 
         /** The main pouchDB interface */
