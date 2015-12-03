@@ -10,6 +10,9 @@
 
 'use strict';
 
+
+interface ExistingTestDoc extends pouchdb.api.methods.ExistingDoc, pouchdb.test.integration.FooDoc { }
+
 var adapters:string[] = ['http', 'local'];
 
 adapters.forEach((adapter:string) => {
@@ -28,14 +31,15 @@ adapters.forEach((adapter:string) => {
     });
     it('Test basic view', (done) => {
       var db = new PouchDB(dbs.name, noop);
+      var docs = [
+        {foo: 'bar'},
+        {
+          _id: 'volatile',
+          foo: 'baz'
+        }
+      ];
       db.bulkDocs({
-        docs: [
-          {foo: 'bar'},
-          {
-            _id: 'volatile',
-            foo: 'baz'
-          }
-        ]
+        docs: docs
       }, {}, ()=>  {
         var queryFun = {
           map: function (doc) {
@@ -47,7 +51,7 @@ adapters.forEach((adapter:string) => {
             db.query(queryFun, {
               include_docs: true,
               reduce: false
-            }, function (_, res) {
+            }, (_, res) => {
               res.rows.should.have.length(1, 'Dont include deleted documents');
               res.total_rows.should.equal(1, 'Include total_rows property.');
               res.rows.forEach(function (x, i) {
@@ -65,14 +69,15 @@ adapters.forEach((adapter:string) => {
 
     it('Test passing just a function', (done)=> {
       var db = new PouchDB(dbs.name, noop);
+      var docs = [
+        {foo: 'bar'},
+        {
+          _id: 'volatile',
+          foo: 'baz'
+        }
+      ];
       db.bulkDocs({
-        docs: [
-          {foo: 'bar'},
-          {
-            _id: 'volatile',
-            foo: 'baz'
-          }
-        ]
+        docs: docs
       }, {}, () =>{
         var queryFun = function (doc) {
           emit(doc.foo, doc);
@@ -99,14 +104,16 @@ adapters.forEach((adapter:string) => {
 
     it('Test opts.startkey/opts.endkey', (done)=> {
       var db = new PouchDB(dbs.name,noop);
+      var docs = [
+        {key: 'key1'},
+        {key: 'key2'},
+        {key: 'key3'},
+        {key: 'key4'},
+        {key: 'key5'}
+      ];
+
       db.bulkDocs({
-        docs: [
-          {key: 'key1'},
-          {key: 'key2'},
-          {key: 'key3'},
-          {key: 'key4'},
-          {key: 'key5'}
-        ]
+        docs: docs
       }, {}, function () {
         var queryFun = {
           map: function (doc) {
@@ -145,13 +152,15 @@ adapters.forEach((adapter:string) => {
 
     it('Test opts.key', (done)=> {
       var db = new PouchDB(dbs.name, noop);
+      var docs = [
+        {key: 'key1'},
+        {key: 'key2'},
+        {key: 'key3'},
+        {key: 'key3'}
+      ];
+
       db.bulkDocs({
-        docs: [
-          {key: 'key1'},
-          {key: 'key2'},
-          {key: 'key3'},
-          {key: 'key3'}
-        ]
+        docs: docs
       }, {}, function () {
         var queryFun = {
           map: function (doc) {
@@ -279,14 +288,16 @@ adapters.forEach((adapter:string) => {
 
     it('Test joins', (done)=> {
       var db = new PouchDB(dbs.name, noop);
+      var docs = [
+        {
+          _id: 'mydoc',
+          foo: 'bar'
+        },
+        {doc_id: 'mydoc'}
+      ];
+
       db.bulkDocs({
-        docs: [
-          {
-            _id: 'mydoc',
-            foo: 'bar'
-          },
-          {doc_id: 'mydoc'}
-        ]
+        docs: docs
       }, {}, () => {
         var queryFun = {
           map: (doc) => {
@@ -322,12 +333,14 @@ adapters.forEach((adapter:string) => {
 
     it('Built in _sum reduce function', (done) => {
       var db = new PouchDB(dbs.name, noop);
+      var docs = [
+        {val: 'bar'},
+        {val: 'bar'},
+        {val: 'baz'}
+      ];
+
       db.bulkDocs({
-        docs: [
-          {val: 'bar'},
-          {val: 'bar'},
-          {val: 'baz'}
-        ]
+        docs: docs
       }, null, function () {
         var queryFun = {
           map: function (doc) {
@@ -349,12 +362,14 @@ adapters.forEach((adapter:string) => {
 
     it('Built in _count reduce function', (done) => {
       var db = new PouchDB(dbs.name, noop);
+      var docs = [
+        {val: 'bar'},
+        {val: 'bar'},
+        {val: 'baz'}
+      ];
+
       db.bulkDocs({
-        docs: [
-          {val: 'bar'},
-          {val: 'bar'},
-          {val: 'baz'}
-        ]
+        docs: docs
       }, null, function () {
         var queryFun = {
           map: function (doc) {
@@ -376,12 +391,14 @@ adapters.forEach((adapter:string) => {
 
     it('Built in _stats reduce function', (done) => {
       var db = new PouchDB(dbs.name, noop);
+      var docs = [
+        {val: 'bar'},
+        {val: 'bar'},
+        {val: 'baz'}
+      ];
+
       db.bulkDocs({
-        docs: [
-          {val: 'bar'},
-          {val: 'bar'},
-          {val: 'baz'}
-        ]
+        docs: docs
       }, null, function () {
         var queryFun = {
           map: function (doc) {
@@ -491,15 +508,17 @@ adapters.forEach((adapter:string) => {
     });
 
     it('Test view querying with limit option', (done) => {
-      var db = new PouchDB(dbs.name);
+      var db = new PouchDB(dbs.name, noop);
+      var docs = [
+        {foo: 'bar'},
+        {foo: 'bar'},
+        {foo: 'baz'}
+      ];
+
       db.bulkDocs({
-        docs: [
-          {foo: 'bar'},
-          {foo: 'bar'},
-          {foo: 'baz'}
-        ]
-      }, null, function () {
-        db.query(function (doc) {
+        docs: docs
+      }, null, () => {
+        db.query((doc) => {
           if (doc.foo === 'bar') {
             emit(doc.foo);
           }
@@ -537,8 +556,10 @@ adapters.forEach((adapter:string) => {
 
     it('Special document member _doc_id_rev', (done) => {
       var db = new PouchDB(dbs.name, noop);
-      db.bulkDocs({docs: [{foo: 'bar'}]}, null, () => {
-        db.query(function (doc) {
+      var docs =[{foo: 'bar'}];
+
+      db.bulkDocs({docs: docs}, null, () => {
+        db.query((doc) => {
           if (doc.foo === 'bar') {
             emit(doc.foo);
           }
@@ -551,7 +572,9 @@ adapters.forEach((adapter:string) => {
 
     it('If reduce function returns 0', (done) => {
       var db = new PouchDB(dbs.name, noop);
-      db.bulkDocs({docs: [{foo: 'bar'}]}, null, function () {
+      var docs = [{foo: 'bar'}];
+
+      db.bulkDocs({docs: docs}, null, function () {
         db.query({
           map: function (doc) {
             emit(doc.foo);
@@ -568,12 +591,14 @@ adapters.forEach((adapter:string) => {
 
     it('Testing skip with a view', (done) => {
       var db = new PouchDB(dbs.name, noop);
+      var docs = [
+        {foo: 'bar'},
+        {foo: 'baz'},
+        {foo: 'baf'}
+      ];
+
       db.bulkDocs({
-        docs: [
-          {foo: 'bar'},
-          {foo: 'baz'},
-          {foo: 'baf'}
-        ]
+        docs: docs
       }, null, function () {
         db.query((doc) => {
           emit(doc.foo, null);
@@ -587,12 +612,14 @@ adapters.forEach((adapter:string) => {
 
     it('Testing skip with allDocs', (done) => {
       var db = new PouchDB(dbs.name, noop);
+      var docs = [
+        {foo: 'bar'},
+        {foo: 'baz'},
+        {foo: 'baf'}
+      ];
+
       db.bulkDocs({
-        docs: [
-          {foo: 'bar'},
-          {foo: 'baz'},
-          {foo: 'baf'}
-        ]
+        docs: docs
       }, null, function () {
         db.allDocs({skip: 1}, (err, data) => {
           should.not.exist(err);

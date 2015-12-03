@@ -268,6 +268,11 @@ declare module pouchdb {
                 value: {
                     _rev: string;
                     deleted?: boolean;
+                    sum?:number;
+                    count?: number;
+                    min?: number;
+                    max?: number;
+                    sumsqr?: number;
                 }
             }
 
@@ -1119,20 +1124,20 @@ declare module pouchdb {
                      * @param queryFun
                      * @options options options that specify
                      */
-                    query(queryFun: any, callback: async.Callback<QueryResponse>): void;
+                    query(queryFun: any, callback: async.Callback<Response>): void;
 
                     /**
                      * Query document.
                      * @param queryFun
                      * @options options options that specify
                      */
-                    query(queryFun: any, options: options.EmptyOptions, callback: async.Callback<QueryResponse>): void;
+                    query(queryFun: any, options: options.EmptyOptions, callback: async.Callback<Response>): void;
                     /**
                      * Query document.
                      * @param queryFun
                      * @options options options that specify
                      */
-                    query(queryFun: any, options: QyeryOptions, callback: async.Callback<QueryResponse>): void;
+                    query(queryFun: any, options: QyeryOptions, callback: async.Callback<Response>): void;
 
 
                 }
@@ -1142,7 +1147,7 @@ declare module pouchdb {
                      * @param queryFun
                      * @options options options that specify
                      */
-                    query(queryFun: any, options?: QyeryOptions): async.PouchPromise<QueryResponse>;
+                    query(queryFun: any, options?: QyeryOptions): async.PouchPromise<Response>;
 
                 }
             }
