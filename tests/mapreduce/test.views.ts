@@ -8,6 +8,7 @@
 /// <reference path="../integration/common.ts" />
 /// <reference path="../integration/utils.d.ts" />
 
+import MapReduce = pouchdb.api.methods.query.MapReduce;
 'use strict';
 
 
@@ -41,8 +42,8 @@ adapters.forEach((adapter:string) => {
       db.bulkDocs({
         docs: docs
       }, {}, ()=>  {
-        var queryFun = {
-          map: function (doc) {
+        var queryFun = <MapReduce>{
+          map: (doc) => {
             emit(doc.foo, doc);
           }
         };
@@ -79,7 +80,7 @@ adapters.forEach((adapter:string) => {
       db.bulkDocs({
         docs: docs
       }, {}, () =>{
-        var queryFun = function (doc) {
+        var queryFun = <MapReduce>(doc)  => {
           emit(doc.foo, doc);
         };
         db.get('volatile', function (_, doc) {
@@ -115,8 +116,8 @@ adapters.forEach((adapter:string) => {
       db.bulkDocs({
         docs: docs
       }, {}, function () {
-        var queryFun = {
-          map: function (doc) {
+        var queryFun = <MapReduce>{
+          map: (doc) =>  {
             emit(doc.key, doc);
           }
         };
@@ -163,7 +164,7 @@ adapters.forEach((adapter:string) => {
         docs: docs
       }, {}, function () {
         var queryFun = {
-          map: function (doc) {
+          map: (doc) => {
             emit(doc.key, doc);
           }
         };
@@ -372,7 +373,7 @@ adapters.forEach((adapter:string) => {
         docs: docs
       }, null, function () {
         var queryFun = {
-          map: function (doc) {
+          map: (doc) => {
             emit(doc.val, doc.val);
           },
           reduce: '_count'
@@ -401,7 +402,7 @@ adapters.forEach((adapter:string) => {
         docs: docs
       }, null, function () {
         var queryFun = {
-          map: function (doc) {
+          map: (doc) => {
             emit(doc.val, 1);
           },
           reduce: '_stats'

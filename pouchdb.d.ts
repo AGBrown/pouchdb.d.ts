@@ -139,6 +139,8 @@ declare module pouchdb {
             error?: any;
             message?: string;
             status?: number;
+            name?: string;
+            reason?: string;
         }
         /** Overrides a supplied interface to represent a promise object with custom error typings for the first pass */
         export interface PouchPromise<T> extends Promise<T> {
@@ -186,6 +188,7 @@ declare module pouchdb {
              * cannot yet specify docs are objects, and not primitives, so use this type as a placeholder.
              */
             interface BaseDoc {
+
             }
 
             /** Interface for a doc (with `_id`) passed to the put() method */
@@ -1106,7 +1109,7 @@ declare module pouchdb {
                 /** Type union for the possible info/error type alternates returned by `query()` */
                 type QueryResponse = Response | OperationResponse;
 
-                interface QyeryOptions {
+                interface QueryOptions {
                     reduce: boolean;
                     include_docs?: boolean;
                     startkey?: string;
@@ -1114,8 +1117,9 @@ declare module pouchdb {
                     key?: string;
                 }
 
-                interface mapFun {
-                    emit(key: string, value: string): void;
+                interface MapReduce{
+                    map?(doc: DocContainer<ExistingDoc>);
+                    map?(doc: ExistingDoc): void;
                 }
 
                 interface Callback {
@@ -1124,30 +1128,30 @@ declare module pouchdb {
                      * @param queryFun
                      * @options options options that specify
                      */
-                    query(queryFun: any, callback: async.Callback<Response>): void;
+                    query(queryFun: MapReduce, callback?: async.Callback<Response>): void;
 
                     /**
                      * Query document.
                      * @param queryFun
                      * @options options options that specify
                      */
-                    query(queryFun: any, options: options.EmptyOptions, callback: async.Callback<Response>): void;
+                    query(queryFun: MapReduce, options: options.EmptyOptions, callback: async.Callback<Response>): void;
                     /**
                      * Query document.
                      * @param queryFun
                      * @options options options that specify
                      */
-                    query(queryFun: any, options: QyeryOptions, callback: async.Callback<Response>): void;
+                    query(queryFun: MapReduce, options: QueryOptions, callback: async.Callback<Response>): void;
 
 
                 }
                 interface Promisable {
-                    /**
+                    /*
                      * Query document.
                      * @param queryFun
                      * @options options options that specify
                      */
-                    query(queryFun: any, options?: QyeryOptions): async.PouchPromise<Response>;
+                    query(queryFun: MapReduce, options?: QueryOptions): async.PouchPromise<Response>;
 
                 }
             }
