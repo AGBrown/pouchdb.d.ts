@@ -1155,6 +1155,17 @@ declare module pouchdb {
 
                 }
             }
+            module replicate {
+                module from {
+                    interface Callback {
+                        from(instance: PouchInstance,  callback: async.Callback<Response>): void;
+                    }
+                    interface Promisable {
+                        from(instance: PouchInstance):async.PouchPromise<Response>;
+                    }
+                }
+            }
+
         }
         /** Contains the main callback/promise apis for pouchdb */
         module db {
@@ -1188,7 +1199,17 @@ declare module pouchdb {
                 , methods.put.Promisable
                 , methods.remove.Promisable
                 , methods.query.Promisable { }
+
+            module replicate {
+
+                export interface Callback extends
+                    methods.replicate.from.Callback { }
+                export interface Promisable extends
+                    methods.replicate.from.Promisable { }
+            }
+
         }
+
 
         /** The main pouchDB interface */
         interface PouchInstance {
@@ -1295,12 +1316,16 @@ declare module pouchdb {
     /** The api module for the pouchdb callback pattern */
     module callback {
         /** The main pouchDB interface (callback pattern) */
-        interface PouchDB extends api.db.Callback { }
+        interface PouchDB extends api.db.Callback {
+            replicate: api.db.replicate.Callback;
+        }
     }
     /** The api module for the pouchdb promise pattern */
     module promise {
         /** The main pouchDB interface (promise pattern) */
-        interface PouchDB extends api.db.Promisable { }
+        interface PouchDB extends api.db.Promisable {
+            replicate: api.db.replicate.Promisable;
+        }
     }
     /** The api module for the pouchdb promise pattern (constructor only) */
     module thenable {
