@@ -1120,6 +1120,13 @@ declare module pouchdb {
                 interface MapReduce{
                     map?(doc: DocContainer<ExistingDoc>);
                     map?(doc: ExistingDoc): void;
+                    /**
+                     * @TODO change type if needed;
+                     * @param key
+                     * @param values
+                     * @param rereduce
+                     */
+                    reduce(key: string, values: any, rereduce: any): void;
                 }
 
                 interface Callback {

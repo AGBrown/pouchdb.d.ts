@@ -577,7 +577,7 @@ adapters.forEach((adapter:string) => {
 
       db.bulkDocs({docs: docs}, null, function () {
         db.query({
-          map: function (doc) {
+          map: (doc) => {
             emit(doc.foo);
           },
           reduce: function (key, values, rereduce) {
