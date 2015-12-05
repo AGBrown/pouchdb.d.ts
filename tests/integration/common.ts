@@ -21,6 +21,7 @@ var should = chai.should();
 
 interface dbsShape {
   name?: string;
+  remote?: string;
 }
 var noop = (e, v) => { };
 
