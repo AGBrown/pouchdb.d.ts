@@ -256,6 +256,7 @@ declare module pouchdb {
             interface StoredDoc extends ExistingDoc {
                 /** The document attachments */
                 _attachments?: {};
+                _doc_id_rev?: {};
             }
 
             /** A container for a document as returned by `allDocs()` and `query()` */
@@ -268,19 +269,15 @@ declare module pouchdb {
                 key: string;
                 /** @todo not sure what this is */
                 value: {
-                    rev: string;
-                    deleted?: boolean;
-                }
-
-                    /**| {
-                    _rev: string;
+                    rev:string;
+                    _rev?: string;
                     deleted?: boolean;
                     sum?:number;
                     count?: number;
                     min?: number;
                     max?: number;
                     sumsqr?: number;
-                }*/
+                }
             }
 
             /** Response object for `allDocs()` and `query()` */
@@ -1135,7 +1132,7 @@ declare module pouchdb {
 
 
 
-                export function emit(key:any, value:any):void;
+                export function emit(key:any, value?:any):void;
 
                 interface Callback {
                     /**

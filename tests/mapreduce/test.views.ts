@@ -10,6 +10,7 @@
 
 import MapReduce = pouchdb.api.methods.query.MapReduce;
 import emit = pouchdb.api.methods.query.emit;
+
 'use strict';
 
 
@@ -646,6 +647,7 @@ adapters.forEach((adapter:string) => {
       });
     });
 
+/**
     it('Map documents on 0/null/undefined/empty string', (done) => {
       var db = new PouchDB(dbs.name, noop);
       var docs = [
@@ -730,7 +732,8 @@ adapters.forEach((adapter:string) => {
           });
         });
       });
-    }
+
+    }*/
   });
 
 });
