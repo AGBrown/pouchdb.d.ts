@@ -139,6 +139,8 @@ declare module pouchdb {
             error?: any;
             message?: string;
             status?: number;
+            name?: string;
+            reason?: string;
         }
         /** Overrides a supplied interface to represent a promise object with custom error typings for the first pass */
         export interface PouchPromise<T> extends Promise<T> {
@@ -186,6 +188,7 @@ declare module pouchdb {
              * cannot yet specify docs are objects, and not primitives, so use this type as a placeholder.
              */
             interface BaseDoc {
+
             }
 
             /** Interface for a doc (with `_id`) passed to the put() method */
@@ -250,41 +253,49 @@ declare module pouchdb {
                 limit?: number;
             }
 
+            /** A stored document returned for `allDocs` and `query()` */
+            interface StoredDoc extends ExistingDoc {
+                /** The document attachments */
+                _attachments?: {};
+            }
+
+            /** A container for a document as returned by `allDocs()` and `query()` */
+            interface DocContainer<D extends ExistingDoc> {
+                /** The document */
+                doc: D;
+                /** The document id */
+                id: string;
+                /** The document key */
+                key: string;
+                /** @todo not sure what this is */
+                value: {
+                    _rev: string;
+                    deleted?: boolean;
+                    sum?:number;
+                    count?: number;
+                    min?: number;
+                    max?: number;
+                    sumsqr?: number;
+                }
+            }
+
+            /** Response object for `allDocs()` and `query()` */
+            interface Response {
+                /** The `skip` if provided, or in CouchDB the actual offset */
+                offset: number;
+                /** the total number of non-deleted documents in the database */
+                total_rows: number;
+                /** rows containing the documents, or just the `_id`/`_revs` if you didn't
+                 *  set `include_docs` to `true`
+                 */
+                rows: DocContainer<StoredDoc>[];
+            }
+
             //////////////////////////// Methods ///////////////////////////////
             // Please keep these modules in alphabetical order
 
             /** Contains the method and call/return types for allDocs() */
             module allDocs {
-                /** A stored document returned for `allDocs` */
-                interface StoredDoc extends ExistingDoc {
-                    /** The document attachments */
-                    _attachments?: {};
-                }
-                /** A container for a document as returned by `allDocs()` */
-                interface DocContainer<D extends ExistingDoc> {
-                    /** The document */
-                    doc: D;
-                    /** The document id */
-                    id: string;
-                    /** The document key */
-                    key: string;
-                    /** @todo not sure what this is */
-                    value: {
-                        rev: string;
-                        deleted?: boolean;
-                    }
-                }
-                /** Response object for `allDocs()` */
-                interface Response {
-                    /** The `skip` if provided, or in CouchDB the actual offset */
-                    offset: number;
-                    /** the total number of non-deleted documents in the database */
-                    total_rows: number;
-                    /** rows containing the documents, or just the `_id`/`_revs` if you didn't
-                     *  set `include_docs` to `true`
-                     */
-                    rows: DocContainer<StoredDoc>[];
-                }
 
                 /** Options for `allDocs()` output */
                 interface RangeOptions extends BasePaginationOptions {
@@ -1091,6 +1102,77 @@ declare module pouchdb {
                     remove(doc: NewDoc, options: RevOptions): async.PouchPromise<OperationResponse>;
                 }
             }
+
+            /** Contains the method and call/return types for query()*/
+            module query {
+
+                /** Type union for the possible info/error type alternates returned by `query()` */
+                type QueryResponse = Response | OperationResponse;
+
+                interface QueryOptions {
+                    reduce: boolean;
+                    include_docs?: boolean;
+                    startkey?: string;
+                    endkey?: string;
+                    key?: string;
+                }
+
+                interface MapReduce{
+                    map?(doc: DocContainer<ExistingDoc>);
+                    map?(doc: ExistingDoc): void;
+                    /**
+                     * @TODO change type if needed;
+                     * @param key
+                     * @param values
+                     * @param rereduce
+                     */
+                    reduce(key: string, values: any, rereduce: any): void;
+                }
+
+                interface Callback {
+                    /**
+                     * Query document.
+                     * @param queryFun
+                     * @options options options that specify
+                     */
+                    query(queryFun: MapReduce, callback?: async.Callback<Response>): void;
+
+                    /**
+                     * Query document.
+                     * @param queryFun
+                     * @options options options that specify
+                     */
+                    query(queryFun: MapReduce, options: options.EmptyOptions, callback: async.Callback<Response>): void;
+                    /**
+                     * Query document.
+                     * @param queryFun
+                     * @options options options that specify
+                     */
+                    query(queryFun: MapReduce, options: QueryOptions, callback: async.Callback<Response>): void;
+
+
+                }
+                interface Promisable {
+                    /*
+                     * Query document.
+                     * @param queryFun
+                     * @options options options that specify
+                     */
+                    query(queryFun: MapReduce, options?: QueryOptions): async.PouchPromise<Response>;
+
+                }
+            }
+            module replicate {
+                module from {
+                    interface Callback {
+                        from(instance: PouchInstance,  callback: async.Callback<Response>): void;
+                    }
+                    interface Promisable {
+                        from(instance: PouchInstance):async.PouchPromise<Response>;
+                    }
+                }
+            }
+
         }
         /** Contains the main callback/promise apis for pouchdb */
         module db {
@@ -1107,7 +1189,8 @@ declare module pouchdb {
                 , methods.info.Callback
                 , methods.post.Callback
                 , methods.put.Callback
-                , methods.remove.Callback { }
+                , methods.remove.Callback
+                , methods.query.Callback { }
             /** pouchDB api: promise based */
             interface Promisable extends
                 PouchInstance
@@ -1121,8 +1204,19 @@ declare module pouchdb {
                 , methods.info.Promisable
                 , methods.post.Promisable
                 , methods.put.Promisable
-                , methods.remove.Promisable { }
+                , methods.remove.Promisable
+                , methods.query.Promisable { }
+
+            module replicate {
+
+                export interface Callback extends
+                    methods.replicate.from.Callback { }
+                export interface Promisable extends
+                    methods.replicate.from.Promisable { }
+            }
+
         }
+
 
         /** The main pouchDB interface */
         interface PouchInstance {
@@ -1229,12 +1323,16 @@ declare module pouchdb {
     /** The api module for the pouchdb callback pattern */
     module callback {
         /** The main pouchDB interface (callback pattern) */
-        interface PouchDB extends api.db.Callback { }
+        interface PouchDB extends api.db.Callback {
+            replicate: api.db.replicate.Callback;
+        }
     }
     /** The api module for the pouchdb promise pattern */
     module promise {
         /** The main pouchDB interface (promise pattern) */
-        interface PouchDB extends api.db.Promisable { }
+        interface PouchDB extends api.db.Promisable {
+            replicate: api.db.replicate.Promisable;
+        }
     }
     /** The api module for the pouchdb promise pattern (constructor only) */
     module thenable {
