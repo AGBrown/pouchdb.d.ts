@@ -1,6 +1,10 @@
 // Type definitions for pouchdb v3.4.0
 // Project: http://pouchdb.com/, https://github.com/pouchdb/pouchdb
-// Definitions by: Andy Brown <https://github.com/AGBrown> (https://github.com/AGBrown/pouchdb.d.ts), Frederico Galvão <https://github.com/fredgalvao>
+// Definitions by:
+//  Andy Brown <https://github.com/AGBrown> (https://github.com/AGBrown/pouchdb.d.ts),
+//  Frederico Galvão <https://github.com/fredgalvao>
+//  Sébastien GLON <https://github.com/sebglon>
+//
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 
 //  Progress: up to http://pouchdb.com/api.html#fetch_document
@@ -341,24 +345,24 @@ declare module pouchdb {
                 /** Callback pattern for allDocs() */
                 interface Callback {
                     /** Fetch multiple documents, indexed and sorted by the `_id`. */
-                    allDocs(callback?: async.Callback<Response>): void;
+                    allDocs(callback?:async.Callback<Response>): void;
                     /** Fetch multiple documents, indexed and sorted by the `_id`. */
-                    allDocs(options: RangeOptions, callback?: async.Callback<Response>): void;
+                    allDocs(options:RangeOptions, callback?:async.Callback<Response>): void;
                     /** Fetch multiple documents, indexed and sorted by the `_id`. */
-                    allDocs(options: PaginationOptions, callback?: async.Callback<Response>): void;
+                    allDocs(options:PaginationOptions, callback?:async.Callback<Response>): void;
                     /** Fetch multiple documents, indexed and sorted by the `_id`. */
-                    allDocs(options: FilterOptions, callback?: async.Callback<Response>): void;
+                    allDocs(options:FilterOptions, callback?:async.Callback<Response>): void;
                 }
                 /** Promise pattern for allDocs() */
                 interface Promisable {
                     /** Fetch multiple documents, indexed and sorted by the `_id`. */
                     allDocs(): async.PouchPromise<Response>;
                     /** Fetch multiple documents, indexed and sorted by the `_id`. */
-                    allDocs(options: RangeOptions): async.PouchPromise<Response>;
+                    allDocs(options:RangeOptions): async.PouchPromise<Response>;
                     /** Fetch multiple documents, indexed and sorted by the `_id`. */
-                    allDocs(options: PaginationOptions): async.PouchPromise<Response>;
+                    allDocs(options:PaginationOptions): async.PouchPromise<Response>;
                     /** Fetch multiple documents, indexed and sorted by the `_id`. */
-                    allDocs(options: FilterOptions): async.PouchPromise<Response>;
+                    allDocs(options:FilterOptions): async.PouchPromise<Response>;
                 }
             }
 
@@ -384,7 +388,7 @@ declare module pouchdb {
                 }
                 /** Options for `bulkDocs()` */
                 interface DocumentPouchAndOptions<D extends NewDoc | MixedDoc>
-                    extends BulkDocsOptions {
+                extends BulkDocsOptions {
                     /** The array of documents to update */
                     docs: D[];
                 }
@@ -418,73 +422,73 @@ declare module pouchdb {
                      * Update/Delete each doc in an array of documents.
                      * @param options an options object with the documents to update/delete
                      */
-                    bulkDocs(folder: DocumentPouchAndOptions<ExistingDoc>, callback?: async.Callback<BulkDocsResponse[]>): void;
+                    bulkDocs(folder:DocumentPouchAndOptions<ExistingDoc>, callback?:async.Callback<BulkDocsResponse[]>): void;
                     /**
                      * Update/Delete each doc in an array of documents.
                      * @param options an options object with the documents to update/delete
                      */
-                    bulkDocs(folder: DocumentPouch<ExistingDoc>, options: BulkDocsOptions, callback?: async.Callback<BulkDocsResponse[]>): void;
+                    bulkDocs(folder:DocumentPouch<ExistingDoc>, options:BulkDocsOptions, callback?:async.Callback<BulkDocsResponse[]>): void;
                     /**
                      * Update/Delete each doc in an array of documents.
                      * @param doc the doc
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    bulkDocs(docs: ExistingDoc[], callback?: async.Callback<BulkDocsResponse[]>): void;
+                    bulkDocs(docs:ExistingDoc[], callback?:async.Callback<BulkDocsResponse[]>): void;
                     /**
                      * Update/Delete each doc in an array of documents.
                      * @param doc the doc
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    bulkDocs(docs: ExistingDoc[], options: BulkDocsOptions, callback?: async.Callback<BulkDocsResponse[]>): void;
+                    bulkDocs(docs:ExistingDoc[], options:BulkDocsOptions, callback?:async.Callback<BulkDocsResponse[]>): void;
 
                     /**
                      * Create multiple documents.
                      * @param doc the doc
                      */
-                    bulkDocs(folder: DocumentPouchAndOptions<NewDoc>, callback?: async.Callback<BulkDocsResponse[]>): void;
+                    bulkDocs(folder:DocumentPouchAndOptions<NewDoc>, callback?:async.Callback<BulkDocsResponse[]>): void;
                     /**
                      * Create multiple documents.
                      * @param doc the doc
                      */
-                    bulkDocs(folder: DocumentPouch<NewDoc>, options: BulkDocsOptions, callback?: async.Callback<BulkDocsResponse[]>): void;
+                    bulkDocs(folder:DocumentPouch<NewDoc>, options:BulkDocsOptions, callback?:async.Callback<BulkDocsResponse[]>): void;
                     /**
                      * Create multiple documents.
                      * @param doc the doc
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    bulkDocs(docs: NewDoc[], callback?: async.Callback<BulkDocsResponse[]>): void;
+                    bulkDocs(docs:NewDoc[], callback?:async.Callback<BulkDocsResponse[]>): void;
                     /**
                      * Create multiple documents.
                      * @param doc the doc
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    bulkDocs(docs: NewDoc[], options: BulkDocsOptions, callback?: async.Callback<BulkDocsResponse[]>): void;
+                    bulkDocs(docs:NewDoc[], options:BulkDocsOptions, callback?:async.Callback<BulkDocsResponse[]>): void;
 
                     /**
                      * Perform mixed Create/Update/Delete operations on multiple documents.
                      * @param options the doc
                      */
-                    bulkDocs(folder: DocumentPouchAndOptions<MixedDoc>, callback?: async.Callback<BulkDocsResponse[]>): void;
+                    bulkDocs(folder:DocumentPouchAndOptions<MixedDoc>, callback?:async.Callback<BulkDocsResponse[]>): void;
                     /**
                      * Perform mixed Create/Update/Delete operations on multiple documents.
                      * @param options the doc
                      */
-                    bulkDocs(folder: DocumentPouch<MixedDoc>, options: BulkDocsOptions, callback?: async.Callback<BulkDocsResponse[]>): void;
+                    bulkDocs(folder:DocumentPouch<MixedDoc>, options:BulkDocsOptions, callback?:async.Callback<BulkDocsResponse[]>): void;
                     /**
                      * Perform mixed Create/Update/Delete operations on multiple documents.
                      * @param doc the doc
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    bulkDocs(docs: MixedDoc[], callback?: async.Callback<BulkDocsResponse[]>): void;
+                    bulkDocs(docs:MixedDoc[], callback?:async.Callback<BulkDocsResponse[]>): void;
                     /**
                      * Perform mixed Create/Update/Delete operations on multiple documents.
                      * @param doc the doc
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    bulkDocs(docs: MixedDoc[], options: BulkDocsOptions, callback?: async.Callback<BulkDocsResponse[]>): void;
+                    bulkDocs(docs:MixedDoc[], options:BulkDocsOptions, callback?:async.Callback<BulkDocsResponse[]>): void;
                 }
                 /** Promise pattern for bulkDocs() */
                 interface Promisable {
@@ -494,40 +498,40 @@ declare module pouchdb {
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    bulkDocs(folder: DocumentPouch<ExistingDoc>, options?: BulkDocsOptions): async.PouchPromise<BulkDocsResponse[]>;
+                    bulkDocs(folder:DocumentPouch<ExistingDoc>, options?:BulkDocsOptions): async.PouchPromise<BulkDocsResponse[]>;
                     /**
                      * Update/Delete each doc in an array of documents.
                      * @param doc the doc
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    bulkDocs(docs: ExistingDoc[], options?: BulkDocsOptions): async.PouchPromise<BulkDocsResponse[]>;
+                    bulkDocs(docs:ExistingDoc[], options?:BulkDocsOptions): async.PouchPromise<BulkDocsResponse[]>;
                     /**
                      * Create multiple documents.
                      * @param doc the doc
                      * @param options
                      */
-                    bulkDocs(folder: DocumentPouch<NewDoc>): async.PouchPromise<BulkDocsResponse[]>;
+                    bulkDocs(folder:DocumentPouch<NewDoc>): async.PouchPromise<BulkDocsResponse[]>;
                     /**
                      * Create multiple documents.
                      * @param doc the doc
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    bulkDocs(docs: NewDoc[], options?: BulkDocsOptions): async.PouchPromise<BulkDocsResponse[]>;
+                    bulkDocs(docs:NewDoc[], options?:BulkDocsOptions): async.PouchPromise<BulkDocsResponse[]>;
                     /**
                      * Perform mixed Create/Update/Delete operations on multiple documents.
                      * @param docs the documents to act on
                      * @param options
                      */
-                    bulkDocs(folder: DocumentPouch<MixedDoc>): async.PouchPromise<BulkDocsResponse[]>;
+                    bulkDocs(folder:DocumentPouch<MixedDoc>): async.PouchPromise<BulkDocsResponse[]>;
                     /**
                      * Perform mixed Create/Update/Delete operations on multiple documents.
                      * @param docs the documents to act on
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    bulkDocs(docs: MixedDoc[], options?: BulkDocsOptions): async.PouchPromise<BulkDocsResponse[]>;
+                    bulkDocs(docs:MixedDoc[], options?:BulkDocsOptions): async.PouchPromise<BulkDocsResponse[]>;
                 }
             }
 
@@ -637,7 +641,7 @@ declare module pouchdb {
                     /**
                      * The `change` event listener. This event fires when a change has been found.
                      */
-                    onChange?: (change: ChangeInfo) => void;
+                    onChange?: (change:ChangeInfo) => void;
 
                     ///** The `create` event listener */
                     //create?: (???) => void;
@@ -652,19 +656,21 @@ declare module pouchdb {
                      * The `complete` event listener.  This event fires when all changes have been
                      * read. In live changes, only cancelling the changes should trigger this event.
                      */
-                    complete?: (err: async.Error, info: CompleteInfo) => void;
+                    complete?: (err:async.Error, info:CompleteInfo) => void;
                     /**
                      * The `error` event listener. This event is fired when the replication is stopped
                      * due to an unrecoverable failure.
                      * @todo: confirm error shape
                      */
-                    error?: (err: any) => void;
+                    error?: (err:any) => void;
                 }
 
                 /** Options for the `changes()` method */
-                interface ChangesOptions extends EventsOptions, BaseOptions, FilterOptions { }
+                interface ChangesOptions extends EventsOptions, BaseOptions, FilterOptions {
+                }
                 /** Advanced options for the `changes()` method */
-                interface ChangesOptionsAdv extends EventsOptions, ChangesOptions, AdvancedOptions { }
+                interface ChangesOptionsAdv extends EventsOptions, ChangesOptions, AdvancedOptions {
+                }
 
                 /** Result object for changes() */
                 interface ChangesResult {
@@ -680,18 +686,20 @@ declare module pouchdb {
                      * A list of changes made to documents in the database, in the order they were made.
                      * @returns an object with the method `cancel()` to stop listening for new changes
                      */
-                    changes(options: methods.changes.ChangesOptions): methods.changes.ChangesResult;
+                    changes(options:methods.changes.ChangesOptions): methods.changes.ChangesResult;
                     /**
                      * A list of changes made to documents in the database, in the order they were made
                      * (using advanced options).
                      * @returns an object with the method `cancel()` to stop listening for new changes
                      */
-                    changes(options: methods.changes.ChangesOptionsAdv): methods.changes.ChangesResult;
+                    changes(options:methods.changes.ChangesOptionsAdv): methods.changes.ChangesResult;
                 }
                 /** Callback pattern for changes() */
-                interface Callback { }
+                interface Callback {
+                }
                 /** Promise pattern for changes() */
-                interface Promisable { }
+                interface Promisable {
+                }
             }
 
             /** Contains the method and call/return types for close() */
@@ -699,7 +707,7 @@ declare module pouchdb {
                 /** Callback pattern for close() */
                 interface Callback {
                     /** Closes the pouchdb */
-                    close(callback?: async.Callback<string>): void;
+                    close(callback?:async.Callback<string>): void;
                 }
                 /** Promise pattern for close() */
                 interface Promisable {
@@ -713,7 +721,8 @@ declare module pouchdb {
                 /**
                  * Promise/callback result for destroy()
                  */
-                interface Info extends BaseResponse { }
+                interface Info extends BaseResponse {
+                }
                 /**
                  * Callback pattern for destroy
                  */
@@ -723,12 +732,12 @@ declare module pouchdb {
                      * @param options ajax options
                      * @param callback a callback to handle success/error
                      */
-                    destroy(options: options.OptionsWithAjax, callback?: async.Callback<Info>): void;
+                    destroy(options:options.OptionsWithAjax, callback?:async.Callback<Info>): void;
                     /**
                      * Deletes a database
                      * @param callback a callback to handle success/error
                      */
-                    destroy(callback?: async.Callback<Info>): void;
+                    destroy(callback?:async.Callback<Info>): void;
                 }
                 /**
                  * Promise pattern for destroy
@@ -738,7 +747,7 @@ declare module pouchdb {
                      * Deletes a database
                      * @param options ajax options
                      */
-                    destroy(options?: options.OptionsWithAjax): async.PouchPromise<Info>;
+                    destroy(options?:options.OptionsWithAjax): async.PouchPromise<Info>;
                 }
             }
 
@@ -802,13 +811,13 @@ declare module pouchdb {
                      * Retrieves a document, specified by `docId`.
                      * @param docId the doc id
                      */
-                    get<R extends Response>(docId: string, callback?: async.Callback<R>): void;
+                    get<R extends Response>(docId:string, callback?:async.Callback<R>): void;
                     /**
                      * Retrieves a document, specified by `docId`.
                      * @param docId the doc id
                      * @param options
                      */
-                    get<R extends Response>(docId: string, options: Options, callback?: async.Callback<R>): void;
+                    get<R extends Response>(docId:string, options:Options, callback?:async.Callback<R>): void;
                 }
                 /** Promise pattern for remove */
                 interface Promisable {
@@ -817,7 +826,7 @@ declare module pouchdb {
                      * @param docId the doc id
                      * @param options
                      */
-                    get<R extends ExistingDoc>(docId: string, options?: Options): async.PouchPromise<R>;
+                    get<R extends ExistingDoc>(docId:string, options?:Options): async.PouchPromise<R>;
                 }
             }
 
@@ -826,7 +835,7 @@ declare module pouchdb {
                 /** Callback pattern for `id()` */
                 interface Callback {
                     /** Returns the instance id for the pouchdb */
-                    id(callback?: async.Callback<string>): void;
+                    id(callback?:async.Callback<string>): void;
                 }
                 /** Promise pattern for `id()` */
                 interface Promisable {
@@ -861,7 +870,7 @@ declare module pouchdb {
                 /** Callback pattern for `info()` */
                 interface Callback {
                     /** Returns the instance info for the pouchdb */
-                    info(callback?: async.Callback<Response | ResponseDebug>): void;
+                    info(callback?:async.Callback<Response | ResponseDebug>): void;
                 }
                 /** Promise pattern for `info()` */
                 interface Promisable {
@@ -885,7 +894,7 @@ declare module pouchdb {
                      * @param doc the doc (with no id)
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    post(doc: BaseDoc, callback?: async.Callback<OperationResponse>): void;
+                    post(doc:BaseDoc, callback?:async.Callback<OperationResponse>): void;
                     /**
                      * Create a new document and let PouchDB auto-generate an _id for it
                      * (tip: use `put()` instead for better indexing)
@@ -893,7 +902,7 @@ declare module pouchdb {
                      * @param options ajax options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    post(doc: BaseDoc, options: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
+                    post(doc:BaseDoc, options:options.EmptyOptions, callback?:async.Callback<OperationResponse>): void;
                 }
                 /** Promise pattern for post */
                 interface Promisable {
@@ -904,7 +913,7 @@ declare module pouchdb {
                      * @param options ajax options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    post(doc: BaseDoc, options?: options.EmptyOptions): async.PouchPromise<OperationResponse>;
+                    post(doc:BaseDoc, options?:options.EmptyOptions): async.PouchPromise<OperationResponse>;
                 }
             }
 
@@ -921,27 +930,27 @@ declare module pouchdb {
                      * @param doc the doc
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    put(doc: ExistingDoc, callback?: async.Callback<OperationResponse>): void;
+                    put(doc:ExistingDoc, callback?:async.Callback<OperationResponse>): void;
                     /**
                      * Update an existing document.
                      * @param doc the doc
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    put(doc: ExistingDoc, options: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
+                    put(doc:ExistingDoc, options:options.EmptyOptions, callback?:async.Callback<OperationResponse>): void;
                     /**
                      * Create a new document.
                      * @param doc the doc
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    put(doc: NewDoc, callback?: async.Callback<OperationResponse>): void;
+                    put(doc:NewDoc, callback?:async.Callback<OperationResponse>): void;
                     /**
                      * Create a new document.
                      * @param doc the doc
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    put(doc: NewDoc, options: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
+                    put(doc:NewDoc, options:options.EmptyOptions, callback?:async.Callback<OperationResponse>): void;
                     /**
                      * Update an existing document.
                      * @param doc the doc
@@ -949,7 +958,7 @@ declare module pouchdb {
                      * @param docRev the doc rev
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    put(doc: BaseDoc, docId: string, docRev: string, callback?: async.Callback<OperationResponse>): void;
+                    put(doc:BaseDoc, docId:string, docRev:string, callback?:async.Callback<OperationResponse>): void;
                     /**
                      * Update an existing document.
                      * @param doc the doc
@@ -958,7 +967,7 @@ declare module pouchdb {
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    put(doc: BaseDoc, docId: string, docRev: string, options: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
+                    put(doc:BaseDoc, docId:string, docRev:string, options:options.EmptyOptions, callback?:async.Callback<OperationResponse>): void;
                     /**
                      * Create a new document. If the document already exists,
                      * you must use the update overload otherwise a conflict will occur.
@@ -966,7 +975,7 @@ declare module pouchdb {
                      * @param docId the doc id
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    put(doc: BaseDoc, docId: string, callback?: async.Callback<OperationResponse>): void;
+                    put(doc:BaseDoc, docId:string, callback?:async.Callback<OperationResponse>): void;
                     /**
                      * Create a new document. If the document already exists,
                      * you must use the update overload otherwise a conflict will occur.
@@ -975,7 +984,7 @@ declare module pouchdb {
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    put(doc: BaseDoc, docId: string, options: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
+                    put(doc:BaseDoc, docId:string, options:options.EmptyOptions, callback?:async.Callback<OperationResponse>): void;
                 }
                 /** Promise pattern for put */
                 interface Promisable {
@@ -985,14 +994,14 @@ declare module pouchdb {
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    put(doc: ExistingDoc, options?: options.EmptyOptions): async.PouchPromise<OperationResponse>;
+                    put(doc:ExistingDoc, options?:options.EmptyOptions): async.PouchPromise<OperationResponse>;
                     /**
                      * Create a new document.
                      * @param doc the doc
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    put(doc: NewDoc, options?: options.EmptyOptions): async.PouchPromise<OperationResponse>;
+                    put(doc:NewDoc, options?:options.EmptyOptions): async.PouchPromise<OperationResponse>;
                     /**
                      * Update an existing document.
                      * @param doc the doc
@@ -1001,7 +1010,7 @@ declare module pouchdb {
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    put(doc: BaseDoc, docId: string, docRev: string, options?: options.EmptyOptions): async.PouchPromise<OperationResponse>;
+                    put(doc:BaseDoc, docId:string, docRev:string, options?:options.EmptyOptions): async.PouchPromise<OperationResponse>;
                     /**
                      * Create a new document. If the document already exists,
                      * you must use the update overload otherwise a conflict will occur.
@@ -1010,7 +1019,71 @@ declare module pouchdb {
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    put(doc: BaseDoc, docId: string, options?: options.EmptyOptions): async.PouchPromise<OperationResponse>;
+                    put(doc:BaseDoc, docId:string, options?:options.EmptyOptions): async.PouchPromise<OperationResponse>;
+                }
+            }
+
+
+            /** Contains the method and call/return types for query()*/
+            module query {
+
+                /** Type union for the possible info/error type alternates returned by `query()` */
+                type QueryResponse = Response | OperationResponse;
+
+                interface QueryOptions {
+                    reduce: boolean;
+                    include_docs?: boolean;
+                    startkey?: string;
+                    endkey?: string;
+                    key?: string;
+                }
+
+                interface MapReduce {
+                    map?(doc:DocContainer<ExistingDoc>): void;
+                    map?(doc:ExistingDoc): void;
+                    /**
+                     * @TODO change type if needed;
+                     * @param key
+                     * @param values
+                     * @param rereduce
+                     */
+                    reduce?: string  |((key:string, values:any, rereduce:any) => number);
+                }
+
+
+                export function emit(key:any, value?:any):void;
+
+                interface Callback {
+                    /**
+                     * Query document.
+                     * @param queryFun
+                     * @options options options that specify
+                     */
+                    query(queryFun:MapReduce, callback?:async.Callback<Response>): void;
+
+                    /**
+                     * Query document.
+                     * @param queryFun
+                     * @options options options that specify
+                     */
+                    query(queryFun:MapReduce, options:options.EmptyOptions, callback:async.Callback<Response>): void;
+                    /**
+                     * Query document.
+                     * @param queryFun
+                     * @options options options that specify
+                     */
+                    query(queryFun:MapReduce, options:QueryOptions, callback:async.Callback<Response>): void;
+
+
+                }
+                interface Promisable {
+                    /*
+                     * Query document.
+                     * @param queryFun
+                     * @options options options that specify
+                     */
+                    query(queryFun:MapReduce, options?:QueryOptions): async.PouchPromise<Response>;
+
                 }
             }
 
@@ -1036,7 +1109,7 @@ declare module pouchdb {
                      * @param docRev the doc revision
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    remove(docId: string, docRev: string, callback?: async.Callback<OperationResponse>): void;
+                    remove(docId:string, docRev:string, callback?:async.Callback<OperationResponse>): void;
                     /**
                      * Deletes the document.
                      * `doc` is required to be a document with at least an `_id` and a `_rev` property.
@@ -1046,7 +1119,7 @@ declare module pouchdb {
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    remove(docId: string, docRev: string, options: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
+                    remove(docId:string, docRev:string, options:options.EmptyOptions, callback?:async.Callback<OperationResponse>): void;
                     /**
                      * Deletes the document.
                      * `doc` is required to be a document with at least an `_id` and a `_rev` property.
@@ -1055,7 +1128,7 @@ declare module pouchdb {
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    remove(doc: ExistingDoc, callback?: async.Callback<OperationResponse>): void;
+                    remove(doc:ExistingDoc, callback?:async.Callback<OperationResponse>): void;
                     /**
                      * Deletes the document.
                      * `doc` is required to be a document with at least an `_id` and a `_rev` property.
@@ -1064,14 +1137,14 @@ declare module pouchdb {
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    remove(doc: ExistingDoc, options: options.EmptyOptions, callback?: async.Callback<OperationResponse>): void;
+                    remove(doc:ExistingDoc, options:options.EmptyOptions, callback?:async.Callback<OperationResponse>): void;
                     /**
                      * Deletes the document.
                      * `doc` is required to be a document with at least an `_id` property, `rev` is specified in the `options`.
                      * @param doc the doc (with only an `id` property)
                      * @param options options that specify
                      */
-                    remove(doc: NewDoc, options: RevOptions, callback?: async.Callback<OperationResponse>): void;
+                    remove(doc:NewDoc, options:RevOptions, callback?:async.Callback<OperationResponse>): void;
                 }
                 /** Promise pattern for remove */
                 interface Promisable {
@@ -1084,7 +1157,7 @@ declare module pouchdb {
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    remove(docId: string, docRev: string, options?: options.EmptyOptions): async.PouchPromise<OperationResponse>;
+                    remove(docId:string, docRev:string, options?:options.EmptyOptions): async.PouchPromise<OperationResponse>;
                     /**
                      * Deletes the document.
                      * `doc` is required to be a document with at least an `_id` and a `_rev` property.
@@ -1093,92 +1166,29 @@ declare module pouchdb {
                      * @param options
                      * @todo define options shape - docs don't make it clear what this is
                      */
-                    remove(doc: ExistingDoc, options?: options.EmptyOptions): async.PouchPromise<OperationResponse>;
+                    remove(doc:ExistingDoc, options?:options.EmptyOptions): async.PouchPromise<OperationResponse>;
                     /**
                      * Deletes the document.
                      * `doc` is required to be a document with at least an `_id` property, `rev` is specified in the `options`.
                      * @param doc the doc (with only an `id` property)
                      * @param options options that specify
                      */
-                    remove(doc: NewDoc, options: RevOptions): async.PouchPromise<OperationResponse>;
+                    remove(doc:NewDoc, options:RevOptions): async.PouchPromise<OperationResponse>;
                 }
             }
 
-            /** Contains the method and call/return types for query()*/
-            module query {
-
-                /** Type union for the possible info/error type alternates returned by `query()` */
-                type QueryResponse = Response | OperationResponse;
-
-                interface QueryOptions {
-                    reduce: boolean;
-                    include_docs?: boolean;
-                    startkey?: string;
-                    endkey?: string;
-                    key?: string;
-                }
-
-                interface MapReduce{
-                    map?(doc: DocContainer<ExistingDoc>): void;
-                    map?(doc: ExistingDoc): void;
-                    /**
-                     * @TODO change type if needed;
-                     * @param key
-                     * @param values
-                     * @param rereduce
-                     */
-                    reduce?: string  |((key: string, values: any, rereduce: any) => number);
-                }
-
-
-
-                export function emit(key:any, value?:any):void;
-
-                interface Callback {
-                    /**
-                     * Query document.
-                     * @param queryFun
-                     * @options options options that specify
-                     */
-                    query(queryFun: MapReduce, callback?: async.Callback<Response>): void;
-
-                    /**
-                     * Query document.
-                     * @param queryFun
-                     * @options options options that specify
-                     */
-                    query(queryFun: MapReduce, options: options.EmptyOptions, callback: async.Callback<Response>): void;
-                    /**
-                     * Query document.
-                     * @param queryFun
-                     * @options options options that specify
-                     */
-                    query(queryFun: MapReduce, options: QueryOptions, callback: async.Callback<Response>): void;
-
-
-                }
-                interface Promisable {
-                    /*
-                     * Query document.
-                     * @param queryFun
-                     * @options options options that specify
-                     */
-                    query(queryFun: MapReduce, options?: QueryOptions): async.PouchPromise<Response>;
-
-                }
-            }
             module replicate {
                 module from {
                     interface Callback {
-                        from(instance: PouchInstance,  callback: async.Callback<Response>): void;
+                        from(instance:PouchInstance, callback:async.Callback<Response>): void;
                     }
                     interface Promisable {
-                        from(instance: PouchInstance):async.PouchPromise<Response>;
+                        from(instance:PouchInstance):async.PouchPromise<Response>;
                     }
                 }
             }
 
-        }
+    }
         /** Contains the main callback/promise apis for pouchdb */
         module db {
             /** pouchDB api: callback based */
@@ -1194,8 +1204,8 @@ declare module pouchdb {
                 , methods.info.Callback
                 , methods.post.Callback
                 , methods.put.Callback
-                , methods.remove.Callback
-                , methods.query.Callback { }
+                , methods.query.Callback
+                , methods.remove.Callback { }
             /** pouchDB api: promise based */
             interface Promisable extends
                 PouchInstance
@@ -1209,8 +1219,8 @@ declare module pouchdb {
                 , methods.info.Promisable
                 , methods.post.Promisable
                 , methods.put.Promisable
-                , methods.remove.Promisable
-                , methods.query.Promisable { }
+                , methods.query.Promisable
+                , methods.remove.Promisable { }
 
             module replicate {
 

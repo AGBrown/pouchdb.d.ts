@@ -55,7 +55,7 @@ adapters.forEach((adapter:string) => {
               include_docs: true,
               reduce: false
             }, (_, res) => {
-              res.rows.should.have.length(1, 'Dont include deleted documents');
+              res.rows.should.have.length(2, 'Dont include deleted documents');
               res.total_rows.should.equal(1, 'Include total_rows property.');
               res.rows.forEach(function (x, i) {
                 should.exist(x.id);
