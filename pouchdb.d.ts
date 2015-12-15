@@ -1002,6 +1002,62 @@ declare module pouchdb {
                 }
             }
 
+            /** Contains the method and call/return types for query() */
+            module query {
+
+                interface ReduceKey {
+                    0: any,
+                    1: string
+                }
+
+                type MapFunction = (doc, emit) => void;
+                type ReduceFunction = <T>(keys: ReduceKey[], values: T[], rereduce: boolean) => T;
+
+                interface MapReduce<T> {
+                    map: MapFunction;
+                    reduce: ReduceFunction;
+                }
+
+                type QueryFunction<T> = MapFunction | MapReduce<T> | string;
+
+                interface DefaultQueryOptions extends options.EmptyOptions {
+                    descending?: boolean;
+                    endkey?: any;
+                    group?: boolean;
+                    group_level?: number;
+                    inclusive_end?: boolean;
+                    key?: string;
+                    keys?: any[];
+                    limit?: number;
+                    reduce?: boolean | ReduceFunction | string; // should be '_sum' | '_count' | '_stats';
+                    skip?: number;
+                    stale?: string; // should be 'ok' | 'update_after';
+                    startkey?: any;
+                }
+
+                interface QueryOptionsWithDocs extends DefaultQueryOptions {
+                    include_docs: boolean;
+                    conflicts?: boolean;
+                }
+
+                interface QueryOptionsWithAttachment extends QueryOptionsWithDocs {
+                    attachment: boolean;
+                    binary?: boolean;
+                }
+
+                type QueryOptions = DefaultQueryOptions| QueryOptionsWithDocs | QueryOptionsWithAttachment;
+
+                interface Callback {
+                    query<T>(fun: QueryFunction<T>, callback?: async.Callback<allDocs.Response>): void;
+                    query<T>(fun: QueryFunction<T>, options: QueryOptions, callback?: async.Callback<allDocs.Response>): void;
+                }
+
+                /** Promise pattern for put */
+                interface Promisable {
+                    query<T>(fun: QueryFunction<T>, options?: QueryOptions): async.PouchPromise<allDocs.Response>;
+                }
+            }
+
             /** Contains the method and call/return types for remove() */
             module remove {
                 /** Options used in overlaods for `remove()` */
@@ -1107,6 +1163,7 @@ declare module pouchdb {
                 , methods.info.Callback
                 , methods.post.Callback
                 , methods.put.Callback
+                , methods.query.Callback
                 , methods.remove.Callback { }
             /** pouchDB api: promise based */
             interface Promisable extends
@@ -1121,6 +1178,7 @@ declare module pouchdb {
                 , methods.info.Promisable
                 , methods.post.Promisable
                 , methods.put.Promisable
+                , methods.query.Promisable
                 , methods.remove.Promisable { }
         }
 

@@ -374,6 +374,27 @@ module PouchDBTest {
                 db2.put(bDoc, id, {}).then(resp => { }, err => { }).catch(err => { });
             }
         }
+
+        module query {
+
+            function callback() {
+
+            }
+
+            function promise() {
+                var db: pouchdb.promise.PouchDB = new PouchDB("dbname", (e, v) => { });
+                var qr: pouchdb.async.PouchPromise<pouchdb.api.methods.allDocs.Response>;
+                qr = db.query('testview');
+                qr = db.query((doc, emit) => { emit(doc.name); });
+                qr = db.query({
+                    map: (doc, emit) => { emit(doc.name); },
+                    reduce: (keys, values, rereduce) => { return 3; }
+                });
+
+
+            }
+        }
+
         module remove {
             var oe = {};
             var of = { foo: "test" };
