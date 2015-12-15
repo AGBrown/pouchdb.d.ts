@@ -378,11 +378,12 @@ module PouchDBTest {
         module query {
 
             function callback() {
+                //var db: pouchdb.callback.PouchDB = new PouchDB("dbname", (e, v) => { });
 
             }
 
             function promise() {
-                var db: pouchdb.promise.PouchDB = new PouchDB("dbname", (e, v) => { });
+                var db: pouchdb.thenable.PouchDB = new PouchDB("dbname");
                 var qr: pouchdb.async.PouchPromise<pouchdb.api.methods.allDocs.Response>;
                 qr = db.query('testview');
                 qr = db.query((doc, emit) => { emit(doc.name); });
