@@ -388,7 +388,10 @@ module PouchDBTest {
                 qr = db.query('testview');
                 qr = db.query((doc, emit) => { emit(doc.name); });
                 qr = db.query({
-                    map: (doc, emit) => { emit(doc.name); },
+                    map: (doc) => {
+                        var emit: (data: any) => { };
+                        emit(doc.name);
+                    },
                     reduce: (keys, values, rereduce) => { return 3; }
                 });
 

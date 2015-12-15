@@ -1010,11 +1010,12 @@ declare module pouchdb {
                     1: string
                 }
 
-                type MapFunction = (doc, emit) => void;
+                type EmitFunction = (data: any) => void;
+                type MapFunction = (doc: any, emit: EmitFunction) => void;
                 type ReduceFunction = <T>(keys: ReduceKey[], values: T[], rereduce: boolean) => T;
 
                 interface MapReduce<T> {
-                    map: MapFunction;
+                    map: (doc: any) => void;
                     reduce: ReduceFunction;
                 }
 
